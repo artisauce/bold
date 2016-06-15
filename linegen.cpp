@@ -7,7 +7,8 @@
 #include <iostream>
 using namespace std;
 # define M_PI           3.14159265358979323846  /* lol it's pi */
-
+// Current compile: clang linegen.cpp -lm -lstdc++
+//		    g++ linegen.cpp
 // Get me meh distance.
 double dist(int startY, int startX, int endY, int endX){
     double dx = ((double)endX-(double)startX);
@@ -15,10 +16,11 @@ double dist(int startY, int startX, int endY, int endX){
     return(sqrt(dx*dx + dy*dy));
 }
 
-unsigned int randLine(unsigned int seed, double pushCoefficient, int startY, int startX, int endY, int endX, 
-unsigned int* yList, unsigned int* xList, int* ySpareList, int* xSpareList,
-unsigned int side, bool diagonal, bool debug){
-    srand(1379966042);
+void randLine(unsigned int seed, unsigned int* index, unsigned int* spareIndex, double pushCoefficient, 
+	int startY, int startX, int endY, int endX, unsigned int* yList, 
+	unsigned int* xList, int* ySpareList, int* xSpareList,
+	unsigned int side, bool diagonal, bool debug){
+    srand(seed);
 	if(debug){
 		cout << "--------- SEED: " << seed << " ---------" << endl;
 	}
@@ -31,10 +33,35 @@ unsigned int side, bool diagonal, bool debug){
     int ex = startX; // X
     int wy = startY; // Y
     //map[(startY*side) + startX] = 1;
-	yList[0] = startY;
-	xList[0] = startX;
-    unsigned int index = 1;
-	unsigned int spareIndex = 0;
+	if(startY>=side || startY<0 || startX>=side || startX<0){
+		if(*spareIndex > 0){
+			if(xSpareList[(*spareIndex) - 1] != startX && ySpareList[(*spareIndex) - 1] != startY){
+				xSpareList[*spareIndex] = (startX);
+				ySpareList[*spareIndex] = (startY);
+				(*spareIndex)++;
+			}
+		}
+		else {
+			xSpareList[*spareIndex] = (startX);
+			ySpareList[*spareIndex] = (startY);
+			(*spareIndex)++;
+		}
+		
+	}
+	else {
+		if(*index > 0){
+			if(xList[(*index) - 1] != startX && yList[(*index) - 1] != startY){
+				xList[*index] = (startX);
+				yList[*index] = (startY);
+				(*index)++;
+			}
+		}
+		else {
+			xList[*index] = (startX);
+			yList[*index] = (startY);
+			(*index)++;
+		}
+	}
     while(ex != endX || wy != endY){
         double result = atan2((endY-wy),(endX-ex)) + (M_PI * 2);
 	result = fmod(result,(M_PI * 2));
@@ -49,6 +76,7 @@ unsigned int side, bool diagonal, bool debug){
         // rounding down. -22.5 / 45 = -0.5, plus 1 = 0.5. Add 2, etc...
         int bResult = (int)((result * (180/(M_PI*45)))+2.5);
         int origBResult = bResult;
+	
         int random = rand()%1000; // Random number between 0 and 999.
 	 double distToA = dist(wy,ex,startY,startX) + 1; // Add one so there's a 100% chance when right 
 							// beside the goal. Unfortunately, it means a more push to goal. Fix?
@@ -72,27 +100,38 @@ unsigned int side, bool diagonal, bool debug){
                 }
             }
         }
+	
 
         int yAdd = yAddArray[bResult]; // We get the values where to go.
         int xAdd = xAddArray[bResult];
-        if(yList[index-1] == wy+yAdd && xList[index-1] == ex+xAdd){
-            bResult = origBResult;
-            yAdd = yAddArray[bResult]; // We get the values where to go.
-            xAdd = xAddArray[bResult];
-        }
+	if(*index > 0){
+		if(yList[(*index)-1] == wy+yAdd && xList[(*index)-1] == ex+xAdd){
+			bResult = origBResult;
+			yAdd = yAddArray[bResult]; // We get the values where to go.
+			xAdd = xAddArray[bResult];
+		}
+	}
+	if(*spareIndex > 0){
+		if(ySpareList[(*spareIndex)-1] == wy+yAdd && xSpareList[(*spareIndex)-1] == ex+xAdd){
+			bResult = origBResult;
+			yAdd = yAddArray[bResult]; // We get the values where to go.
+			xAdd = xAddArray[bResult];
+		}
+	}
         if(diagonal && yAdd*xAdd) { // Check if diagonal.
             if(dist(wy+yAdd,ex,endY,endX) < dist(wy,ex+xAdd,endY,endX)){
-                yList[index] = wy+yAdd;
-                xList[index] = ex;
+                yList[*index] = wy+yAdd;
+                xList[*index] = ex;
                 //map[((wy+yAdd)*side) + ex] = 2;
             }
             else{
-                yList[index] = wy;
-                xList[index] = ex+xAdd;
+                yList[*index] = wy;
+                xList[*index] = ex+xAdd;
                 //map[(wy*side) + ex+xAdd] = 2;
             }
-            index++;
+            (*index)++;
         }
+	
         //--------------- DEBUG STUFF. /t for tabbing.
         if(debug){
         cout << "WY: " << wy << "+" << yAdd << "\tEX:" << ex << "+" << xAdd << "\tDRES:" << dList[bResult] << 
@@ -113,68 +152,194 @@ unsigned int side, bool diagonal, bool debug){
         }
         cout << (int)(999.5 - (pow(((orig-(dist(wy,ex,startY,startX)+1))/orig),0.5)*700)) << "\tRANDOM:" << random << endl;
         }
+	
         //---------------
 	ex=ex+xAdd;
 	wy=wy+yAdd;
 	if(wy>=side || wy<0 || ex>=side || ex<0){
-		cout << "OUTSIDE" << endl;
-		xSpareList[spareIndex] = (ex);
-        	ySpareList[spareIndex] = (wy);
-        	spareIndex++;
+		xSpareList[*spareIndex] = (ex);
+        	ySpareList[*spareIndex] = (wy);
+        	(*spareIndex)++;
+		
 	}
 	else{
-		xList[index] = (ex);
-		yList[index] = (wy);
-		index++;
+		xList[*index] = (ex);
+		yList[*index] = (wy);
+		(*index)++;
 	}
         //map[(wy*side) + ex] = 1;
     }
-	xSpareList[spareIndex] = 1;
-        ySpareList[spareIndex] = 1; // Why 1 and 1? Because all maps are 1x1 or greater, and spare is exclusively for coordinates
-	// outside of map. We use that for length.
-	return index; // Return length.
-}
-
-void circle(double pushCoefficient, unsigned int pointX, unsigned int pointY, unsigned int radius, 
-unsigned int* map, unsigned int side, bool diagonal, bool debug){
 	
 }
 
+void circle(unsigned int seed, unsigned int* index, unsigned int* spareIndex, double pushCoefficient, 
+	unsigned int pointY, unsigned int pointX, unsigned int radius, 
+	unsigned int* yList, unsigned int* xList, int* ySpareList, int* xSpareList,
+	unsigned int side, bool diagonal, bool debug){
+	srand(seed);
+
+	int yPointOne = pointY - radius;
+	int xPointOne = pointX;
+	
+	int yPointTwo = pointY;
+	int xPointTwo = pointX - radius;
+
+	int yPointThree = pointY+radius;
+	int xPointThree = pointX;
+
+	int yPointFour = pointY;
+	int xPointFour = pointX + radius;
+
+	if(index==NULL){
+		unsigned int* index;
+		*index = 0;
+	}
+	if(spareIndex==NULL){
+		unsigned int* spareIndex;
+		*spareIndex = 0;
+	}
+	//void randLine(unsigned int seed, unsigned int* index, unsigned int* spareIndex, double pushCoefficient, 
+	//int startY, int startX, int endY, int endX, unsigned int* yList, unsigned int* xList, int* ySpareList, int* xSpareList,
+	//unsigned int side, bool diagonal, bool debug){
+	randLine(rand(), index, spareIndex, pushCoefficient, yPointOne, xPointOne, yPointTwo, xPointTwo, yList, xList, ySpareList, xSpareList, side, diagonal, debug);
+	randLine(rand(), index, spareIndex, pushCoefficient, yPointTwo, xPointTwo, yPointThree, xPointThree, yList, xList, ySpareList, xSpareList, side, diagonal, debug);
+	randLine(rand(), index, spareIndex, pushCoefficient, yPointThree, xPointThree, yPointFour, xPointFour, yList, xList, ySpareList, xSpareList, side, diagonal, debug);
+	randLine(rand(), index, spareIndex, pushCoefficient, yPointFour, xPointFour, yPointOne, xPointOne, yList, xList, ySpareList, xSpareList, side, diagonal, debug);
+}
+
+void fillMap( int filler, int pointY, int pointX, unsigned side, int* map, int* spareMap, bool wallMode){
+	//cout << "GO" << " " << pointY << " " << pointX<< " "  << detect<< " "  << filler << endl;
+	spareMap[(pointY*side) + pointX] = 0;
+	for(int y = -1; y < 2; ++y){
+		for(int x = -1; x < 2; ++x){
+			//cout << map[(pointY*side) + pointX] << endl;
+			//cout << (map[((pointY+y)*side) + pointX + x]) << endl;
+			if(pointY+y < side && pointY+y >= 0 && pointX+x < side && pointX+x >= 0){
+				if(wallMode){
+					if(spareMap[((pointY+y)*side) + pointX + x] == 2){
+						//cout << map[((pointY+y)*side) + pointX + x] << " " << detect << endl;
+						fillMap(filler,pointY+y,pointX+x,side, map, spareMap,wallMode);
+					}
+				}
+				else {
+					if(spareMap[((pointY+y)*side) + pointX + x] == 1){
+						fillMap(filler,pointY+y,pointX+x,side, map, spareMap,wallMode);
+					}
+					else if(spareMap[((pointY+y)*side) + pointX + x] == 2){
+						fillMap(filler,pointY+y,pointX+x,side, map, spareMap,true);
+					}
+				}
+			}
+		}
+	}
+	map[(pointY*side) + pointX] += filler;
+}
+
+void printMap(int* map, unsigned int side){
+	 for (int i = 0; i < side*side; ++i)
+	{
+		if(i%side == 0){
+		    cout << endl;
+		}
+		cout << map[i];
+	}
+	cout << endl;
+
+}
+
 int main () {
-//unsigned int side = 20; changed to const below
-const unsigned int side = 20;
-    unsigned int yList[side*side];
-    unsigned int xList[side*side];
+	unsigned int side = 100;
+    	unsigned int yList[side*side];
+    	unsigned int xList[side*side];
 	int ySpareList[side*side];
-    int xSpareList[side*side];
-    unsigned int map[side*side];
-	bool debug = true;
+    	int xSpareList[side*side];
+    	int map[side*side];
+	unsigned int startIndex;
+	unsigned int startSpareIndex;
+	int spareMap[side*side];
+	bool debug = false;
+	unsigned int seed;
+	unsigned int repeat = 0;
 	//-- For testing for BAD STUFF
 	while(1){ // Since it's RNG... we'll need a lot to detect even a tiny bug.
 	//--
+	seed = rand();
+	srand(seed);
+	cout << "SEED: "<< seed << endl;
+	startIndex = 0; // Since I want to output two things. We'll need to pass these things in as pointers.
+	startSpareIndex = 0;
     for (int i = 0; i < side*side; ++i)
     {
         map[i] = 0;
     }
-    int length = randLine(rand(), 0.1, (side/2)-1, 0,  (side/2)-1, side-1, yList, xList, ySpareList,xSpareList, side, false,debug);
-	//----------
-	for(int i = 0; i<length; ++i){
-		map[ (yList[i]*side) + xList[i] ] = 1;
-		if(debug){
-		cout << "Y: " << yList[i] << " X: " << xList[i] << endl;
+    //randLine(rand(), &startIndex, &startSpareIndex , 0.1, (side/2)-1, 0,  (side/2)-1, side-1, yList, xList, ySpareList,xSpareList, side, false,debug);
+	for(int e = 0; e < 9; ++e){
+	startIndex = 0;
+	startSpareIndex = 0;
+	for (int i = 0; i < side*side; ++i)
+    	{
+		spareMap[i] = 1;
+    	}
+	circle(rand(), &startIndex, &startSpareIndex, 0.1, (side/2)-1, (side/2)-1, side/(2.5+pow(e,1.2)), 
+	yList, xList, ySpareList, xSpareList, side, true, debug);
+	//unsigned int yMaxCoord = yList[0];
+	//unsigned int xMaxCoord = xList[0];
+	//unsigned int yMinCoord = yList[0];
+	//unsigned int xMinCoord = xList[0];
+	/*
+	for(int i = 0; i <startIndex;++i){
+		if(yMaxCoord < yList[i]){
+			yMaxCoord = yList[i];
 		}
+		else if(yMinCoord > yList[i]){
+			yMinCoord = yList[i];
+		}
+		if(xMaxCoord < xList[i]){
+			xMaxCoord = xList[i];
+		}
+		else if(xMinCoord > xList[i]){
+			xMinCoord = xList[i];
+		}
+	}*/
+	for(int i = 0; i<startIndex;++i){
+		spareMap[ (yList[i]*side) + xList[i] ] = 2;
 	}
+	//printMap(spareMap,side);
+	fillMap(1, (side/2)-1, (side/2)-1, side, map, spareMap, false);
+	//if(spareMap[0] == 0){
+	//	continue;
+	//}
+	//printMap(spareMap,side);
+	//---------- To be used when borders are wierd. Will manually set everything.
+	/*for(unsigned int y = yMinCoord; y <= yMaxCoord; ++y){
+		for(unsigned int x = xMinCoord; x <= xMaxCoord; ++x){
+			if(!(spareMap[y*side + x])){
+				map[y*side + x] += 1;
+				cout << map[y*side + x] << endl;
+				if(debug){
+					cout << "Y: " << y << " X: " << x << endl;
+				}
+			}
+		}
+	}*/
 	//----------
-    for (int i = 0; i < side*side; ++i)
-    {
-        if(i%side == 0){
-            cout << endl;
-        }
-        cout << map[i];
-
-    }
-	cout << endl;
+	// ===
+	
+	//for(int i = 0; i<startIndex;++i){
+	//	map[yList[i]*side + xList[i]] += 1;
+	//}
+	// ===
+	}
+	//if(spareMap[0] == 0){
+	//	printMap(map,side);
+	//}
+    	printMap(map,side);
 	//--
     }
 	//--
 }
+
+// TODO:
+
+// Since there's a possibility for the filler to spawn outside of circle (crazy random line occurances, especially on small circles)
+// Fix that
