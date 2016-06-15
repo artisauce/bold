@@ -135,7 +135,7 @@ unsigned int side, bool diagonal, bool debug){
 	return index; // Return length.
 }
 
-void int circle(double pushCoefficient, unsigned int pointX, unsigned int pointY, unsigned int radius, 
+void circle(double pushCoefficient, unsigned int pointX, unsigned int pointY, unsigned int radius, 
 unsigned int* map, unsigned int side, bool diagonal, bool debug){
 	
 }
