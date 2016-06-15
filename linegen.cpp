@@ -135,13 +135,14 @@ unsigned int side, bool diagonal, bool debug){
 	return index; // Return length.
 }
 
-unsigned int circle(double pushCoefficient, unsigned int pointX, unsigned int pointY, unsigned int radius, 
+void int circle(double pushCoefficient, unsigned int pointX, unsigned int pointY, unsigned int radius, 
 unsigned int* map, unsigned int side, bool diagonal, bool debug){
 	
 }
 
 int main () {
-unsigned int side = 20;
+//unsigned int side = 20; changed to const below
+const unsigned int side = 20;
     unsigned int yList[side*side];
     unsigned int xList[side*side];
 	int ySpareList[side*side];
