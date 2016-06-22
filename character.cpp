@@ -25,7 +25,7 @@ character::character(string name_2, unsigned int gender_2, string race_2, int* s
 character::~character() { // destructor
 	delete [] conditions;
 	delete [] items;
-	delete stats;
+	delete [] stats;
 }
 void character::move(char c, int steps) { // moves some number of steps North (N) ,  South (S) , etc.
 	if (c == 'N') {
@@ -69,7 +69,8 @@ void group::new_member(character* member) { // new member is added
 	for (int i = 0; i <= amount - 1; i++) {
 		members[i] = members_original[i];
 	}
-	delete members_original;
+	members[amount - 1] = *member;
+	delete [] members_original;
 } 
 bool group::remove(string name) { // remove member with given name (due to them seperating, death or otherwise)
 	for (int i = 0; i <= amount - 1; i++) {
