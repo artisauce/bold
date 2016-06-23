@@ -9,6 +9,7 @@
 
 
 
+
 void battle_Player_Attacks(Group Attackers, Group Defenders);  // Case when the player attacks a group controlled by the computer
 
 void battle_Player_Defends(Group Attackers, Group Defenders);  // Case when the player is attacked  a group controlled by the computer
