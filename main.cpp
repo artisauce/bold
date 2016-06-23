@@ -13,6 +13,7 @@
 
 void main() {
 
+srand(time(NULL));
 	/*
 	//Testing various Group class methods
 	Group Grp;
