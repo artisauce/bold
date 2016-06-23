@@ -45,7 +45,7 @@ Character random_character_unarmed() {
 	for (int i = 0; i <= Number_of_Stats - 1; i++) {
 		stats_2[i] = rand() % 10;
 	}
-	int health_2 = rand() % 50; 
+	int health_2 = rand() % 50 + 1; 
 	Weapon w;
 
 	Character character_to_return(name_2, stats_2, health_2, w);
