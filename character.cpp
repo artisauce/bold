@@ -40,6 +40,7 @@ Character::~Character() { // destructor
 
 Character random_character_unarmed() {
 
+	srand(time(NULL));
 	string name_2 = to_string(rand());
 	int stats_2[Number_of_Stats];
 	for (int i = 0; i <= Number_of_Stats - 1; i++) {
