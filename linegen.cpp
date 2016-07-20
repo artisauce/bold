@@ -5,7 +5,6 @@
 #include <string.h>
 #include <math.h>
 #include <iostream>
-using namespace std;
 # define M_PI           3.14159265358979323846  /* lol it's pi */
 // Current compile: clang linegen.cpp -lm -lstdc++
 //		    g++ linegen.cpp
@@ -22,7 +21,7 @@ void randLine(unsigned int seed, unsigned int* index, unsigned int* spareIndex, 
 	unsigned int side, unsigned int sideLimit, bool diagonal, bool debug){
     srand(seed);
 	if(debug){
-		cout << "--------- SEED: " << seed << " ---------" << endl;
+		std::cout << "--------- SEED: " << seed << " ---------" << std::endl;
 	}
     int dList[13]  = {    2, 3,   6,9,8, 7, 4, 1, 2, 3,6,     9,8}; // Navigation array. Check numpad.
     int dRealList[13] = { 8, 9,   6,3,2, 1, 4, 7, 8, 9,6,     3,2};  // Adjusted for map display.
@@ -92,7 +91,7 @@ void randLine(unsigned int seed, unsigned int* index, unsigned int* spareIndex, 
 		// values 0.1 to 0.5 seem good. Recommend 0.1.
             int primChance = (int)(999.5 - (pow(((orig-distToA)/orig),pushCoefficient)*700)); //999 is max, 299 min. We truncate-round, so add 0.5.
 		if(primChance<0 && debug){
-			cout << "WARNING: orig: " << orig << " distToA: " << distToA << endl;
+			std::cout << "WARNING: orig: " << orig << " distToA: " << distToA << std::endl;
 		}
             if(random>primChance){ // Checks again if we're going straight.
                 int thirChance = 600-primChance; // We don't need to know secondary chance. 999-399 is what
@@ -113,7 +112,7 @@ void randLine(unsigned int seed, unsigned int* index, unsigned int* spareIndex, 
 		yAdd = yAddArray[bResult]; // We get the values where to go.
 		xAdd = xAddArray[bResult];
 		if(debug){
-			cout << "SIDED" << endl;
+			std::cout << "SIDED" << std::endl;
 		}
 	}
 	else if(sideLimit == 2 && ex+xAdd == startX){
@@ -121,7 +120,7 @@ void randLine(unsigned int seed, unsigned int* index, unsigned int* spareIndex, 
 		yAdd = yAddArray[bResult]; // We get the values where to go.
 		xAdd = xAddArray[bResult];
 		if(debug){
-			cout << "SIDED" << endl;
+			std::cout << "SIDED" << std::endl;
 		}
 	}
 	else{ // Saves on some comparison time.
@@ -159,39 +158,39 @@ void randLine(unsigned int seed, unsigned int* index, unsigned int* spareIndex, 
 			so some has been swapped with "    ".
 			*/
         if(debug){
-		cout << "WY: " << wy << "+" << yAdd;
+		std::cout << "WY: " << wy << "+" << yAdd;
 		//"\t" has been replaced as it is buggy at times and fails to indent
 
 		if (wy < 0 || yAdd < 0) { //Conditional to space accordingly if the number is positive/negative
-			cout << "   ";
+			std::cout << "   ";
 		} else {
-			cout << "    ";
+			std::cout << "    ";
 		}
 
-		cout << "EX:" << ex << "+" << xAdd; 
-		cout << "\tDRES:" << dList[bResult]; 
-		cout << "\tRES:"; 
+		std::cout << "EX:" << ex << "+" << xAdd; 
+		std::cout << "\tDRES:" << dList[bResult]; 
+		std::cout << "\tRES:"; 
 		//Added (int), some numbers cause indentation to fail so I set the type of values
 		if (((int)(result*180)/M_PI) == 0) {
-			cout << (int)(result*180)/M_PI << "    ";
+			std::cout << (int)(result*180)/M_PI << "    ";
 		} else {
-			cout << (int)(result*180)/M_PI;
+			std::cout << (int)(result*180)/M_PI;
 		}
         if(result!=0){
-            cout <<"\tDELY:";
+            std::cout <<"\tDELY:";
         }
         else{
-            cout << "\tDELY:";
+            std::cout << "\tDELY:";
         }
         double distanceC = dist(wy,ex,startY,startX) + 1;
-        cout << (endY-wy) << "\tDELX:" << (endX-ex) << "\tDIST:" << (int)(distanceC + 1); //Added (int), some numbers cause indentation to fail
+        std::cout << (endY-wy) << "\tDELX:" << (endX-ex) << "\tDIST:" << (int)(distanceC + 1); //Added (int), some numbers cause indentation to fail
         if(distanceC-floor(distanceC) > 0){
-            cout << "\tCHANCE:";
+            std::cout << "\tCHANCE:";
         }
         else{
-            cout << "\tCHANCE:";
+            std::cout << "\tCHANCE:";
         }
-        cout << (int)(999.5 - (pow(((orig-(dist(wy,ex,startY,startX)+1))/orig),0.5)*700)) << "\tRANDOM:" << random << endl;
+        std::cout << (int)(999.5 - (pow(((orig-(dist(wy,ex,startY,startX)+1))/orig),0.5)*700)) << "\tRANDOM:" << random << std::endl;
         }
         //---------------
 	ex=ex+xAdd;
@@ -248,16 +247,16 @@ void circle(unsigned int seed, unsigned int* index, unsigned int* spareIndex, do
 }
 
 void fillMap( int filler, int detect, int wall, int pointY, int pointX, unsigned side, int* map, int* spareMap, bool wallMode, bool replace){
-	//cout << "GO" << " " << pointY << " " << pointX<< " "  << detect<< " "  << filler << endl;
+	//std::cout << "GO" << " " << pointY << " " << pointX<< " "  << detect<< " "  << filler << std::endl;
 	spareMap[(pointY*side) + pointX] = 0;
 	for(int y = -1; y < 2; ++y){
 		for(int x = -1; x < 2; ++x){
-			//cout << map[(pointY*side) + pointX] << endl;
-			//cout << (map[((pointY+y)*side) + pointX + x]) << endl;
+			//std::cout << map[(pointY*side) + pointX] << std::endl;
+			//std::cout << (map[((pointY+y)*side) + pointX + x]) << std::endl;
 			if(pointY+y < side && pointY+y >= 0 && pointX+x < side && pointX+x >= 0){
 				if(wallMode){
 					if(spareMap[((pointY+y)*side) + pointX + x] == wall){
-						//cout << map[((pointY+y)*side) + pointX + x] << " " << detect << endl;
+						//std::cout << map[((pointY+y)*side) + pointX + x] << " " << detect << std::endl;
 						fillMap(filler,detect,wall,pointY+y,pointX+x,side, map, spareMap,wallMode,replace);
 					}
 				}
@@ -284,11 +283,11 @@ void printMap(int* map, unsigned int side){
 	 for (int i = 0; i < side*side; ++i)
 	{
 		if(i%side == 0){
-		    cout << endl;
+		    std::cout << std::endl;
 		}
-		cout << map[i];
+		std::cout << map[i];
 	}
-	cout << endl;
+	std::cout << std::endl;
 
 }
 
@@ -310,7 +309,7 @@ int main () {
 		//--
 		seed = rand();
 		srand(seed);
-		cout << "SEED: "<< seed << endl;
+		std::cout << "SEED: "<< seed << std::endl;
 		startIndex = 0; // Since I want to output two things. We'll need to pass these things in as pointers.
 		startSpareIndex = 0;
 		for (int i = 0; i < side*side; ++i)
@@ -350,7 +349,7 @@ int main () {
 		//	map[yList[i]*side + xList[i]] += 1;
 		//}
 		if(map[0] == 1){
-			cout << "SEED: "<< seed << endl;
+			std::cout << "SEED: "<< seed << std::endl;
 			printMap(map,side);
 			//unsigned int crasher = 1/0;
 		}
