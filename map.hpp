@@ -25,7 +25,7 @@ public:
 	// -- cordLists for randLine
 	unsigned int startIndex;
 	std::vector<unsigned int> yList = std::vector<unsigned int>(worldMapSide);
-        unsigned int xList[worldMapSide*worldMapSide];
+        std::vector<unsigned int> xList = std::vector<unsigned int>(worldMapSide);
     	unsigned int startSpareIndex;
 	int ySpareList[(worldMapSide*worldMapSide)*2]; // Turn's out even side*side isn't enough... atleast, for the circle function.
         int xSpareList[(worldMapSide*worldMapSide)*2];
