@@ -3,111 +3,129 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
+#include <iostream>
+#include <vector>
 
-class map {
-public:
+//TODO: Maybe it's time for vectors.
 
-	const unsigned int type; // Determines type of region.
-
-	tile* content; // Is square. Height/width determined by side.
-
-	const unsigned int side; // Length/side
-
-	worldMap* world; // Pointer to its parant.
-
-	unsigned int* explored; // Determining which tiles are explored. 0 not, 1 seen, 2 visited
-
-	unsigned int playerPosition; // Determines player party position.
-
-	group_t* groups; // Positions of critters and what they are.
-
-	map(unsigned int typeEntered, unsigned int sideEntered);
-
-	~map();
-
-	// seeds
-
-	unsigned int seed; // seed for this area.
-
-	unsigned int offset; // In the matter that this seed could not ever work, an offset is needed to get a "better" seed.
-
-	// elevation --
-
-	unsigned int elevationDirection; // Check numpad. 0 means none. 5 means self (a small hill :P)
-
-	// ---
-
-
-	//--generation from other map tiles--//
-
-	tile* fromTiles; // Tiles generated from other maps, by index.
-
-	unsigned int* fromPosY; // Y positions of the tiles, by index.
-
-	unsigned int* fromPosX; // X positions of the tiles, by index.
-
-	// generation to other map tiles
-
-	updateExplore(); // To be called when you move a tile or gain a scout -- explores map. DO NOT combine with map update.
-
-	encounter(unsigned int position); // Checks if battle is held at current player pos.
-
-	mapUpdate(); // All AI on the map will move around where they want to go.
-
-	exportMap(); // Export map contents -- efficiently -- for a graphic program to read and interpret.
-
-	spawning(); // Handles spawning of critters at the border of region. Remember the trials from the previous map player visited also continue.
-
-};
-
-class tile {
-public:
-
-	char* name; // Tile name.
-
-	unsigned int level; // Determines hierachy of what gets placed over what.
-
-	unsigned int type; // What type of place this is.
-
-	int* stats; // Stats determining how this place can be used. --> ATTACK, HIDE, FLEE. -10 means you can't/large risks, 10 is gauranteed/large bonuses.
-
-	tract_t* tracks; // Tracks. Optdate when ready m8.
-
-	tile(unsigned int typeEntered, unsigned int elevationEntered); // Construction.
-
-	unsigned int elevation; // 0 ocean, 1 river, 2 flat land, 3/3+ hills.
-
-	~tile();
-	
-};
-
+// World map - total game area
 class worldMap {
 public:
 
-	char* name; // World name. Again, 17 characters. Not const because const arrays can't be initialized...?
+	const unsigned int seed;
 
-	map* content; // Is square. Height/width determined by side.
+	// -- Settings
+	const size_t worldMapSide;
+	const size_t mapSide;
+	const size_t tileSide;
+	const size_t battlefieldSide;
+	// -- Settings
 
-	unsigned int* heightMap; // Each map such have a primary elevation.
+	// -- cordLists for randLine
+	unsigned int startIndex;
+	std::vector<unsigned int> yList = std::vector<unsigned int>(worldMapSide);
+        unsigned int xList[worldMapSide*worldMapSide];
+    	unsigned int startSpareIndex;
+	int ySpareList[(worldMapSide*worldMapSide)*2]; // Turn's out even side*side isn't enough... atleast, for the circle function.
+        int xSpareList[(worldMapSide*worldMapSide)*2];
+	// -- cordLists for randLine
 
-	const unsigned int side;
+	// -- Maps
+	unsigned int seedMap[worldMapSide*worldMapSide];
+	map spareMap[worldMapSide*worldMapSide];
+	map worldMap[worldMapSide*worldMapSide];
+	// -- Maps
 
-	unsigned int* lock; // Determines lock on region position. 0 means nothing, 1 means current, 2 means OOR (out-of-region), 3 means resetted.
-	// This is so that groups can still get generated and chase you.
+	worldMap(unsigned int seedInput,unsigned int worldMapSideInput, unsigned int mapSideInput, unsigned int tileSideInput, 
+	unsigned int battlefieldSideInput);
+};
 
-	unsigned int playerPosition; // Determines player party position.
+// A game area - for reference, an island
+class map {
+public:
 
-	worldMap(unsigned int sideEntered);
+	const unsigned int seed;
+	const worldMap* parentW;
 
-	unsigned int* capitalHeightPos; // The tallest part of island. [0] is y, [1] is x.
+	// -- Settings
+	const unsigned int mapSide;
+	// -- Settings
 
-	unsigned int* subCapitalHeightPos; // There are 4. [0] is y of first, [1] is x of first, [2] is y of second... up to [7].
+	// -- cordLists for randLine
+	unsigned int startIndex;
+	unsigned int yList[mapSide*mapSide];
+        unsigned int xList[mapSide*mapSide];
+    	unsigned int startSpareIndex;
+	int ySpareList[(mapSide*mapSide)*2]; // Turn's out even side*side isn't enough... atleast, for the circle function.
+        int xSpareList[(mapSide*mapSide)*2];
+	// -- cordLists for randLine
 
-	~worldMap();
+	// -- Maps
+	unsigned int seedMap[mapSide*mapSide];
+	tile spareMap[mapSide*mapSide];
+	tile regionMap[mapSide*mapSide]; // Darn naming
+	// -- Maps
 
-	worldMapUpdate(); // All AI on the world map will move around where they want to go.
-
-	exportWorldMap(); // Export map contents -- efficiently -- for a graphic program to read and interpret.
+	map(unsigned int seedInput, worldMap* parentWInput);
 
 };
+
+// A tile in the game area - has its own little map
+class tile {
+public:
+	
+	const unsigned int seed;
+	const map* parentM;
+
+	// -- Settings
+	const unsigned int tileSide;
+	// -- Settings
+
+	// -- cordLists for randLine
+	unsigned int startIndex;
+	unsigned int yList[tileSide*tileSide];
+        unsigned int xList[tileSide*tileSide];
+    	unsigned int startSpareIndex;
+	int ySpareList[(tileSide*tileSide)*2]; // Turn's out even side*side isn't enough... atleast, for the circle function.
+        int xSpareList[(tileSide*tileSide)*2];
+	// -- cordLists for randLine
+
+	// -- Maps
+	unsigned int seedMap[tileSide*tileSide];
+	unsigned int spareMap[tileSide*tileSide];
+	unsigned int tileMap[tileSide*tileSide];
+	// -- Maps
+
+	tile(unsigned int seedInput, map* parentMInput);
+	
+};
+
+// Battlefields are generated temporarily for duration of battle. Represents a coordinate in the tile map.
+class battlefield {
+public:
+
+	
+
+
+};
+
+double dist(int startY, int startX, int endY, int endX);
+
+void randLine(unsigned int seed, unsigned int* index, unsigned int* spareIndex, double pushCoefficient, 
+    int startY, int startX, int endY, int endX, unsigned int* yList, 
+    unsigned int* xList, int* ySpareList, int* xSpareList,
+    unsigned int side, unsigned int sideLimit, bool borderLimit, bool diagonal, bool debug);
+
+void circle(unsigned int seed, unsigned int* index, unsigned int* spareIndex, double pushCoefficient, 
+    unsigned int pointY, unsigned int pointX, unsigned int radius, 
+    unsigned int* yList, unsigned int* xList, int* ySpareList, int* xSpareList,
+    unsigned int side, bool diagonal, bool debug);
+
+void fillMap( int filler, int detect, int wall, int pointY, int pointX, unsigned int side, int* map, int* spareMap, bool wallMode, bool replace);
+
+void printMap(int* map, unsigned int side);
+
+void genTile(unsigned int seed, double pushCoefficient, int pointY, int pointX, int* map, unsigned int side, unsigned int tileSide, bool diagonal, bool debug);
+
 

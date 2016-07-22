@@ -5,7 +5,6 @@
 #include <string.h>
 #include <math.h>
 #include <iostream>
-using namespace std;
 # define M_PI           3.14159265358979323846  /* lol it's pi */
 // Current compile: clang linegen.cpp -lm -lstdc++
 //           g++ linegen.cpp
@@ -22,7 +21,7 @@ void randLine(unsigned int seed, unsigned int* index, unsigned int* spareIndex, 
     unsigned int side, unsigned int sideLimit, bool borderLimit, bool diagonal, bool debug){
     srand(seed);
     if(debug){
-        cout << "--------- SEED: " << seed << " ---------" << endl;
+        std::cout << "--------- SEED: " << seed << " ---------" << std::endl;
     }
     int dList[13]  = {    2, 3,   6,9,8, 7, 4, 1, 2, 3,6,     9,8}; // Navigation array. Check numpad.
     int dRealList[13] = { 8, 9,   6,3,2, 1, 4, 7, 8, 9,6,     3,2};  // Adjusted for map display.
@@ -92,7 +91,7 @@ void randLine(unsigned int seed, unsigned int* index, unsigned int* spareIndex, 
         // values 0.1 to 0.5 seem good. Recommend 0.1.
             int primChance = (int)(999.5 - (pow(((orig-distToA)/orig),pushCoefficient)*700)); //999 is max, 299 min. We truncate-round, so add 0.5.
         if(primChance<0 && debug){
-            cout << "WARNING: orig: " << orig << " distToA: " << distToA << endl;
+            std::cout << "WARNING: orig: " << orig << " distToA: " << distToA << std::endl;
         }
             if(random>primChance){ // Checks again if we're going straight.
                 int thirChance = 600-primChance; // We don't need to know secondary chance. 999-399 is what
@@ -107,9 +106,9 @@ void randLine(unsigned int seed, unsigned int* index, unsigned int* spareIndex, 
         }
     int yAdd = yAddArray[bResult]; // We get the values where to go.
     int xAdd = xAddArray[bResult];
-    //cout << sideLimit << endl;
-    //cout << "1 WY:" << (wy+yAdd) << " STY:" << startY << " EX:" << (ex+xAdd) << " ENDX:" << endX << endl;
-    //cout << "2 EX:" << (ex+xAdd) << " STX:" << startX << " WY:" << (wy+yAdd) << " ENDY:" << endY << endl;
+    //std::cout << sideLimit << std::endl;
+    //std::cout << "1 WY:" << (wy+yAdd) << " STY:" << startY << " EX:" << (ex+xAdd) << " ENDX:" << endX << std::endl;
+    //std::cout << "2 EX:" << (ex+xAdd) << " STX:" << startX << " WY:" << (wy+yAdd) << " ENDY:" << endY << std::endl;
     if(sideLimit == 1 && (wy+yAdd == startY || ex+xAdd == endX)){ 
         // The side mod is useful for circles for avoiding center. 
         // Will be useless when better fill function is made. Remember to remove.
@@ -118,7 +117,7 @@ void randLine(unsigned int seed, unsigned int* index, unsigned int* spareIndex, 
         yAdd = yAddArray[bResult]; // We get the values where to go.
         xAdd = xAddArray[bResult];
         if(debug){
-            cout << "SIDED" << endl;
+            std::cout << "SIDED" << std::endl;
         }
     }
     else if(sideLimit == 2 && (ex+xAdd == startX || wy+yAdd == endY)){
@@ -126,7 +125,7 @@ void randLine(unsigned int seed, unsigned int* index, unsigned int* spareIndex, 
         yAdd = yAddArray[bResult]; // We get the values where to go.
         xAdd = xAddArray[bResult];
         if(debug){
-            cout << "SIDED" << endl;
+            std::cout << "SIDED" << std::endl;
         }
     }
     else{ // Saves on some comparison time.
@@ -172,67 +171,67 @@ void randLine(unsigned int seed, unsigned int* index, unsigned int* spareIndex, 
             so some has been swapped with "    ".
             */
         if(debug){
-        cout << "WY: " << wy << "+" << yAdd;
+        std::cout << "WY: " << wy << "+" << yAdd;
         //"\t" has been replaced as it is buggy at times and fails to indent
 
         if (wy < 0 || yAdd < 0) { //Conditional to space accordingly if the number is positive/negative
-            cout << "   ";
+            std::cout << "   ";
         } else {
-            cout << "    ";
+            std::cout << "    ";
         }
 
-        cout << "EX:" << ex << "+" << xAdd; 
-        cout << "\tDRES:" << dList[bResult]; 
-        cout << "\tRES:"; 
+        std::cout << "EX:" << ex << "+" << xAdd; 
+        std::cout << "\tDRES:" << dList[bResult]; 
+        std::cout << "\tRES:"; 
         //Added (int), some numbers cause indentation to fail so I set the type of values
         double angle = (result*180)/M_PI;
         if (angle-(int)angle >= 0) {
-            cout << (int)(result*180)/M_PI << "    ";
+            std::cout << (int)(result*180)/M_PI << "    ";
         } else {
-            cout << (int)(result*180)/M_PI;
+            std::cout << (int)(result*180)/M_PI;
         }
         if(result!=0){
-            cout << "\tDELY:";
+            std::cout << "\tDELY:";
         }
         else{
-            cout << "\tDELY:";
+            std::cout << "\tDELY:";
         }
 
         double distanceC = dist(wy,ex,startY,startX) + 1;
-        cout << (endY-wy);
+        std::cout << (endY-wy);
 
                 if((endY-wy) <= -10){ //Spacing conditional for DELX
-                    cout << " DELX:" << (endX-ex);
+                    std::cout << " DELX:" << (endX-ex);
                 } else if ((endY-wy) >= 10){
-                    cout << "  DELX:" << (endX-ex);
+                    std::cout << "  DELX:" << (endX-ex);
                 }    else if ((endY-wy) > -10 && (endY-wy) < 0){
-                    cout << "  DELX:" << (endX-ex);
+                    std::cout << "  DELX:" << (endX-ex);
                 } else {
-                    cout << "   DELX:" << (endX-ex);
+                    std::cout << "   DELX:" << (endX-ex);
                 }
 
                 if((endX-ex) >= 0 && (endX-ex) < 10){ //Spacing conditional for DIST
-                    cout << "   DIST:";
+                    std::cout << "   DIST:";
                 } else if((endX-ex) <= -10) {
-                    cout << " DIST:";
+                    std::cout << " DIST:";
                 } else {
-                    cout << "  DIST:";
+                    std::cout << "  DIST:";
                 }                
 
-                cout << (int)(distanceC + 1); //Added (int), some numbers cause indentation to fail
+                std::cout << (int)(distanceC + 1); //Added (int), some numbers cause indentation to fail
         if(distanceC-floor(distanceC) > 0){
-            cout << "\tCHANCE:";
+            std::cout << "\tCHANCE:";
         }
         else {
-            cout << "\tCHANCE:";
+            std::cout << "\tCHANCE:";
         }
-        cout << (int)(999.5 - (pow(((orig-(dist(wy,ex,startY,startX)+1))/orig),0.5)*700));
+        std::cout << (int)(999.5 - (pow(((orig-(dist(wy,ex,startY,startX)+1))/orig),0.5)*700));
 
                 //Spacing conditional for RANDOM
                 if ((int)(999.5 - (pow(((orig-(dist(wy,ex,startY,startX)+1))/orig),0.5)*700)) < -1000) {
-                    cout << "      RANDOM:" << random << endl;
+                    std::cout << "      RANDOM:" << random << std::endl;
                 } else {
-                    cout << "\t\tRANDOM:" << random << endl;
+                    std::cout << "\t\tRANDOM:" << random << std::endl;
                 }
         }
         //---------------
@@ -281,16 +280,16 @@ void circle(unsigned int seed, unsigned int* index, unsigned int* spareIndex, do
 }
 
 void fillMap( int filler, int detect, int wall, int pointY, int pointX, unsigned int side, int* map, int* spareMap, bool wallMode, bool replace){ // An earlier bug is where it was just "unsigned side". Apparently that works...
-    //cout << "GO" << " " << pointY << " " << pointX<< " "  << detect<< " "  << filler << endl;
+    //std::cout << "GO" << " " << pointY << " " << pointX<< " "  << detect<< " "  << filler << std::endl;
     spareMap[(pointY*side) + pointX] = 0;
     for(int y = -1; y < 2; ++y){
         for(int x = -1; x < 2; ++x){
-            //cout << map[(pointY*side) + pointX] << endl;
-            //cout << (map[((pointY+y)*side) + pointX + x]) << endl;
+            //std::cout << map[(pointY*side) + pointX] << std::endl;
+            //std::cout << (map[((pointY+y)*side) + pointX + x]) << std::endl;
             if(pointY+y < side && pointY+y >= 0 && pointX+x < side && pointX+x >= 0){
                 if(wallMode){
                     if(spareMap[((pointY+y)*side) + pointX + x] == wall){
-                        //cout << map[((pointY+y)*side) + pointX + x] << " " << detect << endl;
+                        //std::cout << map[((pointY+y)*side) + pointX + x] << " " << detect << std::endl;
                         fillMap(filler,detect,wall,pointY+y,pointX+x,side, map, spareMap,wallMode,replace);
                     }
                 }
@@ -317,18 +316,18 @@ void printMap(int* map, unsigned int side){
     for (int i = 0; i < side*side; ++i)
     {
         if(i%side == 0){
-           cout << endl;
+           std::cout << std::endl;
         }
-        cout << map[i];
+        std::cout << map[i];
     }
-    cout << endl;
+    std::cout << std::endl;
 
 }
 
 void genTile(unsigned int seed, double pushCoefficient, int pointY, int pointX, int* map, unsigned int side, unsigned int tileSide, bool diagonal, bool debug){
 	//seed = 1457715766;
 	srand(seed);
-	//cout << "T SEED: " << seed << endl;
+	//std::cout << "T SEED: " << seed << std::endl;
 	int baseHeight = map[(pointY*side) + pointX];
 	unsigned int shift = tileSide*0.2;
 	int tileMap[tileSide*tileSide];
@@ -358,7 +357,7 @@ void genTile(unsigned int seed, double pushCoefficient, int pointY, int pointX, 
 					}
 				}
 			}
-			//cout << i << " " << e << " " << count << endl;
+			//std::cout << i << " " << e << " " << count << std::endl;
 		}
 	}
 	// --- k done
@@ -394,7 +393,7 @@ void genTile(unsigned int seed, double pushCoefficient, int pointY, int pointX, 
 		}
 		else if(checkDir[1] > level+1){ // Top shape
 			orthogonal[0] = 1;
-			//cout << "GO1" << endl;
+			//std::cout << "GO1" << std::endl;
 			if(checkDir[3] > level+1 || checkDir[5] > level+1){ // Since there's more standard shapes,
 										// this will be a bit quicker
 										// to put into a general if.
@@ -451,26 +450,26 @@ void genTile(unsigned int seed, double pushCoefficient, int pointY, int pointX, 
 		// 0,1,2 INDEXES QUICK REFERENCE
 		// 3,4,5
 		// 6,7,8
-		//cout << "GO" << endl;
+		//std::cout << "GO" << std::endl;
 		if(checkDir[2] > level+1 && checkDir[5] <= level+1 && checkDir[1] <= level+1){ // NE corner - single
-			//cout << "GOLA" << endl;
+			//std::cout << "GOLA" << std::endl;
 			// ---
 			randLine(rand(), &index, &spareIndex, pushCoefficient, 0, (tileSide-1)-shift, 
 			shift, tileSide-1, pointsY, pointsX, sparePointsY, sparePointsX, tileSide, 
 			0, true, diagonal, debug);
-			//cout << "GOL" << endl;
+			//std::cout << "GOL" << std::endl;
 			for(int i = 0; i<index;++i){
-				//cout << "GOLS: " << i << " " << pointsY[i] << " " << pointsX[i] << endl;
+				//std::cout << "GOLS: " << i << " " << pointsY[i] << " " << pointsX[i] << std::endl;
 				spareTileMap[(pointsY[i]*tileSide) + pointsX[i] ] = 2;
 			}
 			index = 0;
-			//cout << "GOL" << endl;
+			//std::cout << "GOL" << std::endl;
 			fillMap(1,1,2, 0, tileSide-1, tileSide, tileMap, spareTileMap, false, false);
 			// ---
 		}
 		else if(checkDir[5] > level+1){ // Right shape
 			orthogonal[1] = 1;
-			//cout << "GO2" << endl;
+			//std::cout << "GO2" << std::endl;
 			if(checkDir[1] > level+1 || checkDir[7] > level+1){ // Since there's more standard shapes,
 										// this will be a bit quicker
 										// to put into a general if.
@@ -524,7 +523,7 @@ void genTile(unsigned int seed, double pushCoefficient, int pointY, int pointX, 
 				// ---
 			}
 		}
-		//cout << "GO" << endl;
+		//std::cout << "GO" << std::endl;
 		if(checkDir[8] > level+1 && checkDir[5] <= level+1 && checkDir[7] <= level+1){ // SE corner - single
 			// ---
 			randLine(rand(), &index, &spareIndex, pushCoefficient, 
@@ -540,13 +539,13 @@ void genTile(unsigned int seed, double pushCoefficient, int pointY, int pointX, 
 		}
 		else if(checkDir[7] > level+1){ // Bottom shape
 			orthogonal[2] = 1;
-			//cout << "GO3" << endl;
+			//std::cout << "GO3" << std::endl;
 			if(checkDir[5] > level+1 || checkDir[3] > level+1){ // Since there's more standard shapes,
 										// this will be a bit quicker
 										// to put into a general if.
 				if(checkDir[3] > level+1 && checkDir[5] > level+1){ // W & E & S
 					// ---
-					//cout << "GOA" << endl;
+					//std::cout << "GOA" << std::endl;
 					randLine(rand(), &index, &spareIndex, pushCoefficient, 
 					(tileSide-1)-shift, shift, (tileSide-1)-shift, (tileSide-1)-shift, 
 					pointsY, pointsX, sparePointsY, sparePointsX, tileSide, 
@@ -559,7 +558,7 @@ void genTile(unsigned int seed, double pushCoefficient, int pointY, int pointX, 
 				}
 				else if(checkDir[5] > level+1){ // S & E
 					// ---
-					//cout << "GOB" << endl;
+					//std::cout << "GOB" << std::endl;
 					randLine(rand(), &index, &spareIndex, pushCoefficient, 
 					(tileSide-1)-shift, 0, (tileSide-1)-shift, (tileSide-1)-shift, 
 					pointsY, pointsX, sparePointsY, sparePointsX, tileSide, 
@@ -572,7 +571,7 @@ void genTile(unsigned int seed, double pushCoefficient, int pointY, int pointX, 
 				}
 				else { // W and S
 					// ---
-					//cout << "GOC" << endl;
+					//std::cout << "GOC" << std::endl;
 					randLine(rand(), &index, &spareIndex, pushCoefficient, 
 					(tileSide-1)-shift, shift, (tileSide-1)-shift, (tileSide-1), 
 					pointsY, pointsX, sparePointsY, sparePointsX, tileSide, 
@@ -586,7 +585,7 @@ void genTile(unsigned int seed, double pushCoefficient, int pointY, int pointX, 
 			}
 			else { // Just S
 				// ---
-				//cout << "GOD" << endl;
+				//std::cout << "GOD" << std::endl;
 				randLine(rand(), &index, &spareIndex, pushCoefficient, 
 				(tileSide-1)-shift, 0, (tileSide-1)-shift, (tileSide-1), 
 				pointsY, pointsX, sparePointsY, sparePointsX, tileSide, 
@@ -616,7 +615,7 @@ void genTile(unsigned int seed, double pushCoefficient, int pointY, int pointX, 
 		}
 		else if(checkDir[3] > level+1){ // Left Shape
 			orthogonal[3] = 1;
-			//cout << "GO4" << endl;
+			//std::cout << "GO4" << std::endl;
 			if(checkDir[1] > level+1 || checkDir[7] > level+1){ // Since there's more standard shapes,
 										// this will be a bit quicker
 										// to put into a general if.
@@ -671,7 +670,7 @@ void genTile(unsigned int seed, double pushCoefficient, int pointY, int pointX, 
 			}
 		}
 		//printMap(spareTileMap,tileSide);
-		//cout << orthogonal[0] << " " << orthogonal[1] << " " << orthogonal[2] << " " << orthogonal[3] << " " << level << endl;
+		//std::cout << orthogonal[0] << " " << orthogonal[1] << " " << orthogonal[2] << " " << orthogonal[3] << " " << level << std::endl;
 		if(orthogonal[0] && spareTileMap[(tileSide/2)-1]){ // N
 			fillMap(1,1,2, 0, (tileSide/2)-1, tileSide, tileMap, spareTileMap, false, false);
 		}
@@ -691,7 +690,7 @@ void genTile(unsigned int seed, double pushCoefficient, int pointY, int pointX, 
 		orthogonal[3] = 0;
 		//printMap(tileMap,tileSide);
 	}
-	cout << "T SEED: " << seed << endl;
+	std::cout << "T SEED: " << seed << std::endl;
 	printMap(tileMap,tileSide);
 	//int counter = 0;
 	//for(int i = 0; i<tileSide*tileSide; ++i){
@@ -700,7 +699,7 @@ void genTile(unsigned int seed, double pushCoefficient, int pointY, int pointX, 
 	//	}
 	//}
 	//if(counter==0){
-	//	cout << "T SEED: " << seed << endl;
+	//	std::cout << "T SEED: " << seed << std::endl;
 	//	int gray = 1/0;
 	//}
 }
@@ -732,7 +731,7 @@ int main () {
         for(int i = 0; i < side*side; ++i){
             seedMap[i] = rand();
         }
-        cout << "SEED: "<< seed << endl;
+        std::cout << "SEED: "<< seed << std::endl;
         startIndex = 0; // Since I want to output two things. We'll need to pass these things in as pointers.
         startSpareIndex = 0;
         for (int i = 0; i < side*side; ++i)
@@ -762,7 +761,7 @@ int main () {
             //    map[yList[i]*side + xList[i]] += 1;
             //}
             if(map[0] == 1){
-                cout << "SEED: "<< seed << endl;
+                std::cout << "SEED: "<< seed << std::endl;
                 printMap(map,side);
                 //unsigned int crasher = 1/0;
             }
