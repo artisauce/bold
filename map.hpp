@@ -114,14 +114,13 @@ public:
 
 double dist(int startY, int startX, int endY, int endX);
 
-void randLine(unsigned int seed, unsigned int* index, unsigned int* spareIndex, double pushCoefficient, 
-    int startY, int startX, int endY, int endX, unsigned int* yList, 
-    unsigned int* xList, int* ySpareList, int* xSpareList,
+void randLine(unsigned int seed, double pushCoefficient, int startY, int startX, int endY, 
+    int endX, int* placeMap, int dotPlace, std::vector<int>& ySpareList, std::vector<int>& xSpareList,
     unsigned int side, unsigned int sideLimit, bool borderLimit, bool diagonal, bool debug);
 
-void circle(unsigned int seed, unsigned int* index, unsigned int* spareIndex, double pushCoefficient, 
-    unsigned int pointY, unsigned int pointX, unsigned int radius, 
-    unsigned int* yList, unsigned int* xList, int* ySpareList, int* xSpareList,
+void circle(unsigned int seed, double pushCoefficient, 
+    unsigned int pointY, unsigned int pointX, int* placeMap, int dotPlace, unsigned int radius, 
+    std::vector<int>& ySpareList, std::vector<int>& xSpareList,
     unsigned int side, bool diagonal, bool debug);
 
 void fillMap( int filler, int detect, int wall, int pointY, int pointX, unsigned int side, int* map, int* spareMap, bool wallMode, bool replace);

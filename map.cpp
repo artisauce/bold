@@ -38,9 +38,8 @@ double dist(int startY, int startX, int endY, int endX){
     return(sqrt(dx*dx + dy*dy));
 }
 
-void randLine(unsigned int seed, unsigned int* index, unsigned int* spareIndex, double pushCoefficient, 
-    int startY, int startX, int endY, int endX, unsigned int* yList, 
-    unsigned int* xList, int* ySpareList, int* xSpareList,
+void randLine(unsigned int seed, double pushCoefficient, int startY, int startX, int endY, 
+    int endX, int* placeMap, int dotPlace, std::vector<int>& ySpareList, std::vector<int>& xSpareList,
     unsigned int side, unsigned int sideLimit, bool borderLimit, bool diagonal, bool debug){
     srand(seed);
     if(debug){
@@ -55,139 +54,124 @@ void randLine(unsigned int seed, unsigned int* index, unsigned int* spareIndex, 
     int ex = startX; // X
     int wy = startY; // Y
     //map[(startY*side) + startX] = 1;
+    unsigned int spareIndex = xSpareList.size();
     if(startY>=side || startY<0 || startX>=side || startX<0){
-        if(*spareIndex > 0){
-            if(xSpareList[(*spareIndex) - 1] != startX && ySpareList[(*spareIndex) - 1] != startY){
-                xSpareList[*spareIndex] = (startX);
-                ySpareList[*spareIndex] = (startY);
-                (*spareIndex)++;
+        if(spareIndex > 0){
+            if(xSpareList[(spareIndex) - 1] != startX && ySpareList[(spareIndex) - 1] != startY){
+                xSpareList.push_back(startX);
+                ySpareList.push_back(startY);
+                spareIndex++;
             }
         }
         else {
-            xSpareList[*spareIndex] = (startX);
-            ySpareList[*spareIndex] = (startY);
-            (*spareIndex)++;
+            xSpareList.push_back(startX);
+            ySpareList.push_back(startY);
+            spareIndex++;
         }
         
     }
     else {
-        if(*index > 0){
-            if(xList[(*index) - 1] != startX && yList[(*index) - 1] != startY){
-                xList[*index] = (startX);
-                yList[*index] = (startY);
-                (*index)++;
-            }
-        }
-        else {
-            xList[*index] = (startX);
-            yList[*index] = (startY);
-            (*index)++;
-        }
+        placeMap[(startY*side) + startX] = dotPlace;
     }
     while(ex != endX || wy != endY){
         double result = atan2((endY-wy),(endX-ex)) + (M_PI * 2);
-    result = fmod(result,(M_PI * 2));
-        //This gets the thing in radians.
-        // We multiply the result by 180/M_PI to save us some calculations.
-        // We subtract by 22.5 (to shift the 4 orthogonal directions between the 4 quadrants.)
-        // We then divide by 45. // To obtain the integer on the dList.
-        // Then we round up. // To finalize getting integer.
-        // We add 2 to adjust for dList offset.
-        // ---
-        // So, we simplify this to make it quicker, and to truncate instead of using ceil. Basically adding 1 and
-        // rounding down. -22.5 / 45 = -0.5, plus 1 = 0.5. Add 2, etc...
-        int bResult = (int)((result * (180/(M_PI*45)))+2.5);
-        int origBResult = bResult;
-    
-        int random = rand()%1000; // Random number between 0 and 999.
-    double distToA = dist(wy,ex,startY,startX) + 1; // Add one so there's a 100% chance when right 
-                            // beside the goal. Unfortunately, it means a more push to goal. Fix?
-    if(sideLimit && distToA == 1){
-        random = 0; // Wow RNG manipulation how dare u.
-    }
-        if (random>299 && distToA < orig){ // Checks if, by absolute means, we're going straight or not. We can still go straight...
-           // Also check if distToA larger than orig. Found this by debugging, still possible. :/
-
-            //double pushCoefficient = 0.5; 
-        // Great than 0. Lower than zero means tendency means less push,
-            // greater than 1 means greater push towards end point.
-        // values 0.1 to 0.5 seem good. Recommend 0.1.
-            int primChance = (int)(999.5 - (pow(((orig-distToA)/orig),pushCoefficient)*700)); //999 is max, 299 min. We truncate-round, so add 0.5.
-        if(primChance<0 && debug){
-            std::cout << "WARNING: orig: " << orig << " distToA: " << distToA << std::endl;
+        result = fmod(result,(M_PI * 2));
+            //This gets the thing in radians.
+            // We multiply the result by 180/M_PI to save us some calculations.
+            // We subtract by 22.5 (to shift the 4 orthogonal directions between the 4 quadrants.)
+            // We then divide by 45. // To obtain the integer on the dList.
+            // Then we round up. // To finalize getting integer.
+            // We add 2 to adjust for dList offset.
+            // ---
+            // So, we simplify this to make it quicker, and to truncate instead of using ceil. Basically adding 1 and
+            // rounding down. -22.5 / 45 = -0.5, plus 1 = 0.5. Add 2, etc...
+            int bResult = (int)((result * (180/(M_PI*45)))+2.5);
+            int origBResult = bResult;
+        
+            int random = rand()%1000; // Random number between 0 and 999.
+        double distToA = dist(wy,ex,startY,startX) + 1; // Add one so there's a 100% chance when right 
+                                // beside the goal. Unfortunately, it means a more push to goal. Fix?
+        if(sideLimit && distToA == 1){
+            random = 0; // Wow RNG manipulation how dare u.
         }
-            if(random>primChance){ // Checks again if we're going straight.
-                int thirChance = 600-primChance; // We don't need to know secondary chance. 999-399 is what
-                // got 600 here. 999-primChance is secondary chance. then -399, gets thirChance.
-                if(random>999-thirChance){
-                    bResult=(bResult-2)+((random%2)*4); // If it's even, negative. Odd, positive.
-                }
-                else { // Then secondary chance occurs. We already checked primary and third, both failed.
-                    bResult=(bResult-1)+((random%2)*2); // If it's even, negative. Odd, positive.
+            if (random>299 && distToA < orig){ // Checks if, by absolute means, we're going straight or not. We can still go straight...
+               // Also check if distToA larger than orig. Found this by debugging, still possible. :/
+
+                //double pushCoefficient = 0.5; 
+            // Great than 0. Lower than zero means tendency means less push,
+                // greater than 1 means greater push towards end point.
+            // values 0.1 to 0.5 seem good. Recommend 0.1.
+                int primChance = (int)(999.5 - (pow(((orig-distToA)/orig),pushCoefficient)*700)); //999 is max, 299 min. We truncate-round, so add 0.5.
+            if(primChance<0 && debug){
+                std::cout << "WARNING: orig: " << orig << " distToA: " << distToA << std::endl;
+            }
+                if(random>primChance){ // Checks again if we're going straight.
+                    int thirChance = 600-primChance; // We don't need to know secondary chance. 999-399 is what
+                    // got 600 here. 999-primChance is secondary chance. then -399, gets thirChance.
+                    if(random>999-thirChance){
+                        bResult=(bResult-2)+((random%2)*4); // If it's even, negative. Odd, positive.
+                    }
+                    else { // Then secondary chance occurs. We already checked primary and third, both failed.
+                        bResult=(bResult-1)+((random%2)*2); // If it's even, negative. Odd, positive.
+                    }
                 }
             }
+        int yAdd = yAddArray[bResult]; // We get the values where to go.
+        int xAdd = xAddArray[bResult];
+        //std::cout << sideLimit << std::endl;
+        //std::cout << "1 WY:" << (wy+yAdd) << " STY:" << startY << " EX:" << (ex+xAdd) << " ENDX:" << endX << std::endl;
+        //std::cout << "2 EX:" << (ex+xAdd) << " STX:" << startX << " WY:" << (wy+yAdd) << " ENDY:" << endY << std::endl;
+        if(sideLimit == 1 && (wy+yAdd == startY || ex+xAdd == endX)){ 
+            // The side mod is useful for circles for avoiding center. 
+            // Will be useless when better fill function is made. Remember to remove.
+            // Also avoids the other spectrum, as sometimes it can create loose threads and lakes.
+            bResult = origBResult;
+            yAdd = yAddArray[bResult]; // We get the values where to go.
+            xAdd = xAddArray[bResult];
+            if(debug){
+                std::cout << "SIDED" << std::endl;
+            }
         }
-    int yAdd = yAddArray[bResult]; // We get the values where to go.
-    int xAdd = xAddArray[bResult];
-    //std::cout << sideLimit << std::endl;
-    //std::cout << "1 WY:" << (wy+yAdd) << " STY:" << startY << " EX:" << (ex+xAdd) << " ENDX:" << endX << std::endl;
-    //std::cout << "2 EX:" << (ex+xAdd) << " STX:" << startX << " WY:" << (wy+yAdd) << " ENDY:" << endY << std::endl;
-    if(sideLimit == 1 && (wy+yAdd == startY || ex+xAdd == endX)){ 
-        // The side mod is useful for circles for avoiding center. 
-        // Will be useless when better fill function is made. Remember to remove.
-        // Also avoids the other spectrum, as sometimes it can create loose threads and lakes.
-        bResult = origBResult;
-        yAdd = yAddArray[bResult]; // We get the values where to go.
-        xAdd = xAddArray[bResult];
-        if(debug){
-            std::cout << "SIDED" << std::endl;
+        else if(sideLimit == 2 && (ex+xAdd == startX || wy+yAdd == endY)){
+            bResult = origBResult;
+            yAdd = yAddArray[bResult]; // We get the values where to go.
+            xAdd = xAddArray[bResult];
+            if(debug){
+                std::cout << "SIDED" << std::endl;
+            }
         }
-    }
-    else if(sideLimit == 2 && (ex+xAdd == startX || wy+yAdd == endY)){
-        bResult = origBResult;
-        yAdd = yAddArray[bResult]; // We get the values where to go.
-        xAdd = xAddArray[bResult];
-        if(debug){
-            std::cout << "SIDED" << std::endl;
+        else{ // Saves on some comparison time.
+            if(dotPlace == placeMap[(wy+yAdd)*side + ex+xAdd){
+                bResult = origBResult;
+                yAdd = yAddArray[bResult]; // We get the values where to go.
+                xAdd = xAddArray[bResult];
+            }
+        if(wy+yAdd>=side || wy+yAdd<0 || ex+xAdd>=side || ex+xAdd<0){ // This is here so that NULL for spareIndex is good.
+            if(spareIndex > 0){
+                if(ySpareList[(spareIndex)-1] == wy+yAdd && xSpareList[(spareIndex)-1] == ex+xAdd){
+                    bResult = origBResult;
+                    yAdd = yAddArray[bResult]; // We get the values where to go.
+                    xAdd = xAddArray[bResult];
+                }
+            }
+            }
         }
-    }
-    else{ // Saves on some comparison time.
-        if(*index > 0){
-            if(yList[(*index)-1] == wy+yAdd && xList[(*index)-1] == ex+xAdd){
+        if(borderLimit){// Borderlimit has highest priority.
+            if(wy+yAdd>=(side-1) || wy+yAdd<=0 || ex+xAdd>=(side-1) || ex+xAdd<=0){
                 bResult = origBResult;
                 yAdd = yAddArray[bResult]; // We get the values where to go.
                 xAdd = xAddArray[bResult];
             }
         }
-	if(wy+yAdd>=side || wy+yAdd<0 || ex+xAdd>=side || ex+xAdd<0){ // This is here so that NULL for spareIndex is good.
-		if(*spareIndex > 0){
-		    if(ySpareList[(*spareIndex)-1] == wy+yAdd && xSpareList[(*spareIndex)-1] == ex+xAdd){
-		        bResult = origBResult;
-		        yAdd = yAddArray[bResult]; // We get the values where to go.
-		        xAdd = xAddArray[bResult];
-		    }
-		}
-        }
-    }
-    if(borderLimit){// Borderlimit has highest priority.
-        if(wy+yAdd>=(side-1) || wy+yAdd<=0 || ex+xAdd>=(side-1) || ex+xAdd<=0){
-            bResult = origBResult;
-            yAdd = yAddArray[bResult]; // We get the values where to go.
-            xAdd = xAddArray[bResult];
-        }
-    }
         if(diagonal && yAdd*xAdd) { // Check if diagonal.
             if(dist(wy+yAdd,ex,endY,endX) < dist(wy,ex+xAdd,endY,endX)){
-                yList[*index] = wy+yAdd;
-                xList[*index] = ex;
+                placeMap[(wy+yAdd)*side + ex] = dotPlace;
                 //map[((wy+yAdd)*side) + ex] = 2;
             }
             else{
-                yList[*index] = wy;
-                xList[*index] = ex+xAdd;
+                placeMap[wy*side + ex+xAdd] = dotPlace;
                 //map[(wy*side) + ex+xAdd] = 2;
             }
-            (*index)++;
         }
         //--------------- DEBUG STUFF. /t for tabbing.
             /*Changes (June 13th, 2016): "\t" seems to be buggy at times
@@ -258,26 +242,24 @@ void randLine(unsigned int seed, unsigned int* index, unsigned int* spareIndex, 
                 }
         }
         //---------------
-    ex=ex+xAdd;
-    wy=wy+yAdd; // Save some time.
-    if(wy>=side || wy<0 || ex>=side || ex<0){
-        xSpareList[*spareIndex] = (ex);
-            ySpareList[*spareIndex] = (wy);
-            (*spareIndex)++;
-    }
-    else {
-        xList[*index] = (ex);
-        yList[*index] = (wy);
-        (*index)++;
-    }
-        //map[(wy*side) + ex] = 1;
+        ex=ex+xAdd;
+        wy=wy+yAdd; // Save some time.
+        if(wy>=side || wy<0 || ex>=side || ex<0){
+                xSpareList.push_back(startX);
+                ySpareList.push_back(startY);
+                spareIndex++;
+        }
+        else {
+            map[wy*side + ex] = dotPlace;
+        }
+            //map[(wy*side) + ex] = 1;
     }
     
 }
 
-void circle(unsigned int seed, unsigned int* index, unsigned int* spareIndex, double pushCoefficient, 
-    unsigned int pointY, unsigned int pointX, unsigned int radius, 
-    unsigned int* yList, unsigned int* xList, int* ySpareList, int* xSpareList,
+void circle(unsigned int seed, double pushCoefficient, 
+    unsigned int pointY, unsigned int pointX, int* placeMap, int dotPlace, unsigned int radius, 
+    std::vector<int>& ySpareList, std::vector<int>& xSpareList,
     unsigned int side, bool diagonal, bool debug){
     srand(seed);
 
@@ -293,13 +275,13 @@ void circle(unsigned int seed, unsigned int* index, unsigned int* spareIndex, do
     int yPointFour = pointY;
     int xPointFour = pointX + radius;
 
-    //void randLine(unsigned int seed, unsigned int* index, unsigned int* spareIndex, double pushCoefficient, 
-    //int startY, int startX, int endY, int endX, unsigned int* yList, unsigned int* xList, int* ySpareList, int* xSpareList,
-    //unsigned int side, bool diagonal, bool debug){
-    randLine(rand(), index, spareIndex, pushCoefficient, yPointOne, xPointOne, yPointTwo, xPointTwo, yList, xList, ySpareList, xSpareList, side, 2, true, diagonal, debug); // Top left
-    randLine(rand(), index, spareIndex, pushCoefficient, yPointTwo, xPointTwo, yPointThree, xPointThree, yList, xList, ySpareList, xSpareList, side, 1, true, diagonal, debug); // Bottom left
-    randLine(rand(), index, spareIndex, pushCoefficient, yPointThree, xPointThree, yPointFour, xPointFour, yList, xList, ySpareList, xSpareList, side, 2, true, diagonal, debug); // Bottom right
-    randLine(rand(), index, spareIndex, pushCoefficient, yPointFour, xPointFour, yPointOne, xPointOne, yList, xList, ySpareList, xSpareList, side, 1, true, diagonal, debug); // Top right
+    //randLine(unsigned int seed, double pushCoefficient, int startY, int startX, int endY, 
+    //int endX, int* placeMap, int dotPlace, std::vector<int>& ySpareList, std::vector<int>& xSpareList,
+    //unsigned int side, unsigned int sideLimit, bool borderLimit, bool diagonal, bool debug)
+    randLine(rand(), pushCoefficient, yPointOne, xPointOne, yPointTwo, xPointTwo, placeMap, dotPlace, ySpareList, xSpareList, side, 2, true, diagonal, debug); // Top left
+    randLine(rand(), pushCoefficient, yPointTwo, xPointTwo, yPointThree, xPointThree, placeMap, dotPlace,  ySpareList, xSpareList, side, 1, true, diagonal, debug); // Bottom left
+    randLine(rand(), pushCoefficient, yPointThree, xPointThree, yPointFour, xPointFour, placeMap, dotPlace,  ySpareList, xSpareList, side, 2, true, diagonal, debug); // Bottom right
+    randLine(rand(), pushCoefficient, yPointFour, xPointFour, yPointOne, xPointOne, placeMap, dotPlace,  ySpareList, xSpareList, side, 1, true, diagonal, debug); // Top right
 }
 
 void fillMap( int filler, int detect, int wall, int pointY, int pointX, unsigned int side, int* map, int* spareMap, bool wallMode, bool replace){ // An earlier bug is where it was just "unsigned side". Apparently that works...
