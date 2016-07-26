@@ -1,15 +1,7 @@
-#include <assert.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <math.h>
-#include <iostream>
-#include <vector>
+#include "tookit.hpp"
 # define M_PI           3.14159265358979323846  /* lol it's pi */
-// Current compile: clang linegen2.cpp -lm -lstdc++
-//           g++ linegen.cpp
-// Get me meh distance.
+
+// TOOL FUNCTIONS
 double dist(int startY, int startX, int endY, int endX){
     double dx = ((double)endX-(double)startX);
     double dy = ((double)endY-(double)startY);
@@ -119,14 +111,14 @@ void randLine(unsigned int seed, double pushCoefficient, int startY, int startX,
                 std::cout << "SIDED" << std::endl;
             }
         }
-    	if(wy+yAdd>=side || wy+yAdd<0 || ex+xAdd>=side || ex+xAdd<0){ // This is here so that NULL for spareIndex is good.
-    		if(spareIndex > 0){
-    		    if(ySpareList[(spareIndex)-1] == wy+yAdd && xSpareList[(spareIndex)-1] == ex+xAdd){
-    		        bResult = origBResult;
-    		        yAdd = yAddArray[bResult]; // We get the values where to go.
-    		        xAdd = xAddArray[bResult];
-    		    }
-    		}
+        if(wy+yAdd>=side || wy+yAdd<0 || ex+xAdd>=side || ex+xAdd<0){ // This is here so that NULL for spareIndex is good.
+            if(spareIndex > 0){
+                if(ySpareList[(spareIndex)-1] == wy+yAdd && xSpareList[(spareIndex)-1] == ex+xAdd){
+                    bResult = origBResult;
+                    yAdd = yAddArray[bResult]; // We get the values where to go.
+                    xAdd = xAddArray[bResult];
+                }
+            }
         }
         else{ // Saves on some comparison time.
             if(placeMap[((wy+yAdd)*side) + (ex+xAdd)] == dotPlace){
@@ -309,363 +301,290 @@ void printMap(int* map, unsigned int side){
 }
 
 void genTile(unsigned int seed, double pushCoefficient, int pointY, int pointX, int* map, unsigned int side, unsigned int tileSide, bool diagonal, bool debug){
-	//seed = 1457715766;
-	srand(seed);
-	//std::cout << "T SEED: " << seed << std::endl;
-	int baseHeight = map[(pointY*side) + pointX];
-	unsigned int shift = tileSide*0.2;
-	int tileMap[tileSide*tileSide];
-	int spareTileMap[tileSide*tileSide];
-	for(int i = 0; i<tileSide*tileSide; ++i){
-		tileMap[i] = baseHeight;
-	}
-	// Start algorithm.
-	int checkDir[9] = {	1,1,1, // 0,1,2 INDEXES QUICK REFERENCE
-				1,1,1, // 3,4,5
-				1,1,1};// 6,7,8
-	// --- Check for boundary case.
-	int count = -1;
-	unsigned int max = 0;
-	for(int i = -1; i<2 ; ++i){
-		for(int e = -1; e<2;++e){
-			count++;
-			if(pointY+i == side || pointY+i < 0 || pointX+e == side || pointX+e < 0){
-				checkDir[count] = 0;
-			}
-			else {
-				int dif = map[((pointY+i)*side) + pointX+e] - baseHeight;
-				if(dif>0){
-					checkDir[count] = 1+dif;
-					if(dif > max){
-						max=dif;
-					}
-				}
-			}
-			//std::cout << i << " " << e << " " << count << std::endl;
-		}
-	}
-	// --- k done
-	//(unsigned int seed, double pushCoefficient, int startY, int startX, int endY, 
+    //seed = 1457715766;
+    srand(seed);
+    //std::cout << "T SEED: " << seed << std::endl;
+    int baseHeight = map[(pointY*side) + pointX];
+    unsigned int shift = tileSide*0.2;
+    int tileMap[tileSide*tileSide];
+    int spareTileMap[tileSide*tileSide];
+    for(int i = 0; i<tileSide*tileSide; ++i){
+        tileMap[i] = baseHeight;
+    }
+    // Start algorithm.
+    int checkDir[9] = { 1,1,1, // 0,1,2 INDEXES QUICK REFERENCE
+                1,1,1, // 3,4,5
+                1,1,1};// 6,7,8
+    // --- Check for boundary case.
+    int count = -1;
+    unsigned int max = 0;
+    for(int i = -1; i<2 ; ++i){
+        for(int e = -1; e<2;++e){
+            count++;
+            if(pointY+i == side || pointY+i < 0 || pointX+e == side || pointX+e < 0){
+                checkDir[count] = 0;
+            }
+            else {
+                int dif = map[((pointY+i)*side) + pointX+e] - baseHeight;
+                if(dif>0){
+                    checkDir[count] = 1+dif;
+                    if(dif > max){
+                        max=dif;
+                    }
+                }
+            }
+            //std::cout << i << " " << e << " " << count << std::endl;
+        }
+    }
+    // --- k done
+    //(unsigned int seed, double pushCoefficient, int startY, int startX, int endY, 
     //int endX, int* placeMap, int dotPlace, std::vector<int>& ySpareList, std::vector<int>& xSpareList,
     // unsigned int side, unsigned int sideLimit, bool borderLimit, bool diagonal, bool debug)
-	unsigned int orthogonal[4] = {0,0,0,0}; // N W S E
-	std::vector<int> sparePointsX(25);
-	std::vector<int> sparePointsY(25);
-	for(int level = 0; level<max;level++){
-		for(int i = 0; i < tileSide*tileSide; ++i){
-			spareTileMap[i] = 1;
-		}
-		if(checkDir[0] > level+1 && checkDir[3] <= level+1 && checkDir[1] <= level+1){ // NW corner - single
-			// ---
-			randLine(rand(), pushCoefficient, 0, shift, 
-			shift, 0, spareTileMap, 2, sparePointsY, sparePointsX, tileSide, 
-			0, true, diagonal, debug);
-			fillMap(1,1,2, 0, 0, tileSide, tileMap, spareTileMap, false, false);
-			// ---
-		}
-		else if(checkDir[1] > level+1){ // Top shape
-			orthogonal[0] = 1;
-			//std::cout << "GO1" << std::endl;
-			if(checkDir[3] > level+1 || checkDir[5] > level+1){ // Since there's more standard shapes,
-										// this will be a bit quicker
-										// to put into a general if.
-				if(checkDir[3] > level+1 && checkDir[5] > level+1){ // N & W & E
-					// ---
-					randLine(rand(), pushCoefficient, 
-					shift, shift, shift, (tileSide-1)-shift, spareTileMap, 2, 
-					sparePointsY, sparePointsX, tileSide, 
-					0, true, diagonal, debug);
-					// ---
-				}
-				else if(checkDir[3] > level+1){ // N & W
-					// ---
-					randLine(rand(), pushCoefficient, 
-					shift, shift, shift, (tileSide-1), spareTileMap, 2, 
-					sparePointsY, sparePointsX, tileSide, 
-					0, true, diagonal, debug); //
-					// ---
-				}
-				else { // N & E
-					// ---
-					randLine(rand(), pushCoefficient, 
-					shift, 0, shift, (tileSide-1)-shift, spareTileMap, 2,
-					sparePointsY, sparePointsX, tileSide, 
-					0, true, diagonal, debug); //
-					// ---
-				}
-			}
-			else { // Just N
-				// ---
-				randLine(rand(), pushCoefficient, 
-				shift, 0, shift, (tileSide-1), spareTileMap, 2,
-				sparePointsY, sparePointsX, tileSide, 
-				0, true, diagonal, debug); //
-				// ---
-			}
-		}
-		// 0,1,2 INDEXES QUICK REFERENCE
-		// 3,4,5
-		// 6,7,8
-		if(checkDir[2] > level+1 && checkDir[5] <= level+1 && checkDir[1] <= level+1){ // NE corner - single
-			//std::cout << "GOLA" << std::endl;
-			// ---
-			randLine(rand(), pushCoefficient, 0, (tileSide-1)-shift, 
-			shift, tileSide-1, spareTileMap, 2, sparePointsY, sparePointsX, tileSide, 
-			0, true, diagonal, debug);
-			//std::cout << "GOL" << std::endl;
-			//std::cout << "GOL" << std::endl;
-			fillMap(1,1,2, 0, tileSide-1, tileSide, tileMap, spareTileMap, false, false);
-			// ---
-		}
-		else if(checkDir[5] > level+1){ // Right shape
-			orthogonal[1] = 1;
-			//std::cout << "GO2" << std::endl;
-			if(checkDir[1] > level+1 || checkDir[7] > level+1){ // Since there's more standard shapes,
-										// this will be a bit quicker
-										// to put into a general if.
-				if(checkDir[1] > level+1 && checkDir[7] > level+1){ // N & E & S
-					// ---
-					randLine(rand(), pushCoefficient, 
-					shift, (tileSide-1)-shift, (tileSide-1)-shift, (tileSide-1)-shift, spareTileMap, 2,
-					sparePointsY, sparePointsX, tileSide, 
-					0, true, diagonal, debug);
-					// ---
-				}
-				else if(checkDir[1] > level+1){ // N & E
-					// ---
-					randLine(rand(), pushCoefficient, 
-					shift, (tileSide-1)-shift, (tileSide-1), (tileSide-1)-shift, spareTileMap, 2,
-					sparePointsY, sparePointsX, tileSide, 
-					0, true, diagonal, debug);
-					// ---
-				}
-				else { // E and S
-					// ---
-					randLine(rand(), pushCoefficient, 
-					0, (tileSide-1)-shift, (tileSide-1)-shift, (tileSide-1)-shift, spareTileMap, 2,
-					sparePointsY, sparePointsX, tileSide, 
-					0, true, diagonal, debug);
-					// ---
-				}
-			}
-			else { // Just E
-				// ---
-				randLine(rand(), pushCoefficient, 
-				0, (tileSide-1)-shift, (tileSide-1), (tileSide-1)-shift, spareTileMap, 2,
-				sparePointsY, sparePointsX, tileSide, 
-				0, true, diagonal, debug); //
-				// ---
-			}
-		}
-		if(checkDir[8] > level+1 && checkDir[5] <= level+1 && checkDir[7] <= level+1){ // SE corner - single
-			// ---
-			randLine(rand(), pushCoefficient, 
-			(tileSide-1)-shift, (tileSide-1), (tileSide-1), (tileSide-1)-shift, spareTileMap, 2,
-			sparePointsY, sparePointsX, tileSide, 
-			0, true, diagonal, debug);
-			fillMap(1,1,2, tileSide-1, tileSide-1, tileSide, tileMap, spareTileMap, false, false);
-			// ---
-		}
-		else if(checkDir[7] > level+1){ // Bottom shape
-			orthogonal[2] = 1;
-			//std::cout << "GO3" << std::endl;
-			if(checkDir[5] > level+1 || checkDir[3] > level+1){ // Since there's more standard shapes,
-										// this will be a bit quicker
-										// to put into a general if.
-				if(checkDir[3] > level+1 && checkDir[5] > level+1){ // W & E & S
-					// ---
-					//std::cout << "GOA" << std::endl;
-					randLine(rand(), pushCoefficient, 
-					(tileSide-1)-shift, shift, (tileSide-1)-shift, (tileSide-1)-shift, 
-					spareTileMap, 2, sparePointsY, sparePointsX, tileSide, 
-					0, true, diagonal, debug);
-					// ---
-				}
-				else if(checkDir[5] > level+1){ // S & E
-					// ---
-					//std::cout << "GOB" << std::endl;
-					randLine(rand(), pushCoefficient, 
-					(tileSide-1)-shift, 0, (tileSide-1)-shift, (tileSide-1)-shift, 
-					spareTileMap, 2, sparePointsY, sparePointsX, tileSide, 
-					0, true, diagonal, debug);
-					// ---
-				}
-				else { // W and S
-					// ---
-					//std::cout << "GOC" << std::endl;
-					randLine(rand(), pushCoefficient, 
-					(tileSide-1)-shift, shift, (tileSide-1)-shift, (tileSide-1), 
-					spareTileMap, 2, sparePointsY, sparePointsX, tileSide, 
-					0, true, diagonal, debug);
-					// ---
-				}
-			}
-			else { // Just S
-				// ---
-				//std::cout << "GOD" << std::endl;
-				randLine(rand(), pushCoefficient, 
-				(tileSide-1)-shift, 0, (tileSide-1)-shift, (tileSide-1), 
-				spareTileMap, 2, sparePointsY, sparePointsX, tileSide, 
-				0, true, diagonal, debug);
-				// ---
-			}
-		}
-		// 0,1,2 INDEXES QUICK REFERENCE
-		// 3,4,5
-		// 6,7,8
-		if(checkDir[6] > level+1 && checkDir[3] <= level+1 && checkDir[7] <= level+1){ // SW corner - single
-			// ---
-			randLine(rand(), pushCoefficient, 
-			(tileSide-1)-shift, 0, (tileSide-1), shift, 
-			spareTileMap, 2, sparePointsY, sparePointsX, tileSide, 
-			0, true, diagonal, debug);
-			fillMap(1,1,2, tileSide-1, 0, tileSide, tileMap, spareTileMap, false, false);
-			// ---
-		}
-		else if(checkDir[3] > level+1){ // Left Shape
-			orthogonal[3] = 1;
-			//std::cout << "GO4" << std::endl;
-			if(checkDir[1] > level+1 || checkDir[7] > level+1){ // Since there's more standard shapes,
-										// this will be a bit quicker
-										// to put into a general if.
-				if(checkDir[1] > level+1 && checkDir[7] > level+1){ // W & N & S
-					// ---
-					randLine(rand(), pushCoefficient, 
-					shift, shift, (tileSide-1)-shift, shift, 
-					spareTileMap, 2, sparePointsY, sparePointsX, tileSide, 
-					0, true, diagonal, debug);
-					// ---
-				}
-				else if(checkDir[1] > level+1){ // N & W
-					// ---
-					randLine(rand(), pushCoefficient, 
-					shift, shift, (tileSide-1), shift, 
-					spareTileMap, 2,sparePointsY, sparePointsX, tileSide, 
-					0, true, diagonal, debug);
-					// ---
-				}
-				else { // W and S
-					// ---
-					randLine(rand(), pushCoefficient, 
-					0, shift, (tileSide-1)-shift, shift, 
-					spareTileMap, 2, sparePointsY, sparePointsX, tileSide, 
-					0, true, diagonal, debug);
-					// ---
-				}
-			}
-			else { // Just W
-				// ---
-				randLine(rand(), pushCoefficient, 
-				0, shift, (tileSide-1), shift, 
-				spareTileMap, 2, sparePointsY, sparePointsX, tileSide, 
-				0, true, diagonal, debug);
-				// ---
-			}
-		}
-		//printMap(spareTileMap,tileSide);
-		//std::cout << orthogonal[0] << " " << orthogonal[1] << " " << orthogonal[2] << " " << orthogonal[3] << " " << level << std::endl;
-		if(orthogonal[0] && spareTileMap[(tileSide/2)-1]){ // N
-			fillMap(1,1,2, 0, (tileSide/2)-1, tileSide, tileMap, spareTileMap, false, false);
-		}
-		// Why else? Think about it. Half the comparisons made for obvious stuff.
-		else if(orthogonal[1] && spareTileMap[(((tileSide/2)-1)*tileSide) + (tileSide-1)]){ // W
-			fillMap(1,1,2, (tileSide/2)-1, tileSide-1, tileSide, tileMap, spareTileMap, false, false);
-		}
-		if(orthogonal[2] && spareTileMap[((tileSide-1)*tileSide)+((tileSide/2)-1)]){ // S
-			fillMap(1,1,2, tileSide-1, (tileSide/2)-1, tileSide, tileMap, spareTileMap, false, false);
-		}
-		else if(orthogonal[3] && spareTileMap[(((tileSide/2)-1)*tileSide)]){ // E
-			fillMap(1,1,2, (tileSide/2)-1, 0, tileSide, tileMap, spareTileMap, false, false);
-		}
-		orthogonal[0] = 0; // Putting them in the if's above is buggy. Fixing requires more comparisons.
-		orthogonal[1] = 0;
-		orthogonal[2] = 0;
-		orthogonal[3] = 0;
-		//printMap(tileMap,tileSide);
-	}
-	std::cout << "T SEED: " << seed << std::endl;
-	printMap(tileMap,tileSide);
-	//int counter = 0;
-	//for(int i = 0; i<tileSide*tileSide; ++i){
-	//	if(tileMap[i] == 0){
-	//		counter++;
-	//	}
-	//}
-	//if(counter==0){
-	//	std::cout << "T SEED: " << seed << std::endl;
-	//	int gray = 1/0;
-	//}
-}
-
-int main () {
-    unsigned int side = 100;
-    unsigned int yList[side*side];
-    unsigned int xList[side*side];
-    std::vector<int> ySpareList;
-    std::vector<int> xSpareList;
-    int map[side*side];
-    unsigned int seedMap[side*side];
-    unsigned int startIndex;
-    unsigned int startSpareIndex;
-    int spareMap[side*side];
-    bool debug = false;
-    unsigned int seed;
-    unsigned int pointX = side/2;
-    unsigned int pointY = side/3;
-    srand(time(NULL));
-    //-- For testing for BAD STUFF
-    while(1){ // Since it's RNG... we'll need a lot to detect even a tiny bug.
-    //--
-        seed = rand();
-        srand(seed);
-	int miniMap[9] = {	1,1,1,
-				        1,0,1,
-				        1,1,1};
-        for(int i = 0; i < side*side; ++i){
-            seedMap[i] = rand();
+    unsigned int orthogonal[4] = {0,0,0,0}; // N W S E
+    std::vector<int> sparePointsX(25);
+    std::vector<int> sparePointsY(25);
+    for(int level = 0; level<max;level++){
+        for(int i = 0; i < tileSide*tileSide; ++i){
+            spareTileMap[i] = 1;
         }
-        std::cout << "SEED: "<< seed << std::endl;
-        startIndex = 0; // Since I want to output two things. We'll need to pass these things in as pointers.
-        startSpareIndex = 0;
-        for (int i = 0; i < side*side; ++i)
-        {
-            map[i] = 0;
+        if(checkDir[0] > level+1 && checkDir[3] <= level+1 && checkDir[1] <= level+1){ // NW corner - single
+            // ---
+            randLine(rand(), pushCoefficient, 0, shift, 
+            shift, 0, spareTileMap, 2, sparePointsY, sparePointsX, tileSide, 
+            0, true, diagonal, debug);
+            fillMap(1,1,2, 0, 0, tileSide, tileMap, spareTileMap, false, false);
+            // ---
         }
-        for(int e = 0; e < 9; ++e){
-    
-            startIndex = 0;
-            startSpareIndex = 0;
-            for (int i = 0; i < side*side; ++i)
-               {
-                spareMap[i] = 1;
-               }
-               //circle(unsigned int seed, double pushCoefficient, 
-                //unsigned int pointY, unsigned int pointX, int* placeMap, int dotPlace, unsigned int radius, 
-                //std::vector<int>& ySpareList, std::vector<int>& xSpareList,
-                // unsigned int side, bool diagonal, bool debug)
-            circle(rand(),  0.1, (side/2)-1, (side/2)-1, spareMap, 2, side/(2.5+pow(e,1.5)), 
-            ySpareList, xSpareList, side, true, debug);
-            //printMap(spareMap,side);
-            fillMap(1,1,2, (side/2)-1, (side/2)-1, side, map, spareMap, false, false);
-            //printMap(spareMap,side);
-    
-            //for(int i = 0; i<startIndex;++i){
-            //    map[yList[i]*side + xList[i]] += 1;
-            //}
-            if(map[0] == 1){
-                std::cout << "SEED: "<< seed << std::endl;
-                printMap(map,side);
-                //unsigned int crasher = 1/0;
+        else if(checkDir[1] > level+1){ // Top shape
+            orthogonal[0] = 1;
+            //std::cout << "GO1" << std::endl;
+            if(checkDir[3] > level+1 || checkDir[5] > level+1){ // Since there's more standard shapes,
+                                        // this will be a bit quicker
+                                        // to put into a general if.
+                if(checkDir[3] > level+1 && checkDir[5] > level+1){ // N & W & E
+                    // ---
+                    randLine(rand(), pushCoefficient, 
+                    shift, shift, shift, (tileSide-1)-shift, spareTileMap, 2, 
+                    sparePointsY, sparePointsX, tileSide, 
+                    0, true, diagonal, debug);
+                    // ---
+                }
+                else if(checkDir[3] > level+1){ // N & W
+                    // ---
+                    randLine(rand(), pushCoefficient, 
+                    shift, shift, shift, (tileSide-1), spareTileMap, 2, 
+                    sparePointsY, sparePointsX, tileSide, 
+                    0, true, diagonal, debug); //
+                    // ---
+                }
+                else { // N & E
+                    // ---
+                    randLine(rand(), pushCoefficient, 
+                    shift, 0, shift, (tileSide-1)-shift, spareTileMap, 2,
+                    sparePointsY, sparePointsX, tileSide, 
+                    0, true, diagonal, debug); //
+                    // ---
+                }
+            }
+            else { // Just N
+                // ---
+                randLine(rand(), pushCoefficient, 
+                shift, 0, shift, (tileSide-1), spareTileMap, 2,
+                sparePointsY, sparePointsX, tileSide, 
+                0, true, diagonal, debug); //
+                // ---
             }
         }
-        //printMap(map,side);
-        
-        genTile(rand(), 0.1, 1, 1, miniMap, 3, 32, true, debug);
-            
-    //--
+        // 0,1,2 INDEXES QUICK REFERENCE
+        // 3,4,5
+        // 6,7,8
+        if(checkDir[2] > level+1 && checkDir[5] <= level+1 && checkDir[1] <= level+1){ // NE corner - single
+            //std::cout << "GOLA" << std::endl;
+            // ---
+            randLine(rand(), pushCoefficient, 0, (tileSide-1)-shift, 
+            shift, tileSide-1, spareTileMap, 2, sparePointsY, sparePointsX, tileSide, 
+            0, true, diagonal, debug);
+            //std::cout << "GOL" << std::endl;
+            //std::cout << "GOL" << std::endl;
+            fillMap(1,1,2, 0, tileSide-1, tileSide, tileMap, spareTileMap, false, false);
+            // ---
         }
-    //--
+        else if(checkDir[5] > level+1){ // Right shape
+            orthogonal[1] = 1;
+            //std::cout << "GO2" << std::endl;
+            if(checkDir[1] > level+1 || checkDir[7] > level+1){ // Since there's more standard shapes,
+                                        // this will be a bit quicker
+                                        // to put into a general if.
+                if(checkDir[1] > level+1 && checkDir[7] > level+1){ // N & E & S
+                    // ---
+                    randLine(rand(), pushCoefficient, 
+                    shift, (tileSide-1)-shift, (tileSide-1)-shift, (tileSide-1)-shift, spareTileMap, 2,
+                    sparePointsY, sparePointsX, tileSide, 
+                    0, true, diagonal, debug);
+                    // ---
+                }
+                else if(checkDir[1] > level+1){ // N & E
+                    // ---
+                    randLine(rand(), pushCoefficient, 
+                    shift, (tileSide-1)-shift, (tileSide-1), (tileSide-1)-shift, spareTileMap, 2,
+                    sparePointsY, sparePointsX, tileSide, 
+                    0, true, diagonal, debug);
+                    // ---
+                }
+                else { // E and S
+                    // ---
+                    randLine(rand(), pushCoefficient, 
+                    0, (tileSide-1)-shift, (tileSide-1)-shift, (tileSide-1)-shift, spareTileMap, 2,
+                    sparePointsY, sparePointsX, tileSide, 
+                    0, true, diagonal, debug);
+                    // ---
+                }
+            }
+            else { // Just E
+                // ---
+                randLine(rand(), pushCoefficient, 
+                0, (tileSide-1)-shift, (tileSide-1), (tileSide-1)-shift, spareTileMap, 2,
+                sparePointsY, sparePointsX, tileSide, 
+                0, true, diagonal, debug); //
+                // ---
+            }
+        }
+        if(checkDir[8] > level+1 && checkDir[5] <= level+1 && checkDir[7] <= level+1){ // SE corner - single
+            // ---
+            randLine(rand(), pushCoefficient, 
+            (tileSide-1)-shift, (tileSide-1), (tileSide-1), (tileSide-1)-shift, spareTileMap, 2,
+            sparePointsY, sparePointsX, tileSide, 
+            0, true, diagonal, debug);
+            fillMap(1,1,2, tileSide-1, tileSide-1, tileSide, tileMap, spareTileMap, false, false);
+            // ---
+        }
+        else if(checkDir[7] > level+1){ // Bottom shape
+            orthogonal[2] = 1;
+            //std::cout << "GO3" << std::endl;
+            if(checkDir[5] > level+1 || checkDir[3] > level+1){ // Since there's more standard shapes,
+                                        // this will be a bit quicker
+                                        // to put into a general if.
+                if(checkDir[3] > level+1 && checkDir[5] > level+1){ // W & E & S
+                    // ---
+                    //std::cout << "GOA" << std::endl;
+                    randLine(rand(), pushCoefficient, 
+                    (tileSide-1)-shift, shift, (tileSide-1)-shift, (tileSide-1)-shift, 
+                    spareTileMap, 2, sparePointsY, sparePointsX, tileSide, 
+                    0, true, diagonal, debug);
+                    // ---
+                }
+                else if(checkDir[5] > level+1){ // S & E
+                    // ---
+                    //std::cout << "GOB" << std::endl;
+                    randLine(rand(), pushCoefficient, 
+                    (tileSide-1)-shift, 0, (tileSide-1)-shift, (tileSide-1)-shift, 
+                    spareTileMap, 2, sparePointsY, sparePointsX, tileSide, 
+                    0, true, diagonal, debug);
+                    // ---
+                }
+                else { // W and S
+                    // ---
+                    //std::cout << "GOC" << std::endl;
+                    randLine(rand(), pushCoefficient, 
+                    (tileSide-1)-shift, shift, (tileSide-1)-shift, (tileSide-1), 
+                    spareTileMap, 2, sparePointsY, sparePointsX, tileSide, 
+                    0, true, diagonal, debug);
+                    // ---
+                }
+            }
+            else { // Just S
+                // ---
+                //std::cout << "GOD" << std::endl;
+                randLine(rand(), pushCoefficient, 
+                (tileSide-1)-shift, 0, (tileSide-1)-shift, (tileSide-1), 
+                spareTileMap, 2, sparePointsY, sparePointsX, tileSide, 
+                0, true, diagonal, debug);
+                // ---
+            }
+        }
+        // 0,1,2 INDEXES QUICK REFERENCE
+        // 3,4,5
+        // 6,7,8
+        if(checkDir[6] > level+1 && checkDir[3] <= level+1 && checkDir[7] <= level+1){ // SW corner - single
+            // ---
+            randLine(rand(), pushCoefficient, 
+            (tileSide-1)-shift, 0, (tileSide-1), shift, 
+            spareTileMap, 2, sparePointsY, sparePointsX, tileSide, 
+            0, true, diagonal, debug);
+            fillMap(1,1,2, tileSide-1, 0, tileSide, tileMap, spareTileMap, false, false);
+            // ---
+        }
+        else if(checkDir[3] > level+1){ // Left Shape
+            orthogonal[3] = 1;
+            //std::cout << "GO4" << std::endl;
+            if(checkDir[1] > level+1 || checkDir[7] > level+1){ // Since there's more standard shapes,
+                                        // this will be a bit quicker
+                                        // to put into a general if.
+                if(checkDir[1] > level+1 && checkDir[7] > level+1){ // W & N & S
+                    // ---
+                    randLine(rand(), pushCoefficient, 
+                    shift, shift, (tileSide-1)-shift, shift, 
+                    spareTileMap, 2, sparePointsY, sparePointsX, tileSide, 
+                    0, true, diagonal, debug);
+                    // ---
+                }
+                else if(checkDir[1] > level+1){ // N & W
+                    // ---
+                    randLine(rand(), pushCoefficient, 
+                    shift, shift, (tileSide-1), shift, 
+                    spareTileMap, 2,sparePointsY, sparePointsX, tileSide, 
+                    0, true, diagonal, debug);
+                    // ---
+                }
+                else { // W and S
+                    // ---
+                    randLine(rand(), pushCoefficient, 
+                    0, shift, (tileSide-1)-shift, shift, 
+                    spareTileMap, 2, sparePointsY, sparePointsX, tileSide, 
+                    0, true, diagonal, debug);
+                    // ---
+                }
+            }
+            else { // Just W
+                // ---
+                randLine(rand(), pushCoefficient, 
+                0, shift, (tileSide-1), shift, 
+                spareTileMap, 2, sparePointsY, sparePointsX, tileSide, 
+                0, true, diagonal, debug);
+                // ---
+            }
+        }
+        //printMap(spareTileMap,tileSide);
+        //std::cout << orthogonal[0] << " " << orthogonal[1] << " " << orthogonal[2] << " " << orthogonal[3] << " " << level << std::endl;
+        if(orthogonal[0] && spareTileMap[(tileSide/2)-1]){ // N
+            fillMap(1,1,2, 0, (tileSide/2)-1, tileSide, tileMap, spareTileMap, false, false);
+        }
+        // Why else? Think about it. Half the comparisons made for obvious stuff.
+        else if(orthogonal[1] && spareTileMap[(((tileSide/2)-1)*tileSide) + (tileSide-1)]){ // W
+            fillMap(1,1,2, (tileSide/2)-1, tileSide-1, tileSide, tileMap, spareTileMap, false, false);
+        }
+        if(orthogonal[2] && spareTileMap[((tileSide-1)*tileSide)+((tileSide/2)-1)]){ // S
+            fillMap(1,1,2, tileSide-1, (tileSide/2)-1, tileSide, tileMap, spareTileMap, false, false);
+        }
+        else if(orthogonal[3] && spareTileMap[(((tileSide/2)-1)*tileSide)]){ // E
+            fillMap(1,1,2, (tileSide/2)-1, 0, tileSide, tileMap, spareTileMap, false, false);
+        }
+        orthogonal[0] = 0; // Putting them in the if's above is buggy. Fixing requires more comparisons.
+        orthogonal[1] = 0;
+        orthogonal[2] = 0;
+        orthogonal[3] = 0;
+        //printMap(tileMap,tileSide);
+    }
+    std::cout << "T SEED: " << seed << std::endl;
+    printMap(tileMap,tileSide);
+    //int counter = 0;
+    //for(int i = 0; i<tileSide*tileSide; ++i){
+    //  if(tileMap[i] == 0){
+    //      counter++;
+    //  }
+    //}
+    //if(counter==0){
+    //  std::cout << "T SEED: " << seed << std::endl;
+    //  int gray = 1/0;
+    //}
 }
-
-// TODO:
-// Th

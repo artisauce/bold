@@ -1,28 +1,30 @@
-#include "map.hpp"
-// Current compile: clang linegen.cpp -lm -lstdc++
-//           g++ linegen.cpp
+#include "worldMap.hpp"
+// Current compile: clang maptest.cpp worldMap.cpp map.cpp tile.cpp toolkit.cpp -lm -lstdc++ -std=c++11
+
 int main () {
     unsigned int side = 100;
-        unsigned int yList[side*side];
-        unsigned int xList[side*side];
-    int ySpareList[(side*side)*2]; // Turn's out even side*side isn't enough... atleast, for the circle function.
-        int xSpareList[(side*side)*2];
-        int map[side*side];
+    unsigned int yList[side*side];
+    unsigned int xList[side*side];
+    std::vector<int> ySpareList;
+    std::vector<int> xSpareList;
+    int map[side*side];
     unsigned int seedMap[side*side];
     unsigned int startIndex;
     unsigned int startSpareIndex;
     int spareMap[side*side];
     bool debug = false;
     unsigned int seed;
+    unsigned int pointX = side/2;
+    unsigned int pointY = side/3;
     srand(time(NULL));
     //-- For testing for BAD STUFF
     while(1){ // Since it's RNG... we'll need a lot to detect even a tiny bug.
     //--
         seed = rand();
         srand(seed);
-	int miniMap[9] = {	rand()%10,rand()%10,rand()%10,
-				rand()%10,0,rand()%10,
-				rand()%10,rand()%10,rand()%10};
+    int miniMap[9] = {  rand()%10,rand()%10,rand()%10,
+                        rand()%10,0,rand()%10,
+                        rand()%10,rand()%10,rand()%10};
         for(int i = 0; i < side*side; ++i){
             seedMap[i] = rand();
         }
@@ -41,13 +43,12 @@ int main () {
                {
                 spareMap[i] = 1;
                }
-
-            circle(rand(), &startIndex, &startSpareIndex, 0.1, (side/2)-1, (side/2)-1, side/(2.5+pow(e,1.5)), 
-            yList, xList, ySpareList, xSpareList, side, true, debug);
-
-            for(int i = 0; i<startIndex;++i){
-                spareMap[ (yList[i]*side) + xList[i] ] = 2;
-            }
+               //circle(unsigned int seed, double pushCoefficient, 
+                //unsigned int pointY, unsigned int pointX, int* placeMap, int dotPlace, unsigned int radius, 
+                //std::vector<int>& ySpareList, std::vector<int>& xSpareList,
+                // unsigned int side, bool diagonal, bool debug)
+            circle(rand(),  0.1, (side/2)-1, (side/2)-1, spareMap, 2, side/(2.5+pow(e,1.5)), 
+            ySpareList, xSpareList, side, true, debug);
             //printMap(spareMap,side);
             fillMap(1,1,2, (side/2)-1, (side/2)-1, side, map, spareMap, false, false);
             //printMap(spareMap,side);
@@ -62,9 +63,13 @@ int main () {
             }
         }
         //printMap(map,side);
+        
         genTile(rand(), 0.1, 1, 1, miniMap, 3, 32, true, debug);
             
     //--
         }
     //--
 }
+
+// TODO:
+// Th

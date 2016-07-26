@@ -1,6 +1,7 @@
-#include "tile.hpp"
-// A game area - for reference, an island
-class map {
+#include "map.hpp"
+//clang maptest.cpp map.cpp -lm -lstdc++ -std=c++11
+// World map - total game area
+class worldMap {
 public:
 
 	// -- ESSENTIAL
@@ -8,6 +9,7 @@ public:
 	// -- ESSENTIAL
 
 	// -- Settings
+	const size_t worldMapSide;
 	const size_t mapSide;
 	const size_t tileSide;
 	const size_t battlefieldSide;
@@ -20,9 +22,9 @@ public:
 
 	// -- Maps
 	unsigned int* seedMap;
-	tile* regionMap; // Darn naming
+	map* bigMap; // Damn naming
 	// -- Maps
 
-	map(unsigned int seedInput, size_t mapSideInput, size_t tileSideInput, size_t battlefieldSideInput);
-
+	worldMap(unsigned int seedInput,size_t worldMapSideInput, size_t mapSideInput, size_t tileSideInput, 
+	size_t battlefieldSideInput);
 };
