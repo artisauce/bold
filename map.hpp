@@ -1,10 +1,12 @@
 #include "tile.hpp"
 // A game area - for reference, an island
+class worldMap; // We need dis
 class map {
 public:
 
 	// -- ESSENTIAL
 	const unsigned int seed;
+	const worldMap* parentW;
 	// -- ESSENTIAL
 
 	// -- Settings
@@ -23,6 +25,6 @@ public:
 	tile* regionMap; // Darn naming
 	// -- Maps
 
-	map(unsigned int seedInput, size_t mapSideInput, size_t tileSideInput, size_t battlefieldSideInput);
+	map(unsigned int seedInput, const worldMap* parentW, size_t mapSideInput, size_t tileSideInput, size_t battlefieldSideInput);
 
 };

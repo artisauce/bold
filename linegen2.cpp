@@ -119,7 +119,7 @@ void randLine(unsigned int seed, double pushCoefficient, int startY, int startX,
                 std::cout << "SIDED" << std::endl;
             }
         }
-    	if(wy+yAdd>=side || wy+yAdd<0 || ex+xAdd>=side || ex+xAdd<0){ // This is here so that NULL for spareIndex is good.
+    	if(wy+yAdd>=side || wy+yAdd<0 || ex+xAdd>=side || ex+xAdd<0){ // This is here so we do two things at the same time.
     		if(spareIndex > 0){
     		    if(ySpareList[(spareIndex)-1] == wy+yAdd && xSpareList[(spareIndex)-1] == ex+xAdd){
     		        bResult = origBResult;
@@ -128,7 +128,7 @@ void randLine(unsigned int seed, double pushCoefficient, int startY, int startX,
     		    }
     		}
         }
-        else{ // Saves on some comparison time.
+        else{ // Saves on some comparison time. Used to be above the 'if' above after conversion, was a HNB.
             if(placeMap[((wy+yAdd)*side) + (ex+xAdd)] == dotPlace){
                 bResult = origBResult;
                 yAdd = yAddArray[bResult]; // We get the values where to go.
