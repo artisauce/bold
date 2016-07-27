@@ -12,7 +12,7 @@ worldMap::worldMap(unsigned int seedInput, const double pushInput, size_t worldM
 {
 	srand(seed);
 	seedMap = new int[worldMapSide*worldMapSide];
-	bigMap.reserve(100);
+	bigMap.reserve(worldMapSide*worldMapSide);
 	for (int i = 0; i < worldMapSide*worldMapSide; ++i)
 	{
 		seedMap[i] = rand();
@@ -24,6 +24,7 @@ worldMap::worldMap(unsigned int seedInput, const double pushInput, size_t worldM
 }
 
 worldMap::~worldMap(){
+	std::cout << "DELETING WORLDMAP" << std::endl;
 	delete[] seedMap;
 	bigMap = std::vector<map>();
 }

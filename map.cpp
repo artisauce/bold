@@ -19,7 +19,7 @@ map::map(unsigned int seedInput, const worldMap* parentWInput, const int yInput,
 	srand(seed);
 	heightMap = new int[mapSide*mapSide];
 	seedMap = new int[mapSide*mapSide];
-	regionMap.reserve(100);
+	regionMap.reserve(mapSide*mapSide);
 	// For region map, I made it a vector because WAOW.
 	for (int i = 0; i < mapSide*mapSide; ++i)
 	{
@@ -29,15 +29,23 @@ map::map(unsigned int seedInput, const worldMap* parentWInput, const int yInput,
 	genIsland(rand(), push, 0, 0, mapSide-1, mapSide-1,
     -1, heightMap, mapSide, ySpareList, xSpareList, 
     diagonal, debug);
+    printMap(heightMap,mapSide);
+    std::cout << "CREATING MAP " << this << " FOR " << parentW << std::endl; 
     for (int i = 0; i < mapSide*mapSide; ++i)
 	{
-		regionMap.push_back(tile(seedMap[i],this,((int)(i/mapSide)),i%mapSide,push,tileSide,battlefieldSide,diagonal,debug)); 
+		regionMap.push_back(tile(seedMap[i],this,((int)(i/mapSide)),i%mapSide,push,tileSide,battlefieldSide,diagonal,debug));
+		std::cout << "MAP " << this << " #" << i << " TILE CREATED: " << &(regionMap[i]) << std::endl; 
 	}
+	std::cout << "CREATED MAP " << this << " FOR " << parentW << std::endl; 
+
 }
 
 map::~map(){
+	std::cout << "DELETING MAP " << this << std::endl;
 	delete[] heightMap;
 	delete[] seedMap;
+	std::cout << "DELETING MAP " << this << std::endl;
+	printMap(regionMap[0].tileMap,tileSide);
 	regionMap = std::vector<tile>();
 	/*for (int i = 0; i < mapSide*mapSide; ++i)
 	{

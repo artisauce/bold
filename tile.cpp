@@ -22,9 +22,16 @@ tile::tile(unsigned int seedInput, const map* parentMInput, const int yInput,
 		seedMap[i] = rand();
 	}
 	genTile(rand(),push,y,x,parentM->heightMap,parentM->mapSide,tileMap,tileSide,diagonal,debug);
+	tileMap[20] = 5;
+	printMap(tileMap,tileSide);
+
+	std::cout << "CREATING TILEMAP " << this << " FOR " << parentM << " FOR " << parentM->parentW << std::endl;
 }
 
 tile::~tile(){
+	std::cout << "DELETING TILEMAP " << this << " FOR " << parentM << " FOR " << parentM->parentW << std::endl;
+	printMap(tileMap,tileSide);
 	delete[] tileMap;
 	delete[] seedMap;
+	std::cout << "DONE DELETING TILEMAP " << this << " FOR " << parentM << " FOR " << parentM->parentW << std::endl;
 }

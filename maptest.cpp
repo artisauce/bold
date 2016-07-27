@@ -4,6 +4,19 @@
 
 
 int main () {
+    srand(time(NULL));
+    bool debug = false;
+    bool diagonal = true;
+    double pushCoefficient = 0.1;
+    size_t worldMapSide = 1;
+    size_t mapSide = 50;
+    size_t tileSide = 16;
+    size_t battlefieldSide = 16;
+    worldMap newMap(rand(), pushCoefficient, worldMapSide, mapSide, tileSide, battlefieldSide,  diagonal, debug);
+
+
+    /*
+
     unsigned int side = 100; // 10 is the bad number currently;
     std::vector<int> ySpareList;
     std::vector<int> xSpareList;
@@ -29,10 +42,12 @@ int main () {
     true, debug);
     printMap(map,side);
     
-            
+    
     //--
     }
     //--
+
+    */ 
 }
 
 // TODO:
