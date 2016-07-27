@@ -16,12 +16,18 @@ int main () {
     unsigned int seed;
     unsigned int pointX = side/2;
     unsigned int pointY = side/3;
+    unsigned int tileSide = 32;
+    int tileMap[tileSide*tileSide];
     srand(time(NULL));
     //-- For testing for BAD STUFF
     while(1){ // Since it's RNG... we'll need a lot to detect even a tiny bug.
     //--
         seed = rand();
         srand(seed);
+        for (int i = 0; i < tileSide*tileSide; ++i)
+        {
+            tileMap[i] = 0;
+        }
     int miniMap[9] = {  rand()%10,rand()%10,rand()%10,
                         rand()%10,0,rand()%10,
                         rand()%10,rand()%10,rand()%10};
@@ -64,7 +70,8 @@ int main () {
         }
         //printMap(map,side);
         
-        genTile(rand(), 0.1, 1, 1, miniMap, 3, 32, true, debug);
+        genTile(rand(), 0.1, 1, 1, miniMap, 3, tileMap, tileSide, true, debug);
+        printMap(tileMap,tileSide);
             
     //--
         }

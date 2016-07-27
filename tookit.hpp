@@ -19,8 +19,10 @@ void circle(unsigned int seed, double pushCoefficient,
     std::vector<int>& ySpareList, std::vector<int>& xSpareList,
     unsigned int side, bool diagonal, bool debug);
 
-void fillMap( int filler, int detect, int wall, int pointY, int pointX, unsigned int side, int* map, int* spareMap, bool wallMode, bool replace);
+void fillMap( int filler, int detect, int wall, int pointY, int pointX, unsigned int side, 
+	int* map, int* spareMap, bool wallMode, bool replace);
 
 void printMap(int* map, unsigned int side);
 
-void genTile(unsigned int seed, double pushCoefficient, int pointY, int pointX, int* map, unsigned int side, unsigned int tileSide, bool diagonal, bool debug);
+void genTile(int seed, double pushCoefficient, int pointY, int pointX, int* map, 
+	unsigned int side, int* tileMap, unsigned int tileSide, bool diagonal, bool debug);

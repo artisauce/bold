@@ -1,4 +1,4 @@
-class test2;
+#import "test2.hpp"
 
 class test1 {
 public:
@@ -6,12 +6,6 @@ public:
 	test2* testPoint2;
 	
 };
-
-class test2 {
-public:
-	test1* testPoint1;
-};
-
 
 int main (){
 

@@ -300,13 +300,13 @@ void printMap(int* map, unsigned int side){
 
 }
 
-void genTile(unsigned int seed, double pushCoefficient, int pointY, int pointX, int* map, unsigned int side, unsigned int tileSide, bool diagonal, bool debug){
+void genTile(int seed, double pushCoefficient, int pointY, int pointX, int* map, 
+    unsigned int side, int* tileMap, unsigned int tileSide, bool diagonal, bool debug){
     //seed = 1457715766;
     srand(seed);
     //std::cout << "T SEED: " << seed << std::endl;
     int baseHeight = map[(pointY*side) + pointX];
     unsigned int shift = tileSide*0.2;
-    int tileMap[tileSide*tileSide];
     int spareTileMap[tileSide*tileSide];
     for(int i = 0; i<tileSide*tileSide; ++i){
         tileMap[i] = baseHeight;
@@ -575,16 +575,8 @@ void genTile(unsigned int seed, double pushCoefficient, int pointY, int pointX, 
         orthogonal[3] = 0;
         //printMap(tileMap,tileSide);
     }
-    std::cout << "T SEED: " << seed << std::endl;
-    printMap(tileMap,tileSide);
-    //int counter = 0;
-    //for(int i = 0; i<tileSide*tileSide; ++i){
-    //  if(tileMap[i] == 0){
-    //      counter++;
-    //  }
-    //}
-    //if(counter==0){
-    //  std::cout << "T SEED: " << seed << std::endl;
-    //  int gray = 1/0;
-    //}
+    if(debug){
+        std::cout << "T SEED: " << seed << std::endl;
+        printMap(tileMap,tileSide);
+    }
 }

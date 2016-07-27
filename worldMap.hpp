@@ -1,6 +1,7 @@
 #include "map.hpp"
 //clang maptest.cpp map.cpp -lm -lstdc++ -std=c++11
 // World map - total game area
+
 class worldMap {
 public:
 

@@ -22,6 +22,7 @@ public:
 
 	// -- Maps
 	unsigned int* seedMap;
+	int* heightMap;
 	tile* regionMap; // Darn naming
 	// -- Maps
 
