@@ -14,6 +14,9 @@ public:
 	const size_t mapSide;
 	const size_t tileSide;
 	const size_t battlefieldSide;
+	const double push;
+	const bool diagonal;
+	const bool debug;
 	// -- Settings
 
 	// -- cordLists for randLine
@@ -22,11 +25,12 @@ public:
 	// -- cordLists for randLine
 
 	// -- Maps
-	unsigned int* seedMap;
-	map* bigMap; // Damn naming
+	int* seedMap;
+	std::vector<map>  bigMap; // Damn naming
 	// -- Maps
 
-	worldMap(unsigned int seedInput,size_t worldMapSideInput, size_t mapSideInput, size_t tileSideInput, 
-	size_t battlefieldSideInput);
+	worldMap(unsigned int seedInput, const double pushInput, size_t worldMapSideInput, size_t mapSideInput, 
+	size_t tileSideInput, size_t battlefieldSideInput, const bool diagonalInput, const bool debugInput);
+	~worldMap();
 };
 
