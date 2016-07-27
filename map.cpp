@@ -19,6 +19,7 @@ map::map(unsigned int seedInput, const worldMap* parentWInput, const int yInput,
 	srand(seed);
 	heightMap = new int[mapSide*mapSide];
 	seedMap = new int[mapSide*mapSide];
+	regionMap.reserve(100);
 	// For region map, I made it a vector because WAOW.
 	for (int i = 0; i < mapSide*mapSide; ++i)
 	{
@@ -26,12 +27,21 @@ map::map(unsigned int seedInput, const worldMap* parentWInput, const int yInput,
 	}
 	// For now, we'll just generate one, big island.
 	genIsland(rand(), push, 0, 0, mapSide-1, mapSide-1,
-    -1, map,  side, ySpareList, xSpareList, 
-    true, debug);
-
+    -1, heightMap, mapSide, ySpareList, xSpareList, 
+    diagonal, debug);
+    for (int i = 0; i < mapSide*mapSide; ++i)
+	{
+		regionMap.push_back(tile(seedMap[i],this,((int)(i/mapSide)),i%mapSide,push,tileSide,battlefieldSide,diagonal,debug)); 
+	}
 }
 
 map::~map(){
 	delete[] heightMap;
 	delete[] seedMap;
+	regionMap = std::vector<tile>();
+	/*for (int i = 0; i < mapSide*mapSide; ++i)
+	{
+		delete regionMap[i];
+	}
+	delete[] regionMap;*/
 }
