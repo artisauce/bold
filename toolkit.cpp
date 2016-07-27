@@ -229,22 +229,22 @@ void randLine(unsigned int seed, double pushCoefficient, int startY, int startX,
 }
 
 void circle(unsigned int seed, double pushCoefficient, 
-    unsigned int pointY, unsigned int pointX, int* placeMap, int dotPlace, unsigned int radius, 
+    unsigned int pointY, unsigned int pointX, int* placeMap, int dotPlace, unsigned int radiusY, unsigned int radiusX,
     std::vector<int>& ySpareList, std::vector<int>& xSpareList,
     unsigned int side, bool diagonal, bool debug){
     srand(seed);
 
-    int yPointOne = pointY - radius;
+    int yPointOne = pointY - radiusY;
     int xPointOne = pointX;
     
     int yPointTwo = pointY;
-    int xPointTwo = pointX - radius;
+    int xPointTwo = pointX - radiusX;
 
-    int yPointThree = pointY+radius;
+    int yPointThree = pointY+radiusY;
     int xPointThree = pointX;
 
     int yPointFour = pointY;
-    int xPointFour = pointX + radius;
+    int xPointFour = pointX + radiusX;
 
     //(unsigned int seed, double pushCoefficient, int startY, int startX, int endY, 
     //int endX, int* placeMap, int dotPlace, std::vector<int>& ySpareList, std::vector<int>& xSpareList,
@@ -579,4 +579,53 @@ void genTile(int seed, double pushCoefficient, int pointY, int pointX, int* map,
         std::cout << "T SEED: " << seed << std::endl;
         printMap(tileMap,tileSide);
     }
+}
+
+void genIsland(unsigned int seed, double pushCoefficient, int startY, int startX, int endY, int endX,
+    int height, int* map, unsigned int side, std::vector<int>& ySpareList, std::vector<int>& xSpareList, 
+    bool diagonal, bool debug){
+    srand(seed);
+    // Start X and Y are top left corner, end X and Y are bottom right corner.
+    if(debug){
+        std::cout << "MAP SEED: "<< seed << std::endl;
+    }
+    int width = (endX-startX+1);
+    int length = (endY-startY+1);
+    int spareMap[side*side];
+    //printMap(map,side);
+    for (int i = 0; i < width*length; i++)
+    {
+        map[( ( ((int)(i/width)) +startY) *side) + ((i%width)+startX)] = 0; // Clear the area, tectonic shift coming through!
+    }
+    //printMap(map,side);
+    if(height < 0){ // If none set, etc. you set to -1 because you're a lazy ass.
+        if(width < 5 || length < 5){ // Simply too small for maps to handle. Get special func instead.
+            height = 0;
+        }
+        else if(width < 11 || length < 11){ // IT'S PRETTY BAD. D;
+            height = 1;
+        }
+        else { // This seems good tho.
+            height = (int)((pow(side,0.5))+1);
+        }
+    }
+    for(int e = 0; e < height; ++e){
+        for (int i = 0; i < side*side; ++i)
+        {
+            spareMap[i] = 1;
+        }
+        circle(rand(),  pushCoefficient, startY+((length/2)), startX+((width/2)), spareMap, 2, 
+        length/(2.5+pow(e,1.5)), width/(2.5+pow(e,1.5)), 
+        ySpareList, xSpareList, side, diagonal, debug);
+        fillMap(1,1,2, startY+((length/2) ), startX+((width/2)), side, map, spareMap, false, false);
+        if(map[0] >= 1){
+            std::cout << e << " SEED: "<< seed << std::endl;
+                        
+        }
+        //printMap(map,side);
+    }
+    //std::cout << map[2] << " GO " << height << std::endl;
+    //std::cout << "END" << std::endl;
+
+
 }

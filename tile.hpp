@@ -14,6 +14,7 @@ public:
 	const size_t battlefieldSide;
 	const int y;
 	const int x;
+	const int height;
 	const double push;
 	const bool diagonal;
 	const bool debug;

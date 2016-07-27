@@ -13,6 +13,12 @@ public:
 	const size_t mapSide;
 	const size_t tileSide;
 	const size_t battlefieldSide;
+	const int y;
+	const int x;
+	const double push;
+	const bool diagonal;
+	const bool debug;
+	// -- Settings
 	// -- Settings
 
 	// -- cordLists for randLine
@@ -21,11 +27,14 @@ public:
 	// -- cordLists for randLine
 
 	// -- Maps
-	unsigned int* seedMap;
+	int* seedMap;
 	int* heightMap;
-	tile* regionMap; // Darn naming
+	tile* regionMap; // Darn naming -- http://stackoverflow.com/questions/15802006/how-can-i-create-objects-while-adding-them-into-a-vector
 	// -- Maps
 
-	map(unsigned int seedInput, const worldMap* parentW, size_t mapSideInput, size_t tileSideInput, size_t battlefieldSideInput);
+	map(unsigned int seedInput, const worldMap* parentW, const int yInput, 
+	const int xInput, const double pushInput, size_t mapSideInput, 
+	size_t tileSideInput, size_t battlefieldSideInput, const bool diagonalInput, const bool debugInput);
+	~map();
 
 };

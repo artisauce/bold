@@ -15,7 +15,7 @@ void randLine(unsigned int seed, double pushCoefficient, int startY, int startX,
     unsigned int side, unsigned int sideLimit, bool borderLimit, bool diagonal, bool debug);
 
 void circle(unsigned int seed, double pushCoefficient, 
-    unsigned int pointY, unsigned int pointX, int* placeMap, int dotPlace, unsigned int radius, 
+    unsigned int pointY, unsigned int pointX, int* placeMap, int dotPlace, unsigned int radiusY, unsigned int radiusX,
     std::vector<int>& ySpareList, std::vector<int>& xSpareList,
     unsigned int side, bool diagonal, bool debug);
 
@@ -26,3 +26,7 @@ void printMap(int* map, unsigned int side);
 
 void genTile(int seed, double pushCoefficient, int pointY, int pointX, int* map, 
 	unsigned int side, int* tileMap, unsigned int tileSide, bool diagonal, bool debug);
+
+void genIsland(unsigned int seed, double pushCoefficient, int startY, int startX, int endY, int endX,
+    int height, int* map, unsigned int side, std::vector<int>& ySpareList, std::vector<int>& xSpareList, 
+    bool diagonal, bool debug);
