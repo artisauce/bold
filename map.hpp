@@ -35,6 +35,7 @@ public:
 	map(unsigned int seedInput, const worldMap* parentW, const int yInput, 
 	const int xInput, const double pushInput, size_t mapSideInput, 
 	size_t tileSideInput, size_t battlefieldSideInput, const bool diagonalInput, const bool debugInput);
+	map(map const& src);
 	~map();
 
 };

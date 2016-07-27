@@ -33,6 +33,7 @@ public:
 	tile(unsigned int seedInput, const map* parentMInput, const int yInput, 
 		const int xInput, const double pushInput, const size_t tileSideInput, 
 		const size_t battlefieldSideInput, const bool diagonalInput, const bool debugInput);
+	tile(tile const& src);
 	~tile();
 
 };

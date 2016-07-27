@@ -10,6 +10,9 @@ worldMap::worldMap(unsigned int seedInput, const double pushInput, size_t worldM
 	diagonal(diagonalInput),
 	debug(debugInput)
 {
+	if(debug){
+    	std::cout << "CREATING WORLDMAP " << this << std::endl; 
+    }
 	srand(seed);
 	seedMap = new int[worldMapSide*worldMapSide];
 	bigMap.reserve(worldMapSide*worldMapSide);
@@ -20,11 +23,22 @@ worldMap::worldMap(unsigned int seedInput, const double pushInput, size_t worldM
     for (int i = 0; i < worldMapSide*worldMapSide; ++i)
 	{
 		bigMap.push_back(map(seedMap[i],this,((int)(i/worldMapSide)),i%worldMapSide,push,mapSide,tileSide,battlefieldSide,diagonal,debug)); 
+		if(debug){
+			std::cout << "WORLDMAP " << this << ": #" << i << " MAP CREATED: " << &(bigMap[i]) << std::endl; 
+		}
 	}
+	if(debug){
+    	std::cout << "CREATED WORLDMAP " << this << std::endl; 
+    }
 }
 
 worldMap::~worldMap(){
-	std::cout << "DELETING WORLDMAP" << std::endl;
+	if(debug){
+		std::cout << "DELETING WORLDMAP " << this << std::endl;
+	}
 	delete[] seedMap;
 	bigMap = std::vector<map>();
+	if(debug){
+		std::cout << "DONE DELETING WORLDMAP " << this << std::endl;
+	}
 }

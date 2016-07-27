@@ -16,6 +16,9 @@ map::map(unsigned int seedInput, const worldMap* parentWInput, const int yInput,
 	diagonal(diagonalInput),
 	debug(debugInput)
 {
+	if(debug){
+    	std::cout << "CREATING MAP " << this << " FOR " << parentW << std::endl; 
+    }
 	srand(seed);
 	heightMap = new int[mapSide*mapSide];
 	seedMap = new int[mapSide*mapSide];
@@ -29,27 +32,60 @@ map::map(unsigned int seedInput, const worldMap* parentWInput, const int yInput,
 	genIsland(rand(), push, 0, 0, mapSide-1, mapSide-1,
     -1, heightMap, mapSide, ySpareList, xSpareList, 
     diagonal, debug);
-    printMap(heightMap,mapSide);
-    std::cout << "CREATING MAP " << this << " FOR " << parentW << std::endl; 
+    //printMap(heightMap,mapSide);
     for (int i = 0; i < mapSide*mapSide; ++i)
 	{
 		regionMap.push_back(tile(seedMap[i],this,((int)(i/mapSide)),i%mapSide,push,tileSide,battlefieldSide,diagonal,debug));
-		std::cout << "MAP " << this << " #" << i << " TILE CREATED: " << &(regionMap[i]) << std::endl; 
+		//printMap(regionMap[i].tileMap,tileSide);
+		if(debug){
+			std::cout << "MAP " << this << ": #" << i << " TILE CREATED: " << &(regionMap[i]) << std::endl; 
+		}
 	}
-	std::cout << "CREATED MAP " << this << " FOR " << parentW << std::endl; 
+	if(debug){
+		std::cout << "CREATED MAP " << this << " FOR " << parentW << std::endl; 
+	}
 
 }
 
+map::map(map const& src): // For copying -- MANDATORY FOR VECTORS, SEE: Rule of Three (C++)
+	seed(src.seed),
+	parentW(src.parentW),
+	y(src.y),
+	x(src.x),
+	push(src.push),
+	mapSide(src.mapSide),
+	tileSide(src.tileSide),
+	battlefieldSide(src.battlefieldSide),
+	diagonal(src.diagonal),
+	debug(src.debug)
+{
+	if(debug){
+		std::cout << "CREATING MAP CPY " << this << " FOR " << parentW << std::endl;
+	}
+	heightMap = new int[mapSide*mapSide];
+	seedMap = new int[mapSide*mapSide];
+	regionMap.reserve(mapSide*mapSide);
+	for (int i = 0; i < mapSide*mapSide; ++i)
+	{
+		heightMap[i] = src.heightMap[i];
+		seedMap[i] = src.seedMap[i];
+		regionMap.push_back(tile((src.regionMap)[i]));
+	}
+	ySpareList = src.ySpareList;
+	xSpareList = src.xSpareList;
+	if(debug){
+		std::cout << "CREATED MAP CPY " << this << " FOR " << parentW << std::endl;
+	}
+}
+
 map::~map(){
-	std::cout << "DELETING MAP " << this << std::endl;
+	if(debug){
+		std::cout << "DELETING MAP " << this << std::endl;
+	}
 	delete[] heightMap;
 	delete[] seedMap;
-	std::cout << "DELETING MAP " << this << std::endl;
-	printMap(regionMap[0].tileMap,tileSide);
 	regionMap = std::vector<tile>();
-	/*for (int i = 0; i < mapSide*mapSide; ++i)
-	{
-		delete regionMap[i];
+	if(debug){
+			std::cout << "DONE DELETING MAP " << this << std::endl;
 	}
-	delete[] regionMap;*/
 }
