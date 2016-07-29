@@ -22,6 +22,8 @@ void circle(unsigned int seed, double pushCoefficient,
 void fillMap( int filler, int detect, int wall, int pointY, int pointX, unsigned int side, 
 	int* map, int* spareMap, bool wallMode, bool replace);
 
+void rawPrintMap(int* map, unsigned int side);
+
 void printMap(int* map, unsigned int side);
 
 void genTile(int seed, double pushCoefficient, int pointY, int pointX, int* map, 
@@ -30,3 +32,4 @@ void genTile(int seed, double pushCoefficient, int pointY, int pointX, int* map,
 void genIsland(unsigned int seed, double pushCoefficient, int startY, int startX, int endY, int endX,
     int height, int* map, unsigned int side, std::vector<int>& ySpareList, std::vector<int>& xSpareList, 
     bool diagonal, bool debug);
+

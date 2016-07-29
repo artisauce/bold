@@ -288,7 +288,7 @@ void fillMap( int filler, int detect, int wall, int pointY, int pointX, unsigned
     }
 }
 
-void printMap(int* map, unsigned int side){
+void rawPrintMap(int* map, unsigned int side){
     for (int i = 0; i < side*side; ++i)
     {
         if(i%side == 0){
@@ -298,6 +298,22 @@ void printMap(int* map, unsigned int side){
     }
     std::cout << std::endl;
 
+}
+
+void printMap(int* map, unsigned int side){
+    for (int i = 0; i < side*side; ++i)
+    {
+        if(i%side == 0){
+           std::cout << std::endl;
+        }
+        if(map[i] == -1){
+            std::cout << " ";
+        }
+        else{
+            std::cout << map[i];
+        }
+    }
+    std::cout << std::endl;
 }
 
 void genTile(int seed, double pushCoefficient, int pointY, int pointX, int* map, 

@@ -8,13 +8,15 @@ int main () {
     bool debug = false;
     bool diagonal = true;
     double pushCoefficient = 0.1;
-    size_t worldMapSide = 1;
-    size_t mapSide = 50;
-    size_t tileSide = 16;
+    size_t worldMapSide = 2;
+    size_t mapSide = 10;
+    size_t tileSide = 8;
     size_t battlefieldSide = 16;
     worldMap newMap(rand(), pushCoefficient, worldMapSide, mapSide, tileSide, battlefieldSide,  diagonal, debug);
-
-
+    if(debug){
+        std::cout << "--- EVERYTHING HAS BEEN MADE --- " << std::endl;
+    }
+    printMap(newMap.bigMap[0].regionMap[0].tileMap,newMap.tileSide);
     /*
 
     unsigned int side = 100; // 10 is the bad number currently;
