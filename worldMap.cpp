@@ -47,12 +47,12 @@ void view(worldMap& theMap, unsigned int worldY, unsigned int worldX,
 				unsigned int regionY, unsigned int regionX, 
 				unsigned int tileY, unsigned int tileX,
 				unsigned int viewRadius, bool mapView, bool circle, std::vector<unsigned int>& viewMap){
-	unsigned int width = (radius*2)+1;
+	unsigned int width = (viewRadius*2)+1;
 	if(viewRadius == 0){
 		unsigned int mapWidth = 1;
 	}
 	else{
-		unsigned int mapWidth 1 + (unsigned int)(viewRadius/theMap->tileSide);
+		unsigned int mapWidth = 1 + (unsigned int)(viewRadius/theMap.tileSide);
 	}
 	viewMap.reserve(width*width);
 	if (circle)
@@ -60,9 +60,5 @@ void view(worldMap& theMap, unsigned int worldY, unsigned int worldX,
 		
 	}
 	else{
-		for (int i; i<mapWidth; ++i)
-		{
-			/* code */
-		}
 	}
 }

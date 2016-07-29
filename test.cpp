@@ -1,12 +1,19 @@
-#import "test2.hpp"
+class test2; 
 
 class test1 {
 public:
 
-	test2* testPoint2;
+	test2* testPoint;
 	
 };
 
-int main (){
+class test2 {
+public:
+
+	test1* testPoint;
+	
+};
+
+int main(){
 
 }

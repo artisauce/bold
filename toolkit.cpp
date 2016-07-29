@@ -257,6 +257,9 @@ void circle(unsigned int seed, double pushCoefficient,
 
 void fillMap( int filler, int detect, int wall, int pointY, int pointX, unsigned int side, int* map, int* spareMap, bool wallMode, bool replace){ // An earlier bug is where it was just "unsigned side". Apparently that works...
     //std::cout << "GO" << " " << pointY << " " << pointX<< " "  << detect<< " "  << filler << std::endl;
+    if(spareMap[(pointY*side) + pointX] == wall){
+        wallMode = true;
+    }
     spareMap[(pointY*side) + pointX] = 0; // Spare map is used to keep track of itself.
     for(int y = -1; y < 2; ++y){
         for(int x = -1; x < 2; ++x){
@@ -272,9 +275,6 @@ void fillMap( int filler, int detect, int wall, int pointY, int pointX, unsigned
                 else {
                     if(spareMap[((pointY+y)*side) + pointX + x] == detect){
                         fillMap(filler,detect,wall,pointY+y,pointX+x,side, map, spareMap,wallMode,replace);
-                    }
-                    else if(spareMap[((pointY+y)*side) + pointX + x] == wall){
-                        fillMap(filler,detect,wall,pointY+y,pointX+x,side, map, spareMap,true,replace);
                     }
                 }
             }
@@ -633,9 +633,13 @@ void genIsland(unsigned int seed, double pushCoefficient, int startY, int startX
         circle(rand(),  pushCoefficient, startY+((length/2)), startX+((width/2)), spareMap, 2, 
         length/(2.5+pow(e,1.5)), width/(2.5+pow(e,1.5)), 
         ySpareList, xSpareList, side, diagonal, debug);
-        fillMap(1,1,2, startY+((length/2) ), startX+((width/2)), side, map, spareMap, false, false);
+        //printMap(spareMap,side);
+        fillMap(1,1,2, startY+((length/2)), startX+((width/2)), side, map, spareMap, false, false);
+        //printMap(spareMap,side);
         if(map[0] >= 1){
             std::cout << e << " SEED: "<< seed << std::endl;
+            std::cout << "HEIGHT: " << height << " SIDE: " << side << " LENGTH: " << length << " WIDTH: " << width << std::endl;
+            printMap(map,side);
                         
         }
         //printMap(map,side);

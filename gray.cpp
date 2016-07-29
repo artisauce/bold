@@ -3,6 +3,9 @@
 //clang -o gray.exe gray.o -lglut -lGL -lGLU
 // ./gray.exe
 
+//https://www3.ntu.edu.sg/home/ehchua/programming/opengl/CG_Introduction.html
+//https://www.opengl.org/archives/resources/faq/technical/gettingstarted.htm
+
 
  
 /* Handler for window-repaint event. Call back when the window first appears and
@@ -28,7 +31,7 @@ int main(int argc, char** argv) {
    glutInit(&argc, argv);                 // Initialize GLUT
    glutCreateWindow("OpenGL Setup Test"); // Create a window with the given title
    glutInitWindowSize(320, 320);   // Set the window's initial width & height
-   glutInitWindowPosition(50, 50); // Position the window's initial top-left corner
+   //glutInitWindowPosition(500, 900); // Position the window's initial top-left corner
    glutDisplayFunc(display); // Register display callback handler for window re-paint
    glutMainLoop();           // Enter the infinitely event-processing loop
    return 0;
