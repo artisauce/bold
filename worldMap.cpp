@@ -43,22 +43,90 @@ worldMap::~worldMap(){
 	}
 }
 
-void view(worldMap& theMap, unsigned int worldY, unsigned int worldX, 
-				unsigned int regionY, unsigned int regionX, 
-				unsigned int tileY, unsigned int tileX,
-				unsigned int viewRadius, bool mapView, bool circle, std::vector<unsigned int>& viewMap){
-	unsigned int width = (viewRadius*2)+1;
+// Precondition: You're on a valid tile.
+unsigned int view(	map& theMap, unsigned int regionY, unsigned int regionX, 
+					unsigned int tileY, unsigned int tileX,
+					unsigned int viewRadius, bool mapView, bool circle, std::vector<int>& viewMap){
+	// TODO: Implement mapView
+	int viewTileWidth = (viewRadius*2)+1;
+	int tileSide = theMap.tileSide;
+	int mapSide = theMap.mapSide;
+	unsigned int mapRadius;
+	//std::cout << "GO" << std::endl;
 	if(viewRadius == 0){
-		unsigned int mapWidth = 1;
+		mapRadius = 0;
 	}
 	else{
-		unsigned int mapWidth = 1 + (unsigned int)(viewRadius/theMap.tileSide);
+		mapRadius = 1 + (unsigned int)(viewRadius/theMap.tileSide);
 	}
-	viewMap.reserve(width*width);
-	if (circle)
+	unsigned int mapWidth = (mapRadius*2)+1;
+	viewMap.reserve(viewTileWidth*viewTileWidth);
+	//std::cout << "GO" << std::endl;
+	float centerPixelX;
+	float centerPixelY;
+	if(circle){
+		centerPixelX = tileX+0.5;
+		centerPixelY = tileY+0.5;
+	}
+	for (int y = -(viewTileWidth/2); y <= (viewTileWidth/2); y++)
 	{
-		
+		for (int x = -(viewTileWidth/2); x <= (viewTileWidth/2); x++)
+		{
+			if(circle){
+				float A = x;
+				float B = y;
+				if(x < tileX){
+					A++;
+				}
+				if(y < tileY){
+					B++;
+				}
+				B = B - centerPixelX;
+				A = A - centerPixelY;
+				float difference = (A*A)+(B*B);
+				if(difference > (viewRadius*viewRadius)){
+					viewMap.push_back(-1);
+					continue;
+					//std::cout << "GO" << std::endl;
+				}
+			}
+			int wy = y+tileY;
+			int ex = x+tileX;
+			int regionYOffset = 0;
+			int regionXOffset = 0;
+			if(wy<0){
+				regionYOffset = (wy-tileSide)/tileSide;
+			}
+			else{
+				regionYOffset = wy/tileSide;
+			}
+			wy-=(regionYOffset*tileSide);
+			if(wy == tileSide){
+				wy = 0;
+			}
+			if(ex<0){
+				regionXOffset = (ex-tileSide)/tileSide;
+			}
+			else{
+				regionXOffset = ex/tileSide;
+			}
+			ex -=(regionXOffset*tileSide);
+			if(ex == tileSide){
+				ex = 0;
+			}
+			regionYOffset+=regionY;
+			regionXOffset+=regionX;
+			if(regionXOffset<0 || regionYOffset<0 || regionXOffset >= mapSide || regionYOffset >=mapSide){
+				viewMap.push_back(0);
+				continue;
+			}
+			//if(theMap.regionMap[(regionYOffset*mapSide) + regionXOffset].tileMap[(wy*tileSide)+ex] > 9){
+				//std::cout << theMap.regionMap[(regionYOffset*mapSide) + regionXOffset].tileMap[(wy*tileSide)+ex] << std::endl;
+				//std::cout << "---- SIDE: " << tileSide << " X: " << x << " Y: " << y << " EX: "<< ex << " WY: " << wy << std::endl;
+			//}
+			viewMap.push_back(theMap.regionMap[(regionYOffset*mapSide) + regionXOffset].tileMap[(wy*tileSide)+ex]);
+
+		}
 	}
-	else{
-	}
+	return viewTileWidth;
 }

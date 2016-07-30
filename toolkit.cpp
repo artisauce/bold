@@ -255,6 +255,7 @@ void circle(unsigned int seed, double pushCoefficient,
     randLine(rand(), pushCoefficient, yPointFour, xPointFour, yPointOne, xPointOne, placeMap, dotPlace,  ySpareList, xSpareList, side, 1, true, diagonal, debug); // Top right
 }
 
+// Precondition: It's applied on a valid index.
 void fillMap( int filler, int detect, int wall, int pointY, int pointX, unsigned int side, int* map, int* spareMap, bool wallMode, bool replace){ // An earlier bug is where it was just "unsigned side". Apparently that works...
     //std::cout << "GO" << " " << pointY << " " << pointX<< " "  << detect<< " "  << filler << std::endl;
     if(spareMap[(pointY*side) + pointX] == wall){
@@ -301,6 +302,34 @@ void rawPrintMap(int* map, unsigned int side){
 }
 
 void printMap(int* map, unsigned int side){
+    for (int i = 0; i < side*side; ++i)
+    {
+        if(i%side == 0){
+           std::cout << std::endl;
+        }
+        if(map[i] == -1){
+            std::cout << " ";
+        }
+        else{
+            std::cout << map[i];
+        }
+    }
+    std::cout << std::endl;
+}
+
+void rawPrintMapVector(std::vector<int>& map, unsigned int side){
+    for (int i = 0; i < side*side; ++i)
+    {
+        if(i%side == 0){
+           std::cout << std::endl;
+        }
+        std::cout << map[i];
+    }
+    std::cout << std::endl;
+
+}
+
+void printMapVector(std::vector<int>& map, unsigned int side){
     for (int i = 0; i < side*side; ++i)
     {
         if(i%side == 0){
