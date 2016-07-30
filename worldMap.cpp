@@ -103,6 +103,7 @@ unsigned int view(	map& theMap, unsigned int regionY, unsigned int regionX,
 			wy-=(regionYOffset*tileSide);
 			if(wy == tileSide){
 				wy = 0;
+				regionYOffset++;
 			}
 			if(ex<0){
 				regionXOffset = (ex-tileSide)/tileSide;
@@ -113,6 +114,7 @@ unsigned int view(	map& theMap, unsigned int regionY, unsigned int regionX,
 			ex -=(regionXOffset*tileSide);
 			if(ex == tileSide){
 				ex = 0;
+				regionXOffset++;
 			}
 			regionYOffset+=regionY;
 			regionXOffset+=regionX;
