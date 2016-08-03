@@ -12,15 +12,17 @@ int main () {
     size_t mapSide = 50;
     size_t tileSide = 16;
     size_t battlefieldSide = 16;
+    std::vector<std::string> tileSet;
+    tileSet.push_back("@");
     worldMap newMap(rand(), pushCoefficient, worldMapSide, mapSide, tileSide, battlefieldSide,  diagonal, debug);
     if(debug){
         std::cout << "--- EVERYTHING HAS BEEN MADE --- " << std::endl;
     }
     std::vector<int> viewer;
     unsigned int sider;
-    sider = view(newMap.bigMap[0],25,25,10,10,35,false,true,false,viewer);
-    printMapVector(viewer,sider);
-    printMap(newMap.bigMap[0].heightMap,mapSide);
+    sider = view(newMap.bigMap[0],25,25,11,11,60,false,true,true,true,viewer);
+    printMapVector(viewer,sider,tileSet);
+    printMap(newMap.bigMap[0].heightMap,mapSide,tileSet);
     
     //printMap(newMap.bigMap[0].regionMap[((mapSide*mapSide)/2)+2].tileMap,newMap.tileSide);
 

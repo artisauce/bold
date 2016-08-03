@@ -24,11 +24,11 @@ void fillMap( int filler, int detect, int wall, int pointY, int pointX, unsigned
 
 void rawPrintMap(int* map, unsigned int side);
 
-void printMap(int* map, unsigned int side);
+void printMap(int* map, unsigned int side, std::vector<std::string>& tileSet);
 
 void rawPrintMapVector(std::vector<int>& map, unsigned int side);
 
-void printMapVector(std::vector<int>& map, unsigned int side);
+void printMapVector(std::vector<int>& map, unsigned int side, std::vector<std::string>& tileSet);
 
 void genTile(int seed, double pushCoefficient, int pointY, int pointX, int* map, 
 	unsigned int side, int* tileMap, unsigned int tileSide, bool diagonal, bool debug);

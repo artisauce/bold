@@ -46,7 +46,7 @@ worldMap::~worldMap(){
 // Precondition: You're on a valid tile.
 unsigned int view(	map& theMap, unsigned int regionY, unsigned int regionX, 
 					unsigned int tileY, unsigned int tileX,
-					unsigned int viewRadius, bool mapView, bool circle, bool borders, std::vector<int>& viewMap){
+					unsigned int viewRadius, bool mapView, bool circle, bool borders, bool playerSee, std::vector<int>& viewMap){
 	// TODO: Implement mapView
 	int viewTileWidth = (viewRadius*2)+1;
 	int tileSide = theMap.tileSide;
@@ -64,6 +64,12 @@ unsigned int view(	map& theMap, unsigned int regionY, unsigned int regionX,
 	//std::cout << "GO" << std::endl;
 	float centerPixelX;
 	float centerPixelY;
+	if(mapView){
+		tileY=regionY;
+		tileX=regionX;
+		tileSide=mapSide;
+		//This is a useful hack.
+	}
 	if(circle){
 		centerPixelX = tileX+0.5;
 		centerPixelY = tileY+0.5;
@@ -85,7 +91,7 @@ unsigned int view(	map& theMap, unsigned int regionY, unsigned int regionX,
 				A = A - centerPixelY;
 				float difference = (A*A)+(B*B);
 				if(difference > (viewRadius*viewRadius)){
-					std::cout << A << " " << tileX << " " << B << " " << tileY << std::endl;
+					//std::cout << A << " " << tileX << " " << B << " " << tileY << std::endl;
 					viewMap.push_back(-1);
 					continue;
 					//std::cout << "GO" << std::endl;
@@ -97,10 +103,22 @@ unsigned int view(	map& theMap, unsigned int regionY, unsigned int regionX,
 					continue;
 				}
 			}
+			if(x == 0 && y==0 && playerSee){
+				viewMap.push_back(-2);
+				continue;
+			}
 			int wy = y+tileY;
 			int ex = x+tileX;
 			int regionYOffset = 0;
 			int regionXOffset = 0;
+			if(mapView){
+				if(wy<0 || wy >= tileSide || ex < 0 || ex >= tileSide){
+					viewMap.push_back(0);
+					continue;
+				}
+				viewMap.push_back(theMap.heightMap[(wy*tileSide)+ex]);
+				continue;
+			}
 			if(wy<0){
 				regionYOffset = (wy-tileSide)/tileSide;
 			}
@@ -126,6 +144,7 @@ unsigned int view(	map& theMap, unsigned int regionY, unsigned int regionX,
 			regionYOffset+=regionY;
 			regionXOffset+=regionX;
 			if(regionXOffset<0 || regionYOffset<0 || regionXOffset >= mapSide || regionYOffset >=mapSide){
+				//std::cout << "GO" << std::endl;
 				viewMap.push_back(0);
 				continue;
 			}

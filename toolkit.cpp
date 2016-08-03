@@ -3,6 +3,7 @@
 
 // TOOL FUNCTIONS
 double dist(int startY, int startX, int endY, int endX){
+    // Remember to rate the code, comment the code, and subscribe if you want to see code similar to this one.
     double dx = ((double)endX-(double)startX);
     double dy = ((double)endY-(double)startY);
     return(sqrt(dx*dx + dy*dy));
@@ -301,14 +302,19 @@ void rawPrintMap(int* map, unsigned int side){
 
 }
 
-void printMap(int* map, unsigned int side){
+void printMap(int* map, unsigned int side, std::vector<std::string>& tileSet){
     for (int i = 0; i < side*side; ++i)
     {
         if(i%side == 0){
            std::cout << std::endl;
         }
-        if(map[i] == -1){
-            std::cout << " ";
+        if(map[i] < 0){
+            if(map[i] == -1){
+                std::cout << " "; // -1 is always blank.
+            }
+            else{
+                std::cout << tileSet[abs(map[i])-2]; // Tilesets
+            }
         }
         else{
             std::cout << map[i];
@@ -329,14 +335,20 @@ void rawPrintMapVector(std::vector<int>& map, unsigned int side){
 
 }
 
-void printMapVector(std::vector<int>& map, unsigned int side){
+void printMapVector(std::vector<int>& map, unsigned int side, std::vector<std::string>& tileSet){
     for (int i = 0; i < side*side; ++i)
     {
         if(i%side == 0){
            std::cout << std::endl;
         }
-        if(map[i] == -1){
-            std::cout << " ";
+        if(map[i] < 0){
+            if(map[i] == -1){
+                std::cout << " "; // -1 is always blank.
+            }
+            else{
+                //std::cout << abs(map[i])-2 << std::endl;
+                std::cout << tileSet[abs(map[i])-2]; // Tilesets
+            }
         }
         else{
             std::cout << map[i];
@@ -622,7 +634,7 @@ void genTile(int seed, double pushCoefficient, int pointY, int pointX, int* map,
     }
     if(debug){
         std::cout << "T SEED: " << seed << std::endl;
-        printMap(tileMap,tileSide);
+        rawPrintMap(tileMap,tileSide);
     }
 }
 
@@ -668,7 +680,7 @@ void genIsland(unsigned int seed, double pushCoefficient, int startY, int startX
         if(map[0] >= 1){
             std::cout << e << " SEED: "<< seed << std::endl;
             std::cout << "HEIGHT: " << height << " SIDE: " << side << " LENGTH: " << length << " WIDTH: " << width << std::endl;
-            printMap(map,side);
+            rawPrintMap(map,side);
                         
         }
         //printMap(map,side);
