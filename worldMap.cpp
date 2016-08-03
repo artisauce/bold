@@ -46,7 +46,7 @@ worldMap::~worldMap(){
 // Precondition: You're on a valid tile.
 unsigned int view(	map& theMap, unsigned int regionY, unsigned int regionX, 
 					unsigned int tileY, unsigned int tileX,
-					unsigned int viewRadius, bool mapView, bool circle, std::vector<int>& viewMap){
+					unsigned int viewRadius, bool mapView, bool circle, bool borders, std::vector<int>& viewMap){
 	// TODO: Implement mapView
 	int viewTileWidth = (viewRadius*2)+1;
 	int tileSide = theMap.tileSide;
@@ -73,21 +73,28 @@ unsigned int view(	map& theMap, unsigned int regionY, unsigned int regionX,
 		for (int x = -(viewTileWidth/2); x <= (viewTileWidth/2); x++)
 		{
 			if(circle){
-				float A = x;
-				float B = y;
-				if(x < tileX){
+				float A = (float)x+tileX;
+				float B = (float)y+tileY;
+				if(A < tileX){
 					A++;
 				}
-				if(y < tileY){
+				if(B < tileY){
 					B++;
 				}
 				B = B - centerPixelX;
 				A = A - centerPixelY;
 				float difference = (A*A)+(B*B);
 				if(difference > (viewRadius*viewRadius)){
+					std::cout << A << " " << tileX << " " << B << " " << tileY << std::endl;
 					viewMap.push_back(-1);
 					continue;
 					//std::cout << "GO" << std::endl;
+				}
+			}
+			if(borders){
+				if( ((y+tileY)%tileSide) == 0 || ((x+tileX)%tileSide) == 0){
+					viewMap.push_back(-1);
+					continue;
 				}
 			}
 			int wy = y+tileY;

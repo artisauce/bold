@@ -18,8 +18,9 @@ int main () {
     }
     std::vector<int> viewer;
     unsigned int sider;
-    sider = view(newMap.bigMap[0],25,25,0,0,35,false,true,viewer);
+    sider = view(newMap.bigMap[0],25,25,10,10,35,false,true,false,viewer);
     printMapVector(viewer,sider);
+    printMap(newMap.bigMap[0].heightMap,mapSide);
     
     //printMap(newMap.bigMap[0].regionMap[((mapSide*mapSide)/2)+2].tileMap,newMap.tileSide);
 
