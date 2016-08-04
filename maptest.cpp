@@ -20,7 +20,7 @@ int main () {
     }
     std::vector<int> viewer;
     unsigned int sider;
-    sider = view(newMap.bigMap[0],25,25,11,11,60,false,true,true,true,viewer);
+    sider = view(newMap.bigMap[0],25,25,11,11,60,false,true,true,true,true,viewer);
     printMapVector(viewer,sider,tileSet);
     printMap(newMap.bigMap[0].heightMap,mapSide,tileSet);
     

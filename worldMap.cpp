@@ -46,8 +46,10 @@ worldMap::~worldMap(){
 // Precondition: You're on a valid tile.
 unsigned int view(	map& theMap, unsigned int regionY, unsigned int regionX, 
 					unsigned int tileY, unsigned int tileX,
-					unsigned int viewRadius, bool mapView, bool circle, bool borders, bool playerSee, std::vector<int>& viewMap){
-	// TODO: Implement mapView
+					unsigned int viewRadius, bool mapView, bool circle, bool borders, bool playerSee, bool wallMode, std::vector<int>& viewMap){
+	// TODO: Implement wallMode
+	// why there's problems: angles, viewing from a platau, you wouldn't be able to see below, from side, you would.
+	// view up: algorithm that's efficient. returns angles, compares. see notes in book.
 	int viewTileWidth = (viewRadius*2)+1;
 	int tileSide = theMap.tileSide;
 	int mapSide = theMap.mapSide;
@@ -73,6 +75,11 @@ unsigned int view(	map& theMap, unsigned int regionY, unsigned int regionX,
 	if(circle){
 		centerPixelX = tileX+0.5;
 		centerPixelY = tileY+0.5;
+	}
+	int viewMap[viewTileWidth*viewTileWidth];
+	for (int i = 0; i < (viewTileWidth*viewTileWidth); i++)
+	{
+		viewMap[i] = -1;
 	}
 	for (int y = -(viewTileWidth/2); y <= (viewTileWidth/2); y++)
 	{
