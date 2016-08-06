@@ -46,14 +46,14 @@ void viewLine(int length, bool* viewMap, int* actualMap,
 
 	// -- inner / outer
 
-	int innerY = 0;
-	int innerX = 0;
-	int outerY = 1;
-	int outerX = 1;
-	int tarYInner = 1; // If target higher (less than, on the graph) than player then inner target (towards player) would need indent by 1.
-	int tarXInner = 1;
-	int tarYOuter = 0; 
-	int tarXOuter = 0;
+	double innerY = 0;
+	double innerX = 0;
+	double outerY = 1;
+	double outerX = 1;
+	double tarYInner = 1; // If target higher (less than, on the graph) than player then inner target (towards player) would need indent by 1.
+	double tarXInner = 1;
+	double tarYOuter = 0; 
+	double tarXOuter = 0;
 	if(yTar > playerY){
 		innerY = 1;
 		outerY = 0;
@@ -88,10 +88,10 @@ void viewLine(int length, bool* viewMap, int* actualMap,
 		}
 	}
 	double checkOffset = 0;
-	int indentY;
-	int indentX;
-	int indentTarX;
-	int indentTarY;
+	double indentY;
+	double indentX;
+	double indentTarX;
+	double indentTarY;
 	//std::cout << "GORE3" << std::endl;
 	if(xDiff == 0 || yDiff == 0 || abs(xDiff)==abs(yDiff)){
 		if(xDiff == 0){
@@ -146,6 +146,10 @@ void viewLine(int length, bool* viewMap, int* actualMap,
 				indentX = outerX;
 				indentY = outerY;
 				// ((x - playerX)* functionX) + playerY
+				//std::cout << "indent y: " << indentY << " x: " << indentX << " tar_indent_y: " << indentTarY << " tar_indent_x: " << indentTarX << " " << function << std::endl;
+				//std::cout << "tarx: " << xTar+tarXInner << " tary: " << (yTar+tarYInner) << " playerx: " << (playerX+outerX) << " playery: " << (playerY+outerY) << " "<< std::endl;
+				//std::cout << "x: " << ((xTar+tarXInner)-(playerX+outerX)) << " y: " << ((yTar+tarYInner)-(playerY+outerY)) << std::endl;
+				//std::cout << "all: " << ((xTar+tarXInner)-(playerX+outerX))/((yTar+tarYInner)-(playerY+outerY)) << std::endl;
 			}
 		}
 		else{
@@ -175,20 +179,22 @@ void viewLine(int length, bool* viewMap, int* actualMap,
 	int aSpecial;
 	double tempAngle;
 	double inaccuray = 0.000001;
-	//std::cout << "GO" << std::endl;
-	while(xIndex != xTar && yIndex  != yTar){
+	std::cout << "---xIndex: " << xIndex << " xTar: " << xTar << " yIndex: " << yIndex << " yTar: " << yTar << " playerY: " << playerY << " playerX: " << playerX << std::endl;
+	while(xIndex != xTar || yIndex  != yTar){
 		// determine direction
 		//std::cout << "GORE" << std::endl;
 		if(special==0){
 			if(upMode){ // dealing with y as input
 				checkOffset = func((double)((yIndex+upMode)-playerY),function,(double)playerX); // move right, find y. remove both indents adding to  rightmode and playerX.
 				if(xIndex != (int)(checkOffset - 0.00001) ){ // 0.00...1 is the inaccuracy, but needed for trunsation. remove both indentY and indentY adding to playerY above.
+					//std::cout << "GORE1 " << xIndex <<" " << checkOffset << " " << function << " " << upMode << " " << function << std::endl;
 					xIndex += rightMode;
 					currHeight = actualMap[(yIndex*length)+xIndex];
 					tempAngle = (currHeight - playerHeight)/distD(playerY,playerX,func((double)(xIndex-playerX),(1.00/function),(double)playerY),(double)xIndex); 
 					// removed indents, xdiff and ydif is same anyhow, and that is used for calculating distance.
 				}
 				else{
+					//std::cout << "GORE2" << std::endl;
 					yIndex += upMode;
 					currHeight = actualMap[(yIndex*length)+xIndex];
 					tempAngle = (currHeight - playerHeight)/distD(playerY,playerX,(double)yIndex,checkOffset); 
@@ -197,12 +203,14 @@ void viewLine(int length, bool* viewMap, int* actualMap,
 			else{ // dealing with x as input
 				checkOffset = func((double)((xIndex+rightMode)-playerX),function,(double)playerY); // move right, find y. remove both indents adding to  rightmode and playerX.
 				if(yIndex != (int)(checkOffset - 0.00001) ){ // 0.00...1 is the inaccuracy, but needed for trunsation. remove both indentY and indentY adding to playerY above.
+					//std::cout << "GORE3" << std::endl;
 					yIndex += upMode;
 					currHeight = actualMap[(yIndex*length)+xIndex];
 					tempAngle = (currHeight - playerHeight)/distD(playerY,playerX,(double)yIndex,func((double)(yIndex-playerY),(1.00/function),(double)playerX)); 
 					// removed indents, xdiff and ydif is same anyhow, and that is used for calculating distance.
 				}
 				else{
+					//std::cout << "GORE4" << std::endl;
 					xIndex += rightMode;
 					currHeight = actualMap[(yIndex*length)+xIndex];
 					tempAngle = (currHeight - playerHeight)/distD(playerY,playerX,checkOffset,(double)xIndex); 
@@ -220,6 +228,7 @@ void viewLine(int length, bool* viewMap, int* actualMap,
 				xIndex+=aSpecial;
 			}
 			else if(abs(special) == 3){
+				//std::cout << "xIndex: " << xIndex << " xTar: " << xTar << " yIndex: " << yIndex << " yTar: " << yTar << " playerY: " << playerY << " playerX: " << playerX << std::endl;
 				yIndex+=aSpecial;
 				xIndex+=aSpecial;
 			}
@@ -232,40 +241,46 @@ void viewLine(int length, bool* viewMap, int* actualMap,
 
 		}
 		if(currHeight == playerHeight){
+			std::cout << "EQ" << std::endl;
 			if(maxAngle == 0){
 				viewMap[(yIndex*length)+xIndex] = true;
+				//minAngle = tempAngle;
 			}
 		}
 		else if(tempAngle<0){
+			std::cout << "UNDER" << std::endl;
 			if(tempAngle>minAngle){
 				viewMap[(yIndex*length)+xIndex] = true;
 				minAngle=tempAngle;
 			}
 		}
 		else{
-			if(tempAngle<maxAngle){
+			std::cout << "OVER" << std::endl;
+			if(tempAngle>maxAngle){
 				viewMap[(yIndex*length)+xIndex] = true;
 				maxAngle=tempAngle;
 			}
 		}
-		//std::cout << "GO3 " << special << " " << tempAngle << " " <<  minAngle << " " << maxAngle << " " << currHeight << " " << checkOffset << std::endl;
-		//std::cout << "GO2 " << xIndex << " " << xTar << " " << yIndex << " " << yTar << " " << playerY << " " << playerX << std::endl;
-		//xIndex != xTar && yIndex  != yTar
+		std::cout << "special: " << special << " tempAngle: " << tempAngle << " minAngle: " <<  minAngle << " maxAngle: " << maxAngle << " currHeight: " << currHeight << " checkOffset: " << checkOffset << std::endl;
+		std::cout << "xIndex: " << xIndex << " xTar: " << xTar << " yIndex: " << yIndex << " yTar: " << yTar << " playerY: " << playerY << " playerX: " << playerX << std::endl;
+		
 
 	}
-	//std::cout << "FIN" << std::endl;
+	std::cout << "FIN" << std::endl;
 }
 
 int main(){
 	int rX=1; // Player cords
 	int rY=1;
-	int length = 3;
+	int length = 5;
 	bool viewMap[(length*length)];
 	//int dRealList[13] = 	{ 8, 9,   6,3,2, 1, 4, 7, 8, 9,6,     3,2, 1, 4};  // Adjusted for map display.
 	double angleMap[length*length];
-	int actualMap[] = {	1,1,1,
-						1,0,1,
-						1,1,1};
+	int actualMap[] = {	0,0,0,0,0,
+						0,1,1,1,0,
+						0,1,0,1,0,
+						0,1,1,1,0,
+						0,0,0,0,0};
 	for(int i = 0; i < length*length; i++)
 	{
 		viewMap[i] = false;
@@ -281,18 +296,19 @@ int main(){
 	{
 		for (int x = 0; x < length; x++)
 		{
-			if(!viewMap[(y*length)]+x){
-				//std::cout << "GOREdO" << std::endl;
+			if(!viewMap[(y*length)+x]){
+				std::cout << y << " " << x << std::endl;
 				viewLine(length,viewMap,actualMap,rY, rX, y, x);
 				//std::cout << "GOREd" << std::endl;
 			}
+			//std::cout << y << " " << x << std::endl;
 		}
 	}
 	for(int y = 0; y < length; y++)
 	{
 		for (int x = 0; x < length; x++)
 		{
-			if(viewMap[(y*length)]+x){
+			if(viewMap[(y*length)+x]){
 				std::cout << actualMap[(y*length)+x];
 			}
 			else{
