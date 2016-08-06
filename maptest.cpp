@@ -5,7 +5,7 @@
 
 int main () {
     srand(time(NULL));
-    bool debug = false;
+    bool debug = true;
     bool diagonal = true;
     double pushCoefficient = 0.1;
     size_t worldMapSide = 2;

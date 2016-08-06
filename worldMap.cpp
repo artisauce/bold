@@ -76,11 +76,6 @@ unsigned int view(	map& theMap, unsigned int regionY, unsigned int regionX,
 		centerPixelX = tileX+0.5;
 		centerPixelY = tileY+0.5;
 	}
-	int viewMap[viewTileWidth*viewTileWidth];
-	for (int i = 0; i < (viewTileWidth*viewTileWidth); i++)
-	{
-		viewMap[i] = -1;
-	}
 	for (int y = -(viewTileWidth/2); y <= (viewTileWidth/2); y++)
 	{
 		for (int x = -(viewTileWidth/2); x <= (viewTileWidth/2); x++)
