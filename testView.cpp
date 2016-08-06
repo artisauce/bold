@@ -9,7 +9,7 @@
 #include <stdexcept>      // std::out_of_range
 # define M_PI           3.14159265358979323846  /* lol it's pi */
 
-double dist(int startY, int startX, int endY, int endX){
+double distD(double startY, double startX, double endY, double endX){
     // Remember to rate the code, comment the code, and subscribe if you want to see code similar to this one.
     double dx = ((double)endX-(double)startX);
     double dy = ((double)endY-(double)startY);
@@ -30,39 +30,31 @@ int viewLine(int length, bool* viewMap, double* angleMap, int* actualMap,
 	int xAdd;
 	int yAdd;
 	double maxAngle = 0.00; 
-	double minAngle = 100.00; //a depth of darkness
+	double minAngle = -100.00; //a depth of darkness
 	int yIndex = playerY;
 	int xIndex = playerX;
 
 	// -- inner / outer
 
-	int innerPlayerY = playerY;
-	int innerPlayerX = playerX;
-	int outerPlayerY = playerY+1;
-	int outerPlayerX = playerX+1;
-	int yIndexUpper = 0;
-	int xIndexUpper = 0;
-	int yUpper = 0; // If target higher (less than, on the graph) than player then inner target (towards player) would need indent by 1.
-	int xUpper = 0;
-	int yLower = 0; 
-	int xLower = 0;
-	if(yTar < playerY){
-		yUpper = 1;
+	int innerY = 0;// t
+	int innerX = 0;//  \
+	int outerY = 1;//   \
+	int outerX = 1;//    p
+	int tarYInner = 1; // If target higher (less than, on the graph) than player then inner target (towards player) would need indent by 1.
+	int tarXInner = 1;
+	int tarYOuter = 0; 
+	int tarXOuter = 0;
+	if(yTar > playerY){
+		innerY = 1;
+		outerY = 0;
+		tarYInner = 0;
+		tarYOuter = 1;
 	}
-	else if(yTar > playerY){
-		innerPlayerY = playerY+1;
-		outerPlayerY = playerY;
-		yIndexUpper = 1;
-		yLower = -1;
-	}
-	if(xTar < playerX){
-		xUpper = 1;
-	}
-	else if(xTar > playerX){
-		innerPlayerX = playerX+1;
-		outerPlayerX = playerX;
-		xIndexUpper = 1;
-		xLower = -1;
+	if(xTar > playerX){
+		innerX = 1;
+		outerX = 0;
+		tarXInner = 0;
+		tarXOuter = 1;
 	}
 
 	// functions
@@ -74,11 +66,17 @@ int viewLine(int length, bool* viewMap, double* angleMap, int* actualMap,
 	int rightMode = 0;
 	if(abs(yDiff)>abs(xDiff)){
 		upMode = abs(yDiff)/yDiff;
+		rightMode = abs(xDiff)/xDiff;
 	}
 	else{
 		rightMode = abs(xDiff)/xDiff;
+		upMode = abs(yDiff)/yDiff;
 	}
 	double checkerOffset = 0;
+	int indentY;
+	int indentX;
+	int indentTarX;
+	int indentTarY;
 	if(xDiff == 0 || yDiff == 0 || abs(xDiff)=abs(yDiff)){
 		if(xDiff == 0){
 			if(yDiff > 0){
@@ -117,22 +115,38 @@ int viewLine(int length, bool* viewMap, double* angleMap, int* actualMap,
 	}
 	else {
 		if(upMode){
-			if(tarHeight<currHeight){
-				function = ((xTar+xLower)-innerPlayerX)/((xTar+yLower)-innerPlayerY); // multiply by current Y to get X.
+			if(tarHeight<playerHeight){
+				function = ((xTar+tarXOuter)-(playerX+innerX))/((yTar+yOuter)-(playerY+innerY)); // multiply by current Y to get X.
+				indentTarX = tarXOuter;
+				indentTarY = tarYOuter;
+				indentX = innerX;
+				indentY = innerY;
 				// ((x - playerX)* functionX) + playerY
 			}
 			else {
-				function = ((xTar+xUpper)-outerPlayerX)/((yTar+yUpper)-outerPlayerY); // multiply by current Y to get X.
+				function = ((xTar+tarXInner)-(playerX+outerX))/((yTar+yInner)-(playerY+outerY)); // multiply by current Y to get X.
+				indentTarX = tarXInner;
+				indentTarY = tarYInner;
+				indentX = outerX;
+				indentY = outerY;
 				// ((x - playerX)* functionX) + playerY
 			}
 		}
 		else{
-			if(tarHeight<currHeight){
-				function = ((yTar+yLower)-innerPlayerY)/((xTar+xLower)-innerPlayerX); // multiply by current X to get Y.
+			if(tarHeight<playerHeight){
+				function = ((yTar+yOuter)-(playerY+innerY))/((xTar+tarXOuter)-(playerX+innerX)); // multiply by current X to get Y.
+				indentTarX = tarXOuter;
+				indentTarY = tarYOuter;
+				indentX = innerX;
+				indentY = innerY;
 				// ((y - playerY)* functionX) + playerX
 			}
 			else {
-				function = ((yTar+yUpper)-outerPlayerY)/((xTar+xUpper)-outerPlayerX); // multiply by current X to get Y.
+				function = ((yTar+yInner)-(playerY+outerY))/((xTar+tarXInner)-(playerX+outerX)); // multiply by current X to get Y.
+				indentTarX = tarXInner;
+				indentTarY = tarYInner;
+				indentX = outerX;
+				indentY = outerY;
 				// ((y - playerY)* functionX) + playerX
 			}
 		}
@@ -145,35 +159,40 @@ int viewLine(int length, bool* viewMap, double* angleMap, int* actualMap,
 	int aSpecial;
 	double result;
 	int bResult;
-	while(xIndex != xTar && yIndex != yTar){
+	double tempAngle;
+	double inaccuray = 0.000001;
+	while(xIndex + indentX != xTar && yIndex + indentY != yTar){
 		// determine direction
 		if(special!=0){
 			if(upMode){ // dealing with y as input
 
 			}
 			else{ // dealing with x as input
-				checkerOffset = func((double)xIndex+(double)rightMode,function,(double)yIndex+(double)yIndexUpper);
-				if(yIndex+yIndexUpper != (int)(checkOffset - 0.00001) ){ // 0.00...1 is the inaccuracy, but needed for trunsation.
-					if()
+				checkerOffset = func((double)((xIndex+rightMode)-playerX),function,(double)playerY); // move right, find y. remove both indents adding to  rightmode and playerX.
+				if(yIndex != (int)(checkOffset - 0.00001) ){ // 0.00...1 is the inaccuracy, but needed for trunsation. remove both indentY and indentY adding to playerY above.
+					currHeight = actualMap[((yIndex+upMode)*length)+xIndex];
+					tempAngle = (playerHeight - currHeight)/distD((double)playerY,(double)playerX,(double)(yIndex + upMode),(double)xIndex); // removed indents, xdiff and ydif is same anyhow, and that is used for calculating distance.
+					func((double)yIndex+(double)indentY,(1.00/function),(double)playerX+(double)indentX);
+					(double startY, double startX, double endY, double endX)
 				}
 				
 			}
 		}
 		else{
-			aSpecial = abs(special);
+			aSpecial = abs(special)/special;
 			if(special == 1){
-				yIndex+=(aSpecial/special);
+				yIndex+=aSpecial;
 			}
 			else if(special == 2){
-				xIndex+=(aSpecial/special);
+				xIndex+=aSpecial;
 			}
 			else if(special == 3){
-				yIndex+=(aSpecial/special);
-				xIndex+=(aSpecial/special);
+				yIndex+=aSpecial;
+				xIndex+=aSpecial;
 			}
 			else{
-				yIndex+=(aSpecial/special);
-				xIndex-=(aSpecial/special);
+				yIndex+=aSpecial;
+				xIndex-=aSpecial;
 			}
 		}
 		currHeight = actualMap[(yIndex*length)+xIndex];
