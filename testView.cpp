@@ -178,19 +178,21 @@ void viewLine(int length, bool* viewMap, int* actualMap,
 
 	int aSpecial;
 	double tempAngle;
-	double inaccuray = 0.000001;
+	double indexHolder;
+	bool ticker = true; // used for certain indents.
 	std::cout << "---xIndex: " << xIndex << " xTar: " << xTar << " yIndex: " << yIndex << " yTar: " << yTar << " playerY: " << playerY << " playerX: " << playerX << std::endl;
 	while(xIndex != xTar || yIndex  != yTar){
 		// determine direction
 		//std::cout << "GORE" << std::endl;
 		if(special==0){
 			if(upMode){ // dealing with y as input
-				checkOffset = func((double)((yIndex+upMode)-playerY),function,(double)playerX); // move right, find y. remove both indents adding to  rightmode and playerX.
+				checkOffset = func((double)((yIndex+upMode)-playerY),function,(double)playerX+indentX); // move right, find y. remove both indents adding to  rightmode and playerX.
 				if(xIndex != (int)(checkOffset - 0.00001) ){ // 0.00...1 is the inaccuracy, but needed for trunsation. remove both indentY and indentY adding to playerY above.
 					//std::cout << "GORE1 " << xIndex <<" " << checkOffset << " " << function << " " << upMode << " " << function << std::endl;
 					xIndex += rightMode;
 					currHeight = actualMap[(yIndex*length)+xIndex];
-					tempAngle = (currHeight - playerHeight)/distD(playerY,playerX,func((double)(xIndex-playerX),(1.00/function),(double)playerY),(double)xIndex); 
+					tempAngle = (currHeight - playerHeight)/distD(playerY,playerX,func((double)(xIndex-playerX),(1.00/function),(double)playerY+indentY),(double)xIndex); 
+					std::cout << "WOOP " << func((double)(xIndex-playerX),(1.00/function),(double)playerY+indentY) << std::endl;
 					// removed indents, xdiff and ydif is same anyhow, and that is used for calculating distance.
 				}
 				else{
@@ -201,12 +203,12 @@ void viewLine(int length, bool* viewMap, int* actualMap,
 				}
 			}
 			else{ // dealing with x as input
-				checkOffset = func((double)((xIndex+rightMode)-playerX),function,(double)playerY); // move right, find y. remove both indents adding to  rightmode and playerX.
+				checkOffset = func((double)((xIndex+rightMode)-playerX),function,(double)playerY+indentY); // move right, find y. remove both indents adding to  rightmode and playerX.
 				if(yIndex != (int)(checkOffset - 0.00001) ){ // 0.00...1 is the inaccuracy, but needed for trunsation. remove both indentY and indentY adding to playerY above.
 					//std::cout << "GORE3" << std::endl;
 					yIndex += upMode;
 					currHeight = actualMap[(yIndex*length)+xIndex];
-					tempAngle = (currHeight - playerHeight)/distD(playerY,playerX,(double)yIndex,func((double)(yIndex-playerY),(1.00/function),(double)playerX)); 
+					tempAngle = (currHeight - playerHeight)/distD(playerY,playerX,(double)yIndex,func((double)(yIndex-playerY),(1.00/function),(double)playerX+indentX)); 
 					// removed indents, xdiff and ydif is same anyhow, and that is used for calculating distance.
 				}
 				else{
@@ -261,9 +263,9 @@ void viewLine(int length, bool* viewMap, int* actualMap,
 				maxAngle=tempAngle;
 			}
 		}
-		std::cout << "special: " << special << " tempAngle: " << tempAngle << " minAngle: " <<  minAngle << " maxAngle: " << maxAngle << " currHeight: " << currHeight << " checkOffset: " << checkOffset << std::endl;
+		std::cout << "special: " << special << " tempAngle: " << tempAngle << " minAngle: " <<  minAngle << " maxAngle: " << maxAngle << " currHeight: " << currHeight << " checkOffset: " << checkOffset << " func: " << function << std::endl;
 		std::cout << "xIndex: " << xIndex << " xTar: " << xTar << " yIndex: " << yIndex << " yTar: " << yTar << " playerY: " << playerY << " playerX: " << playerX << std::endl;
-		
+		std::cout << indentTarX << " " << indentTarY << " " << indentX << " " << indentY << std::endl;
 
 	}
 	std::cout << "FIN" << std::endl;
