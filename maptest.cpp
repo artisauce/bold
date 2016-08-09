@@ -5,7 +5,7 @@
 
 int main () {
     srand(time(NULL));
-    bool debug = true;
+    bool debug = false;
     bool diagonal = true;
     double pushCoefficient = 0.1;
     size_t worldMapSide = 2;
@@ -20,8 +20,10 @@ int main () {
     }
     std::vector<int> viewer;
     unsigned int sider;
-    sider = view(newMap.bigMap[0],25,25,11,11,60,false,true,true,true,true,viewer);
+    sider = view(newMap.bigMap[0],25,25,11,11,60,true,true,false,true,true,viewer);
+    std::cout << " VECTOR MAP " << std::endl;
     printMapVector(viewer,sider,tileSet);
+    std::cout << " FULL MAP " << std::endl;
     printMap(newMap.bigMap[0].heightMap,mapSide,tileSet);
     
     //printMap(newMap.bigMap[0].regionMap[((mapSide*mapSide)/2)+2].tileMap,newMap.tileSide);

@@ -10,9 +10,16 @@
 // Add more includes if needed.
 double dist(int startY, int startX, int endY, int endX);
 
+double distD(int startY, int startX, double endY, double endX);
+
+double func(double input, double multiplier, double addition);
+
 void randLine(unsigned int seed, double pushCoefficient, int startY, int startX, int endY, 
     int endX, int* placeMap, int dotPlace, std::vector<int>& ySpareList, std::vector<int>& xSpareList,
     unsigned int side, unsigned int sideLimit, bool borderLimit, bool diagonal, bool debug);
+
+void viewLine(int length, bool* viewMap, std::vector<int>& actualMap, 
+	int playerY, int playerX, int yTar, int xTar);
 
 void circle(unsigned int seed, double pushCoefficient, 
     unsigned int pointY, unsigned int pointX, int* placeMap, int dotPlace, unsigned int radiusY, unsigned int radiusX,

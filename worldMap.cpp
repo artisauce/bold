@@ -47,7 +47,6 @@ worldMap::~worldMap(){
 unsigned int view(	map& theMap, unsigned int regionY, unsigned int regionX, 
 					unsigned int tileY, unsigned int tileX,
 					unsigned int viewRadius, bool mapView, bool circle, bool borders, bool playerSee, bool wallMode, std::vector<int>& viewMap){
-	// TODO: Implement wallMode
 	// why there's problems: angles, viewing from a platau, you wouldn't be able to see below, from side, you would.
 	// view up: algorithm that's efficient. returns angles, compares. see notes in book.
 	int viewTileWidth = (viewRadius*2)+1;
@@ -70,7 +69,7 @@ unsigned int view(	map& theMap, unsigned int regionY, unsigned int regionX,
 		tileY=regionY;
 		tileX=regionX;
 		tileSide=mapSide;
-		//This is a useful hack.
+		//This is a useful hack. coder plz
 	}
 	if(circle){
 		centerPixelX = tileX+0.5;
@@ -104,10 +103,6 @@ unsigned int view(	map& theMap, unsigned int regionY, unsigned int regionX,
 					viewMap.push_back(-1);
 					continue;
 				}
-			}
-			if(x == 0 && y==0 && playerSee){
-				viewMap.push_back(-2);
-				continue;
 			}
 			int wy = y+tileY;
 			int ex = x+tileX;
@@ -157,6 +152,42 @@ unsigned int view(	map& theMap, unsigned int regionY, unsigned int regionX,
 			viewMap.push_back(theMap.regionMap[(regionYOffset*mapSide) + regionXOffset].tileMap[(wy*tileSide)+ex]);
 
 		}
+	}
+	bool boolMap[viewTileWidth*viewTileWidth];
+	int middle = (viewTileWidth/2);
+	if(wallMode && !borders){ // for the time being, it's incompatible with borders
+		for (int i = 0; i < viewTileWidth*viewTileWidth; i++)
+		{
+			boolMap[i] = false;
+		}
+		boolMap[(middle*viewTileWidth)+middle] = true;
+		for(int a = 0; a < viewTileWidth; a++)
+		{
+			// Getting most of them with this is a good, efficient idea and method.
+			viewLine(viewTileWidth,boolMap,viewMap,middle,middle, a, 0);
+			viewLine(viewTileWidth,boolMap,viewMap,middle,middle, a, viewTileWidth-1);
+			viewLine(viewTileWidth,boolMap,viewMap,middle,middle, 0, a);
+			viewLine(viewTileWidth,boolMap,viewMap,middle,middle, viewTileWidth-1, a);
+		}
+		for(int y = 1; y < viewTileWidth-1; y++)
+		{
+			for (int x = 1; x < viewTileWidth-1; x++)
+			{
+				if(!boolMap[(y*viewTileWidth)+x]){ // This will save a function call, more efficient than in viewLine function check.
+					viewLine(viewTileWidth,boolMap,viewMap,middle,middle, y, x);
+				}
+				//std::cout << y << " " << x << std::endl;
+			}
+		}
+		for (int i = 0; i < viewTileWidth*viewTileWidth; i++)
+		{
+			if(!boolMap[i]){ // Time to implement
+					viewMap[i] = -1;
+			}
+		}
+	}
+	if(playerSee){
+		viewMap[(middle*viewTileWidth)+middle] = -2;
 	}
 	return viewTileWidth;
 }

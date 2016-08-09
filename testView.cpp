@@ -34,6 +34,9 @@ void viewLine(int length, bool* viewMap, int* actualMap,
 	if(playerY == yTar && playerX == xTar){
 		return;
 	}
+	if(viewMap[(yTar*length)+xTar]){
+		return;
+	}
 	//std::cout << "GORE2" << std::endl;
 	// This algorithm is not meant for 100% certainty. 
 	int playerHeight = actualMap[(playerY*length)+playerX];
@@ -318,11 +321,11 @@ int main(){
 	bool viewMap[(length*length)];
 	//int dRealList[13] = 	{ 8, 9,   6,3,2, 1, 4, 7, 8, 9,6,     3,2, 1, 4};  // Adjusted for map display.
 	double angleMap[length*length];
-	int actualMap[] = {	0,0,0,0,0,
-						0,0,0,0,0,
-						0,1,0,1,0,
-						0,0,0,0,0,
-						0,0,0,0,0};
+	int actualMap[] = {	1,1,1,1,1,
+						1,1,1,0,1,
+						1,1,1,1,1,
+						1,1,1,1,1,
+						1,1,1,1,1};
 	for(int i = 0; i < length*length; i++)
 	{
 		viewMap[i] = false;
