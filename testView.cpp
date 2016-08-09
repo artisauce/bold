@@ -74,24 +74,23 @@ void viewLine(int length, bool* viewMap, int* actualMap,
 	int xDiff = xTar-playerX;
 	int upMode = 0;
 	int rightMode = 0;
+	bool goUp = false;
 	//std::cout << "GORDON " << xDiff << " " << yDiff << std::endl;
 	if(abs(yDiff)>abs(xDiff)){
-		upMode = abs(yDiff)/yDiff;
-		if(xDiff!=0){
-			rightMode = abs(xDiff)/xDiff;
-		}
+		goUp = true;
 	}
-	else{
+	if(xDiff!=0){
 		rightMode = abs(xDiff)/xDiff;
-		if(yDiff!=0){
-			upMode = abs(yDiff)/yDiff;
-		}
+	}
+	if(yDiff!=0){
+		upMode = abs(yDiff)/yDiff;
 	}
 	double checkOffset = 0;
 	double indentY;
 	double indentX;
 	double indentTarX;
 	double indentTarY;
+	bool playerIsHigher = false;
 	//std::cout << "GORE3" << std::endl;
 	if(xDiff == 0 || yDiff == 0 || abs(xDiff)==abs(yDiff)){
 		if(xDiff == 0){
@@ -130,8 +129,9 @@ void viewLine(int length, bool* viewMap, int* actualMap,
 		}
 	}
 	else {
-		if(upMode){
+		if(goUp){
 			if(tarHeight<playerHeight){
+				playerIsHigher = true;
 				function = ((xTar+tarXOuter)-(playerX+innerX))/((yTar+tarYOuter)-(playerY+innerY)); // multiply by current Y to get X.
 				indentTarX = tarXOuter;
 				indentTarY = tarYOuter;
@@ -154,6 +154,7 @@ void viewLine(int length, bool* viewMap, int* actualMap,
 		}
 		else{
 			if(tarHeight<playerHeight){
+				playerIsHigher = true;
 				function = ((yTar+tarYOuter)-(playerY+innerY))/((xTar+tarXOuter)-(playerX+innerX)); // multiply by current X to get Y.
 				indentTarX = tarXOuter;
 				indentTarY = tarYOuter;
@@ -170,50 +171,84 @@ void viewLine(int length, bool* viewMap, int* actualMap,
 				// ((y - playerY)* functionX) + playerX
 			}
 		}
-		
+	}
+	// technical
+	double xCheck = 0; // either 0.9999... or 0. For negative traversing
+	double yCheck = 0;
+	double xShift = 0; // either 0 or 0.0000...1. For negative traversing AND function.
+	double yShift = 0;
+	double inaccuracy = 0.001;
+	// technical
+	if(yDiff<0){
+		yCheck = 1-inaccuracy;
+		if(function<0){
+			yShift = inaccuracy;
+		}
+	}
+	std::cout << "AHHHHH " << xDiff << std::endl;
+	std::cout << "AHHHHH2 " << function << std::endl;
+	if(xDiff<0){
+		std::cout << "CHECK " << xDiff << std::endl;
+		xCheck = 1-inaccuracy;
+		if(function<0){
+			std::cout << "CHECK2 " << xDiff << std::endl;
+			xShift = inaccuracy;
+			
+		}
 	}
 	
 
 	// results
-
 	int aSpecial;
 	double tempAngle;
 	double indexHolder;
+	bool alternateAngle = false;
 	bool ticker = true; // used for certain indents.
 	std::cout << "---xIndex: " << xIndex << " xTar: " << xTar << " yIndex: " << yIndex << " yTar: " << yTar << " playerY: " << playerY << " playerX: " << playerX << std::endl;
 	while(xIndex != xTar || yIndex  != yTar){
 		// determine direction
 		//std::cout << "GORE" << std::endl;
 		if(special==0){
-			if(upMode){ // dealing with y as input
-				checkOffset = func((double)((yIndex+upMode)-playerY),function,(double)playerX+indentX); // move right, find y. remove both indents adding to  rightmode and playerX.
-				if(xIndex != (int)(checkOffset - 0.00001) ){ // 0.00...1 is the inaccuracy, but needed for trunsation. remove both indentY and indentY adding to playerY above.
-					//std::cout << "GORE1 " << xIndex <<" " << checkOffset << " " << function << " " << upMode << " " << function << std::endl;
+			if(goUp){ // dealing with y as input
+				yIndex+=upMode;
+				checkOffset = func(((double)(yIndex-indentY-playerY))+yCheck,function,((double)(playerX+indentX))-xShift);
+				std::cout << "GORED " << checkOffset << " " <<yCheck <<  " " << xShift <<  " " << xCheck<< std::endl;
+				std::cout << 	"GORED2 " << yIndex << 
+								" " << ((double)(yIndex-indentY-playerY)) <<  
+								" " << ((double)(yIndex-indentY-playerY))+yCheck <<  
+								" " << ((double)(playerX+indentX))-xShift<< std::endl;
+				if(xIndex != (int)(checkOffset) ){
+					yIndex=(int)func((double)((int)(checkOffset-xShift)-indentX-playerX+xCheck),(1.00/function),((double)(indentY+playerY))-yShift);
+					//std::cout << "GORE3" << std::endl;
 					xIndex += rightMode;
 					currHeight = actualMap[(yIndex*length)+xIndex];
-					tempAngle = (currHeight - playerHeight)/distD(playerY,playerX,func((double)(xIndex-playerX),(1.00/function),(double)playerY+indentY),(double)xIndex); 
-					std::cout << "WOOP " << func((double)(xIndex-playerX),(1.00/function),(double)playerY+indentY) << std::endl;
+					std::cout << "YELLO " << func((double)(xIndex-playerX-indentX),(1.00/function),(double)(playerY+indentY)) << std::endl;
+					tempAngle = (currHeight - playerHeight)/distD(playerY,playerX,func((double)(xIndex-playerX-indentX+xCheck),(1.00/function),(double)(playerY+indentY)),(double)xIndex); 
 					// removed indents, xdiff and ydif is same anyhow, and that is used for calculating distance.
 				}
 				else{
-					//std::cout << "GORE2" << std::endl;
-					yIndex += upMode;
+					//std::cout << "GORE4" << std::endl;
 					currHeight = actualMap[(yIndex*length)+xIndex];
 					tempAngle = (currHeight - playerHeight)/distD(playerY,playerX,(double)yIndex,checkOffset); 
 				}
 			}
 			else{ // dealing with x as input
-				checkOffset = func((double)((xIndex+rightMode)-playerX),function,(double)playerY+indentY); // move right, find y. remove both indents adding to  rightmode and playerX.
-				if(yIndex != (int)(checkOffset - 0.00001) ){ // 0.00...1 is the inaccuracy, but needed for trunsation. remove both indentY and indentY adding to playerY above.
-					//std::cout << "GORE3" << std::endl;
+				xIndex+=rightMode;
+				std::cout << "yShift " << yShift << std::endl;
+				std::cout << "GORE3 " << xShift << std::endl;
+				std::cout << "GORE3 " << xIndex << std::endl;
+				checkOffset = func(((double)(xIndex-indentX-playerX)+xCheck),function,((double)(playerY+indentY))-yShift);
+				if(yIndex != (int)(checkOffset) ){
+					xIndex=(int)func((double)((int)(checkOffset-yShift)-indentY-playerY+yCheck),(1.00/function),((double)(indentX+playerX))-xShift);
+					std::cout << "GORE3 " << xIndex << std::endl;
 					yIndex += upMode;
 					currHeight = actualMap[(yIndex*length)+xIndex];
-					tempAngle = (currHeight - playerHeight)/distD(playerY,playerX,(double)yIndex,func((double)(yIndex-playerY),(1.00/function),(double)playerX+indentX)); 
+					tempAngle = (currHeight - playerHeight)/distD(playerY,playerX,(double)yIndex,func((double)(yIndex-playerY-indentY+yCheck),(1.00/function),(double)(playerX+indentX))); 
 					// removed indents, xdiff and ydif is same anyhow, and that is used for calculating distance.
 				}
 				else{
+					std::cout << "GORE4 " << checkOffset << std::endl;
 					//std::cout << "GORE4" << std::endl;
-					xIndex += rightMode;
 					currHeight = actualMap[(yIndex*length)+xIndex];
 					tempAngle = (currHeight - playerHeight)/distD(playerY,playerX,checkOffset,(double)xIndex); 
 				}
@@ -242,26 +277,9 @@ void viewLine(int length, bool* viewMap, int* actualMap,
 			tempAngle = (currHeight - playerHeight)/dist(playerY,playerX,yIndex,xIndex);
 
 		}
-		if(currHeight == playerHeight){
-			std::cout << "EQ" << std::endl;
-			if(maxAngle == 0){
-				viewMap[(yIndex*length)+xIndex] = true;
-				//minAngle = tempAngle;
-			}
-		}
-		else if(tempAngle<0){
-			std::cout << "UNDER" << std::endl;
-			if(tempAngle>minAngle){
-				viewMap[(yIndex*length)+xIndex] = true;
-				minAngle=tempAngle;
-			}
-		}
-		else{
-			std::cout << "OVER" << std::endl;
-			if(tempAngle>maxAngle){
-				viewMap[(yIndex*length)+xIndex] = true;
-				maxAngle=tempAngle;
-			}
+		if(tempAngle>=minAngle){
+			viewMap[(yIndex*length)+xIndex] = true;
+			minAngle=tempAngle;
 		}
 		std::cout << "special: " << special << " tempAngle: " << tempAngle << " minAngle: " <<  minAngle << " maxAngle: " << maxAngle << " currHeight: " << currHeight << " checkOffset: " << checkOffset << " func: " << function << std::endl;
 		std::cout << "xIndex: " << xIndex << " xTar: " << xTar << " yIndex: " << yIndex << " yTar: " << yTar << " playerY: " << playerY << " playerX: " << playerX << std::endl;
@@ -278,10 +296,10 @@ int main(){
 	bool viewMap[(length*length)];
 	//int dRealList[13] = 	{ 8, 9,   6,3,2, 1, 4, 7, 8, 9,6,     3,2, 1, 4};  // Adjusted for map display.
 	double angleMap[length*length];
-	int actualMap[] = {	0,0,0,0,0,
-						0,1,1,1,0,
-						0,1,0,1,0,
-						0,1,1,1,0,
+	int actualMap[] = {	0,0,0,1,0,
+						0,1,1,2,0,
+						0,1,0,2,0,
+						0,1,1,2,0,
 						0,0,0,0,0};
 	for(int i = 0; i < length*length; i++)
 	{
