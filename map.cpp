@@ -2,19 +2,17 @@
 // The weird include needs the definition of the worldMap class for map constructor.
 
 
-map::map(unsigned int seedInput, const worldMap* parentWInput, const int yInput, 
-	const int xInput, const double pushInput, size_t mapSideInput, 
-	size_t tileSideInput, size_t battlefieldSideInput, const bool diagonalInput, const bool debugInput):
+map::map(unsigned int seedInput, const worldMap* parentWInput, const int yInput, const int xInput):
 	seed(seedInput),
 	parentW(parentWInput),
 	y(yInput),
 	x(xInput),
-	push(pushInput),
-	mapSide(mapSideInput),
-	tileSide(tileSideInput),
-	battlefieldSide(battlefieldSideInput),
-	diagonal(diagonalInput),
-	debug(debugInput)
+	push(parentW->push),
+	mapSide(parentW->mapSide),
+	tileSide(parentW->tileSide),
+	battlefieldSide(parentW->battlefieldSide),
+	diagonal(parentW->diagonal),
+	debug(parentW->debug)
 {
 	if(debug){
     	std::cout << "CREATING MAP " << this << " FOR " << parentW << std::endl; 
@@ -35,7 +33,7 @@ map::map(unsigned int seedInput, const worldMap* parentWInput, const int yInput,
     //printMap(heightMap,mapSide);
     for (int i = 0; i < mapSide*mapSide; ++i)
 	{
-		regionMap.push_back(tile(seedMap[i],this,((int)(i/mapSide)),i%mapSide,push,tileSide,battlefieldSide,diagonal,debug));
+		regionMap.push_back(tile(seedMap[i],this,((int)(i/mapSide)),i%mapSide));
 		//printMap(regionMap[i].tileMap,tileSide);
 		if(debug){
 			std::cout << "MAP " << this << ": #" << i << " TILE CREATED: " << &(regionMap[i]) << std::endl; 

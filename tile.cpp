@@ -1,18 +1,17 @@
 #include "map.hpp"
 // The weird include needs the definition of the map class for tile constructor.
 tile::tile(unsigned int seedInput, const map* parentMInput, const int yInput, 
-	const int xInput, const double pushInput, size_t tileSideInput, size_t battlefieldSideInput,
-	const bool diagonalInput, const bool debugInput):
+	const int xInput):
 	seed(seedInput),
 	parentM(parentMInput),
 	y(yInput),
 	x(xInput),
 	height(parentMInput->heightMap[y*(parentMInput->mapSide) + x]),
-	push(pushInput),
-	tileSide(tileSideInput),
-	battlefieldSide(battlefieldSideInput),
-	diagonal(diagonalInput),
-	debug(debugInput)
+	push(parentM->push),
+	tileSide(parentM->tileSide),
+	battlefieldSide(parentM->battlefieldSide),
+	diagonal(parentM->diagonal),
+	debug(parentM->debug)
 {
 	if(debug){
 		std::cout << "CREATING TILEMAP " << this << " FOR " << parentM << " FOR " << parentM->parentW << std::endl;

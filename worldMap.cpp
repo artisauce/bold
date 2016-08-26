@@ -22,7 +22,7 @@ worldMap::worldMap(unsigned int seedInput, const double pushInput, size_t worldM
 	}
     for (int i = 0; i < worldMapSide*worldMapSide; ++i)
 	{
-		bigMap.push_back(map(seedMap[i],this,((int)(i/worldMapSide)),i%worldMapSide,push,mapSide,tileSide,battlefieldSide,diagonal,debug)); 
+		bigMap.push_back(map(seedMap[i],this,((int)(i/worldMapSide)),i%worldMapSide)); 
 		if(debug){
 			std::cout << "WORLDMAP " << this << ": #" << i << " MAP CREATED: " << &(bigMap[i]) << std::endl; 
 		}

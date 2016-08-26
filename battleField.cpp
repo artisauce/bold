@@ -1,0 +1,70 @@
+#include "map.hpp"
+// The weird include needs the definition of the tile class for tile constructor.
+battlefield::battlefield(const tile* parentTInput):
+	seed(parentTInput->seed), // It's now the same when done in same tile. Woo.
+	parentT(parentTInput),
+	height(parentT->height),
+	battlefieldSide(parentT->battlefieldSide),
+	debug(parentT->debug)
+{
+	if(debug){
+		std::cout << "CREATING BATTLEFIELD " << this << " FOR " << parentT << " FOR " << parentT->parentM << " FOR " << parentT->parentM->parentW << std::endl;
+	}
+	unsigned int originalSeed = rand(); // From in-game. Should be unique each time.
+	srand(seed);
+	int treeStandard = 7;
+	int treeDeviation = 2;
+	double maxDensity = 0.15; // To be generalized from biome/map.
+	if(height-3 > 0){
+		maxDensity = maxDensity - ((double)(height-3))*(maxDensity/5); // to be generalized from biome/map instead later.
+	}
+	// NOTE: No cliff battles. We'll base generation off height, nothing else.
+	battleMap = new int[battlefieldSide*battlefieldSide];
+	for(int i = 0; i<(battlefieldSide*battlefieldSide); i++){
+		battleMap[i] = -3;
+	}
+	unsigned int amount = (unsigned int)(((double)(battlefieldSide*battlefieldSide))*maxDensity);
+	while(amount>0){
+		battleMap[((rand()%battlefieldSide)*battlefieldSide)+(rand()%battlefieldSide)] = 
+						treeStandard + (
+						(rand()%((treeDeviation*2)+1))-treeDeviation
+						);
+		amount--;
+	}	
+	if(debug){
+		std::cout << "CREATED BATTLEFIELD "<< this << " FOR " << parentT << " FOR " << parentT->parentM << " FOR " << parentT->parentM->parentW << std::endl;
+	srand(originalSeed);
+	}
+}
+
+battlefield::battlefield(battlefield const& src): // For copying -- MANDATORY FOR VECTORS, SEE: Rule of Three (C++)
+	seed(src.seed),
+	parentT(src.parentT),
+	height(src.height),
+	battlefieldSide(src.battlefieldSide),
+	debug(src.debug)
+{
+	if(debug){
+		std::cout << "CREATING BATTLEFIELD CPY " << this << " FOR " << parentT << " FOR " << parentT->parentM << " FOR " << parentT->parentM->parentW << std::endl;
+	}
+	battleMap = new int[battlefieldSide*battlefieldSide];
+	for (int i = 0; i < battlefieldSide*battlefieldSide; ++i)
+	{
+		//std::cout << i << std::endl;
+		battleMap[i] = src.battleMap[i];
+	}
+	if(debug){
+		std::cout << "CREATED BATTLEFIELD CPY " << this << " FOR " << parentT << " FOR " << parentT->parentM << " FOR " << parentT->parentM->parentW << std::endl;
+	}
+}
+
+
+battlefield::~battlefield(){
+	if(debug){
+		std::cout << "DELETING BATTLEFIELD " << this << " FOR " << parentT << " FOR " << parentT->parentM << " FOR " << parentT->parentM->parentW << std::endl;
+	}
+	delete[] battleMap;
+	if(debug){
+		std::cout << "DONE DELETING BATTLEFIELD " << this << " FOR " << parentT << " FOR " << parentT->parentM << " FOR " << parentT->parentM->parentW << std::endl;
+	}
+}
