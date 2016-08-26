@@ -10,16 +10,18 @@ public:
 
 	// -- Settings
 	const size_t battlefieldSide;
+	const int y;
+	const int x;
 	const int height;
 	const bool debug;
 	// -- Settings
 
 	// -- Maps
 	int* battleMap;
-	std::string tileSet;
+	std::string tileSet; // Different visuals for different places.
 	// -- Maps
 	
-	battlefield(const tile* parentTInput);
+	battlefield(const tile* parentTInput, const int yInput, const int xInput);
 	battlefield(battlefield const& src);
 	~battlefield();
 	

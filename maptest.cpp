@@ -13,8 +13,9 @@ int main () {
     size_t tileSide = 16;
     size_t battlefieldSide = 64;
     std::vector<std::string> tileSet;
-    tileSet.push_back("@");
-    tileSet.push_back("~");
+    tileSet.push_back("@"); // as -2. Player
+    tileSet.push_back("~"); // as -3. Ground
+    tileSet.push_back("T"); // as -4. Tree
     worldMap newMap(rand(), pushCoefficient, worldMapSide, mapSide, tileSide, battlefieldSide,  diagonal, debug);
     if(debug){
         std::cout << "--- EVERYTHING HAS BEEN MADE --- " << std::endl;
@@ -26,10 +27,18 @@ int main () {
     printMapVector(viewer,sider,tileSet);
     std::cout << " FULL MAP " << std::endl;
     printMap(newMap.bigMap[0].heightMap,mapSide,tileSet);
-    battlefield newBattle(&(newMap.bigMap[0].regionMap[((tileSide/2)*tileSide)+(tileSide/2)]));
+	// Top, should be barren snowland/rocky.
+	battlefield newBattle(&(newMap.bigMap[0].regionMap[((mapSide/2)*mapSide)+(mapSide/2)]),tileSide/2,tileSide/2);
 	printMap(newBattle.battleMap,battlefieldSide,tileSet);
-    //printMap(newMap.bigMap[0].regionMap[((mapSide*mapSide)/2)+2].tileMap,newMap.tileSide);
-
+	// A bit from the peak, less trees.
+	battlefield newBattleTwo(&(newMap.bigMap[0].regionMap[((mapSide/2)*mapSide)+(mapSide/2)+2]),tileSide/2,tileSide/2);
+	printMap(newBattleTwo.battleMap,battlefieldSide,tileSet);
+	// On the mainland, most trees.
+	battlefield newBattleThree(&(newMap.bigMap[0].regionMap[((mapSide/2)*mapSide)+(mapSide/4)]),tileSide/2,tileSide/2);
+	printMap(newBattleThree.battleMap,battlefieldSide,tileSet);
+	// Ocean. Should be nothing.
+	battlefield newBattleFour(&(newMap.bigMap[0].regionMap[((mapSide/2)*mapSide)]),tileSide/2,tileSide/2);
+	printMap(newBattleFour.battleMap,battlefieldSide,tileSet);
 }
 
 // TODO:
