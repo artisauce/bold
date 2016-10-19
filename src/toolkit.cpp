@@ -622,8 +622,12 @@ void printMap(int* map, unsigned int side, std::vector<std::string>& tileSet){
             if(map[i] == -1){
                 std::cout << " "; // -1 is always blank.
             }
+		else if(map[i] == -2){
+			i = (((int)(i/side))*side)+(side-1);
+		}
             else{
-                std::cout << tileSet[abs(map[i])-2]; // Tilesets
+                //std::cout << abs(map[i])-2 << std::endl;
+                std::cout << tileSet[abs(map[i])-3]; // Tilesets
             }
         }
         else{
@@ -645,26 +649,56 @@ void rawPrintMapVector(std::vector<int>& map, unsigned int side){
 
 }
 
+//void printMapVector(std::vector<int>& map, unsigned int side, std::vector<std::string>& tileSet){
+//	std::string output = "";
+//    for (int i = 0; i < side*side; ++i)
+//    {
+ //       if(i%side == 0){
+//		output+='\n';
+ //       }
+ //       if(map[i] < 0){
+ //           if(map[i] == -1){
+//		output+=' '; // -1 is always blank.
+  //          }
+   //         else{
+   //             output+=tileSet[abs(map[i])-2]; // Tilesets
+  //          }
+  //      }
+  //      else{
+//		std::cout <<map[i]<<std::endl;
+  //          output+=map[i];
+  //      }
+  //  }
+  //  std::cout << output.c_str() << std::endl;
+//}
+
 void printMapVector(std::vector<int>& map, unsigned int side, std::vector<std::string>& tileSet){
+	std::cout << std::flush; // Remove everything in buffer
     for (int i = 0; i < side*side; ++i)
     {
         if(i%side == 0){
-           std::cout << std::endl;
+           std::cout << "\n";
         }
+	//usleep(500);
+	//std::cout << "\n";
+	//std::cout << i << " " << side << "\n";
         if(map[i] < 0){
             if(map[i] == -1){
                 std::cout << " "; // -1 is always blank.
             }
+		else if(map[i] == -2){
+			i = (((int)(i/side))*side)+(side-1);
+		}
             else{
                 //std::cout << abs(map[i])-2 << std::endl;
-                std::cout << tileSet[abs(map[i])-2]; // Tilesets
+                std::cout << tileSet[abs(map[i])-3]; // Tilesets
             }
         }
         else{
             std::cout << map[i];
         }
     }
-    std::cout << std::endl;
+    std::cout << std::endl; // Flushes by default as well.
 }
 
 void genTile(int seed, double pushCoefficient, int pointY, int pointX, int* map, 

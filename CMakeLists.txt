@@ -4,7 +4,7 @@ project(maptest)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY build)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY build)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY build)
-SET (CMAKE_CXX_FLAGS "-std=c++11")
+SET (CMAKE_CXX_FLAGS "-std=c++11 -lSDL2")
 #-lm -lstdc++ incase those errors pop up again
 
 if (${CMAKE_CXX_COMPILER_ID} STREQUAL Clang)

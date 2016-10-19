@@ -34,6 +34,6 @@ public:
 	~worldMap();
 };
 
-unsigned int view(map& theMap, unsigned int regionY, unsigned int regionX, 
-				unsigned int tileY, unsigned int tileX,
-				unsigned int viewRadius, bool mapView,  bool circle, bool borders, bool playerSee, bool wallMode ,std::vector<int>& viewMap);
+unsigned int view(map& theMap, int regionY, int regionX, 
+				int tileY,  int tileX,
+				int viewRadius, bool mapView,  bool circle, bool borders, bool playerSee, bool wallMode ,std::vector<int>& viewMap);

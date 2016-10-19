@@ -44,11 +44,12 @@ worldMap::~worldMap(){
 }
 
 // Precondition: You're on a valid tile.
-unsigned int view(	map& theMap, unsigned int regionY, unsigned int regionX, 
-					unsigned int tileY, unsigned int tileX,
-					unsigned int viewRadius, bool mapView, bool circle, bool borders, bool playerSee, bool wallMode, std::vector<int>& viewMap){
+unsigned int view(	map& theMap,  int regionY, int regionX, 
+					 int tileY, int tileX, // Why int's? Because we'll want to still display even in negatives,
+								// top/left/topleft from the map. Don't worry about it too much.
+					int viewRadius, bool mapView, bool circle, bool borders, bool playerSee, bool wallMode, std::vector<int>& viewMap){
 	// why there's problems: angles, viewing from a platau, you wouldn't be able to see below, from side, you would.
-	// view up: algorithm that's efficient. returns angles, compares. see notes in book.
+	// view up: algorithm that's efficient. returns angles, compares. see notes in THE book.
 	int viewTileWidth = (viewRadius*2)+1;
 	int tileSide = theMap.tileSide;
 	int mapSide = theMap.mapSide;
@@ -72,28 +73,33 @@ unsigned int view(	map& theMap, unsigned int regionY, unsigned int regionX,
 		//This is a useful hack. coder plz
 	}
 	if(circle){
-		centerPixelX = tileX+0.5;
-		centerPixelY = tileY+0.5;
+		centerPixelX = (float)tileX+0.5;
+		centerPixelY = (float)tileY+0.5;
 	}
 	for (int y = -(viewTileWidth/2); y <= (viewTileWidth/2); y++)
 	{
 		for (int x = -(viewTileWidth/2); x <= (viewTileWidth/2); x++)
 		{
 			if(circle){
-				float A = (float)x+tileX;
-				float B = (float)y+tileY;
+				float A = (float)x+(float)tileX;
+				float B = (float)y+(float)tileY;
 				if(A < tileX){
 					A++;
 				}
 				if(B < tileY){
 					B++;
 				}
-				B = B - centerPixelX;
-				A = A - centerPixelY;
+				B = B - centerPixelY; // Rogue bug: Found out these were swapped.
+				A = A - centerPixelX; // See? Takes hours just to finds these...
 				float difference = (A*A)+(B*B);
 				if(difference > (viewRadius*viewRadius)){
-					//std::cout << A << " " << tileX << " " << B << " " << tileY << std::endl;
-					viewMap.push_back(-1);
+					//std::cout << "G" << std::endl;
+					if(x>=0){
+						viewMap.push_back(-2);
+					}
+					else{
+						viewMap.push_back(-1);
+					}
 					continue;
 					//std::cout << "GO" << std::endl;
 				}
@@ -187,7 +193,7 @@ unsigned int view(	map& theMap, unsigned int regionY, unsigned int regionX,
 		}
 	}
 	if(playerSee){
-		viewMap[(middle*viewTileWidth)+middle] = -2;
+		viewMap[(middle*viewTileWidth)+middle] = -3;
 	}
 	return viewTileWidth;
 }
