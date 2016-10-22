@@ -4,8 +4,12 @@ project(maptest)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY build)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY build)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY build)
-SET (CMAKE_CXX_FLAGS "-std=c++11 -lSDL2")
+SET (CMAKE_CXX_FLAGS "-std=c++11")
+#ADD_LIBRARY(SDL2 STATIC IMPORTED)
+#SET_TARGET_PROPERTIES(SDL2 PROPERTIES
+#    IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/libSDL2.a)
 #-lm -lstdc++ incase those errors pop up again
+
 
 if (${CMAKE_CXX_COMPILER_ID} STREQUAL Clang)
         set(FIPS_CLANG 1)
@@ -22,6 +26,7 @@ if (${CMAKE_CXX_COMPILER_ID} STREQUAL Clang)
 
 #Bring the headers, such as Student.h into the project
 include_directories(include)
+include_directories(${CMAKE_SOURCE_DIR}/include/sdl/)
 
 #Can manually add the sources using the set command as follows:
 #set(SOURCES src/mainapp.cpp src/Student.cpp)
@@ -30,3 +35,7 @@ include_directories(include)
 file(GLOB SOURCES "src/*.cpp")
 
 add_executable(maptest ${SOURCES})
+target_link_libraries(maptest ${CMAKE_SOURCE_DIR}/libSDL2.a)
+target_link_libraries(maptest ${CMAKE_SOURCE_DIR}/libsndio.so.6.1)
+target_link_libraries(maptest ${CMAKE_SOURCE_DIR}/libdl.so)
+target_link_libraries(maptest ${CMAKE_SOURCE_DIR}/libpthread.so)

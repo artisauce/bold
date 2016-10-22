@@ -1,5 +1,5 @@
 #include "worldMap.hpp"
-#include <SDL2/SDL.h>
+#include "SDL.h"
 // Current compile: clang maptest.cpp worldMap.cpp map.cpp tile.cpp toolkit.cpp battleField.cpp -lm -lstdc++ -std=c++11
 
 //Key press surfaces constants
@@ -193,4 +193,3 @@ int main( int argc, char* args[] )
 
 // TODO:
 // Have battlefields stored in tiles after a battle to re-use, as battles can impact terrain. (!)
-// Find a way to increase std cout buffer so that it doesn't flush after 8196 bytes. (!)
