@@ -10,7 +10,21 @@ ALSO REMEMBER TO COMPILE ON LINUX AND WINDOWS. WE NEED TO ALWAYS VERIFY THAT IT 
 
 Because I still haven't done that.
 
-Instructions:
+-----------------------------------------------------------------------
+
+To compile: Learn how to use Cmake.
+
+Lazy instructions: "sudo apt-get install cmake"
+
+Install, then: "cmake ."
+
+then you make your makefile.
+
+then, "make". You now compiled.
+
+---------------------------------------------------------------------
+
+Game Instructions:
 
 Arrow keys to move up left down right.
 
@@ -19,4 +33,6 @@ Press m to toggle big map mode.
 Remember to have the "MAP MOVE" window selected when doing this, and to press X on the window when done.
 
 To run, "./build/maptest"
+
+
 
