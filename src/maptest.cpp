@@ -1,5 +1,5 @@
 #include "worldMap.hpp"
-#include <SDL2/SDL.h>
+#include "SDL.h"
 // Current compile: clang maptest.cpp worldMap.cpp map.cpp tile.cpp toolkit.cpp battleField.cpp -lm -lstdc++ -std=c++11
 
 //Key press surfaces constants
