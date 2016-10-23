@@ -16,33 +16,33 @@ SDL_Window* gWindow = NULL;
 
 // This shows nice printout of map. It's nice.
 void displayStuff(int sider, std::vector<int>& map, int maxHeight){
+	// Clears screen
 	SDL_SetRenderDrawColor( gRenderer, 0x00, 0x00, 0x00, 0xFF );
 	SDL_RenderClear( gRenderer );
 	SDL_Rect fillRect;
+	// We want to calculate these only once.
 	int tileWidth = SCREEN_WIDTH/sider;
-	//std::cout << tileWidth << std::endl;
 	int tileWidthM = (SCREEN_WIDTH/sider) -1;
 	int tileHeight = SCREEN_HEIGHT/sider;
 	int tileHeightM = (SCREEN_HEIGHT/sider) -1;
-	for(int check = 0;check<sider*sider;check++){
+	for(int check = 0;check<sider*sider;check++){ // Go through each tile in the map inputted.
+		// Make the tile.
 		fillRect = {tileWidth*(check%sider), tileHeight*(check/sider), tileWidthM, tileHeightM};
-		//RGBA
 		if(map[check] > 0){
-		//std::cout << tileWidth*(check%sider) << std::endl;
-		//usleep(20000);
-               	 SDL_SetRenderDrawColor( gRenderer, (int)(255.0*sqrt((float)(map[check])/(float)maxHeight)), 255, (int)(255.0*((float)(map[check])/(float)maxHeight)), 255 ); 
+		//RGBA
+               	 SDL_SetRenderDrawColor( gRenderer, (int)(255.0*sqrt((float)(map[check])/(float)maxHeight)), 255, (int)(255.0*((float)(map[check])/(float)maxHeight)), 255 ); // Set to variable degree of GREEEEN
 		}
-		else if(map[check] == 0){
+		else if(map[check] == 0){ // BLUUUEEEE
                	 SDL_SetRenderDrawColor( gRenderer, 0, 0, 255, 255 ); 
 		}
-		else if(map[check] == -3){
+		else if(map[check] == -3){ /// Purple. That's you.
                	 SDL_SetRenderDrawColor( gRenderer, 255, 0, 255, 255 ); 
 		}
-		else {
+		else {	// Black. That's everything else.
 			SDL_SetRenderDrawColor( gRenderer, 0, 0, 0, 255 );
 		}
+		// Fill in with color.
                	SDL_RenderFillRect( gRenderer, &fillRect );
-		//SDL_RenderPresent( gRenderer );
 	}
 	//Update screenos
 	SDL_RenderPresent( gRenderer );
@@ -99,6 +99,7 @@ int main( int argc, char* args[] )
 {
 	std::ios::sync_with_stdio(false); // This allows fast output for the move demo.
     srand(time(NULL));
+	// Constants.
     bool debug = false;
     bool diagonal = true;
     double pushCoefficient = 0.1;
@@ -115,6 +116,7 @@ int main( int argc, char* args[] )
         std::cout << "--- EVERYTHING HAS BEEN MADE --- " << std::endl;
     }
     std::vector<int> viewer;
+	// More constants.
     unsigned int sider;
 	 int playerXRegion = 25;
 	int playerYRegion = 25;
@@ -223,17 +225,17 @@ int main( int argc, char* args[] )
 							}
 							break;
 
-							case SDLK_m:
+							case SDLK_m: // Toggle map
 							mapView=!mapView;
 							SDL_Delay(250);
 							break;
 
-							case SDLK_MINUS:
+							case SDLK_MINUS: // Decrease view
 							viewRadius--;
 							SDL_Delay(250);
 							break;
 
-							case SDLK_EQUALS:
+							case SDLK_EQUALS: // Increase view
 							viewRadius++;
 							SDL_Delay(250);
 							break;
@@ -243,10 +245,10 @@ int main( int argc, char* args[] )
 							break;
 						}
 						if(updateScreen){
-							viewer.clear();
-							sider = view(newMap.bigMap[0], playerYRegion, playerXRegion, playerYTile, playerXTile, viewRadius,mapView,true,false,true,true,viewer);
-							printMapVector(viewer,sider,tileSet);
-							displayStuff(sider,viewer,8);
+							viewer.clear(); // Clear print console map.
+							sider = view(newMap.bigMap[0], playerYRegion, playerXRegion, playerYTile, playerXTile, viewRadius,mapView,true,false,true,true,viewer); // Sider is length.
+							printMapVector(viewer,sider,tileSet); // This for console.
+							displayStuff(sider,viewer,8); // This for graphocs.
 						}
 					}
 				}
@@ -274,3 +276,4 @@ int main( int argc, char* args[] )
 
 // TODO:
 // Have battlefields stored in tiles after a battle to re-use, as battles can impact terrain. (!)
+// Viewline changes - will need some changes. Player can't really see much that's useful. Too strict.
