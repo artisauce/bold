@@ -1,3 +1,0 @@
-/home/gefer8/bold/CMakeFiles/edit_cache.dir
-/home/gefer8/bold/CMakeFiles/rebuild_cache.dir
-/home/gefer8/bold/CMakeFiles/maptest.dir
