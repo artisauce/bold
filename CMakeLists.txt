@@ -36,13 +36,9 @@ include_directories(${CMAKE_SOURCE_DIR}/include/sdl_image/)
 file(GLOB SOURCES "src/*.cpp")
 
 add_executable(maptest ${SOURCES})
-#target_link_libraries(maptest ${CMAKE_SOURCE_DIR}/libSDL2_image.a)
-target_link_libraries(maptest ${CMAKE_SOURCE_DIR}/libSDL2_image-2.0.so.0.0.1)
-target_link_libraries(maptest ${CMAKE_SOURCE_DIR}/libSDL2-2.0.so.0)
-target_link_libraries(maptest ${CMAKE_SOURCE_DIR}/libsndio.so.6.1)
-target_link_libraries(maptest ${CMAKE_SOURCE_DIR}/libdl.so)
-target_link_libraries(maptest ${CMAKE_SOURCE_DIR}/libpthread.so)
-
-#target_link_libraries(maptest ${CMAKE_SOURCE_DIR}/libSDL2_image-2.0.so.0)
-#target_link_libraries(maptest ${CMAKE_SOURCE_DIR}/libSDL2_image-2.0.so.0.0.1)
+target_link_libraries(maptest ${CMAKE_SOURCE_DIR}/libs/libSDL2_image-2.0.so)
+target_link_libraries(maptest ${CMAKE_SOURCE_DIR}/libs/libSDL2.so)
+target_link_libraries(maptest ${CMAKE_SOURCE_DIR}/libs/libsndio.so.6.1)
+target_link_libraries(maptest ${CMAKE_SOURCE_DIR}/libs/libdl.so)
+target_link_libraries(maptest ${CMAKE_SOURCE_DIR}/libs/libpthread.so)
 

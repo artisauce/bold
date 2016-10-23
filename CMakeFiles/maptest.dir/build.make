@@ -57,9 +57,33 @@ include CMakeFiles/maptest.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/maptest.dir/flags.make
 
+CMakeFiles/maptest.dir/src/worldMap.cpp.o: CMakeFiles/maptest.dir/flags.make
+CMakeFiles/maptest.dir/src/worldMap.cpp.o: src/worldMap.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/gefer8/bold/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/maptest.dir/src/worldMap.cpp.o"
+	/usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/maptest.dir/src/worldMap.cpp.o -c /home/gefer8/bold/src/worldMap.cpp
+
+CMakeFiles/maptest.dir/src/worldMap.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/maptest.dir/src/worldMap.cpp.i"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/gefer8/bold/src/worldMap.cpp > CMakeFiles/maptest.dir/src/worldMap.cpp.i
+
+CMakeFiles/maptest.dir/src/worldMap.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/maptest.dir/src/worldMap.cpp.s"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/gefer8/bold/src/worldMap.cpp -o CMakeFiles/maptest.dir/src/worldMap.cpp.s
+
+CMakeFiles/maptest.dir/src/worldMap.cpp.o.requires:
+
+.PHONY : CMakeFiles/maptest.dir/src/worldMap.cpp.o.requires
+
+CMakeFiles/maptest.dir/src/worldMap.cpp.o.provides: CMakeFiles/maptest.dir/src/worldMap.cpp.o.requires
+	$(MAKE) -f CMakeFiles/maptest.dir/build.make CMakeFiles/maptest.dir/src/worldMap.cpp.o.provides.build
+.PHONY : CMakeFiles/maptest.dir/src/worldMap.cpp.o.provides
+
+CMakeFiles/maptest.dir/src/worldMap.cpp.o.provides.build: CMakeFiles/maptest.dir/src/worldMap.cpp.o
+
+
 CMakeFiles/maptest.dir/src/tile.cpp.o: CMakeFiles/maptest.dir/flags.make
 CMakeFiles/maptest.dir/src/tile.cpp.o: src/tile.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/gefer8/bold/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/maptest.dir/src/tile.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/gefer8/bold/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/maptest.dir/src/tile.cpp.o"
 	/usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/maptest.dir/src/tile.cpp.o -c /home/gefer8/bold/src/tile.cpp
 
 CMakeFiles/maptest.dir/src/tile.cpp.i: cmake_force
@@ -83,7 +107,7 @@ CMakeFiles/maptest.dir/src/tile.cpp.o.provides.build: CMakeFiles/maptest.dir/src
 
 CMakeFiles/maptest.dir/src/map.cpp.o: CMakeFiles/maptest.dir/flags.make
 CMakeFiles/maptest.dir/src/map.cpp.o: src/map.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/gefer8/bold/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/maptest.dir/src/map.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/gefer8/bold/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/maptest.dir/src/map.cpp.o"
 	/usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/maptest.dir/src/map.cpp.o -c /home/gefer8/bold/src/map.cpp
 
 CMakeFiles/maptest.dir/src/map.cpp.i: cmake_force
@@ -103,30 +127,6 @@ CMakeFiles/maptest.dir/src/map.cpp.o.provides: CMakeFiles/maptest.dir/src/map.cp
 .PHONY : CMakeFiles/maptest.dir/src/map.cpp.o.provides
 
 CMakeFiles/maptest.dir/src/map.cpp.o.provides.build: CMakeFiles/maptest.dir/src/map.cpp.o
-
-
-CMakeFiles/maptest.dir/src/toolkit.cpp.o: CMakeFiles/maptest.dir/flags.make
-CMakeFiles/maptest.dir/src/toolkit.cpp.o: src/toolkit.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/gefer8/bold/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/maptest.dir/src/toolkit.cpp.o"
-	/usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/maptest.dir/src/toolkit.cpp.o -c /home/gefer8/bold/src/toolkit.cpp
-
-CMakeFiles/maptest.dir/src/toolkit.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/maptest.dir/src/toolkit.cpp.i"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/gefer8/bold/src/toolkit.cpp > CMakeFiles/maptest.dir/src/toolkit.cpp.i
-
-CMakeFiles/maptest.dir/src/toolkit.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/maptest.dir/src/toolkit.cpp.s"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/gefer8/bold/src/toolkit.cpp -o CMakeFiles/maptest.dir/src/toolkit.cpp.s
-
-CMakeFiles/maptest.dir/src/toolkit.cpp.o.requires:
-
-.PHONY : CMakeFiles/maptest.dir/src/toolkit.cpp.o.requires
-
-CMakeFiles/maptest.dir/src/toolkit.cpp.o.provides: CMakeFiles/maptest.dir/src/toolkit.cpp.o.requires
-	$(MAKE) -f CMakeFiles/maptest.dir/build.make CMakeFiles/maptest.dir/src/toolkit.cpp.o.provides.build
-.PHONY : CMakeFiles/maptest.dir/src/toolkit.cpp.o.provides
-
-CMakeFiles/maptest.dir/src/toolkit.cpp.o.provides.build: CMakeFiles/maptest.dir/src/toolkit.cpp.o
 
 
 CMakeFiles/maptest.dir/src/maptest.cpp.o: CMakeFiles/maptest.dir/flags.make
@@ -177,54 +177,54 @@ CMakeFiles/maptest.dir/src/battleField.cpp.o.provides: CMakeFiles/maptest.dir/sr
 CMakeFiles/maptest.dir/src/battleField.cpp.o.provides.build: CMakeFiles/maptest.dir/src/battleField.cpp.o
 
 
-CMakeFiles/maptest.dir/src/worldMap.cpp.o: CMakeFiles/maptest.dir/flags.make
-CMakeFiles/maptest.dir/src/worldMap.cpp.o: src/worldMap.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/gefer8/bold/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/maptest.dir/src/worldMap.cpp.o"
-	/usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/maptest.dir/src/worldMap.cpp.o -c /home/gefer8/bold/src/worldMap.cpp
+CMakeFiles/maptest.dir/src/toolkit.cpp.o: CMakeFiles/maptest.dir/flags.make
+CMakeFiles/maptest.dir/src/toolkit.cpp.o: src/toolkit.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/gefer8/bold/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/maptest.dir/src/toolkit.cpp.o"
+	/usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/maptest.dir/src/toolkit.cpp.o -c /home/gefer8/bold/src/toolkit.cpp
 
-CMakeFiles/maptest.dir/src/worldMap.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/maptest.dir/src/worldMap.cpp.i"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/gefer8/bold/src/worldMap.cpp > CMakeFiles/maptest.dir/src/worldMap.cpp.i
+CMakeFiles/maptest.dir/src/toolkit.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/maptest.dir/src/toolkit.cpp.i"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/gefer8/bold/src/toolkit.cpp > CMakeFiles/maptest.dir/src/toolkit.cpp.i
 
-CMakeFiles/maptest.dir/src/worldMap.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/maptest.dir/src/worldMap.cpp.s"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/gefer8/bold/src/worldMap.cpp -o CMakeFiles/maptest.dir/src/worldMap.cpp.s
+CMakeFiles/maptest.dir/src/toolkit.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/maptest.dir/src/toolkit.cpp.s"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/gefer8/bold/src/toolkit.cpp -o CMakeFiles/maptest.dir/src/toolkit.cpp.s
 
-CMakeFiles/maptest.dir/src/worldMap.cpp.o.requires:
+CMakeFiles/maptest.dir/src/toolkit.cpp.o.requires:
 
-.PHONY : CMakeFiles/maptest.dir/src/worldMap.cpp.o.requires
+.PHONY : CMakeFiles/maptest.dir/src/toolkit.cpp.o.requires
 
-CMakeFiles/maptest.dir/src/worldMap.cpp.o.provides: CMakeFiles/maptest.dir/src/worldMap.cpp.o.requires
-	$(MAKE) -f CMakeFiles/maptest.dir/build.make CMakeFiles/maptest.dir/src/worldMap.cpp.o.provides.build
-.PHONY : CMakeFiles/maptest.dir/src/worldMap.cpp.o.provides
+CMakeFiles/maptest.dir/src/toolkit.cpp.o.provides: CMakeFiles/maptest.dir/src/toolkit.cpp.o.requires
+	$(MAKE) -f CMakeFiles/maptest.dir/build.make CMakeFiles/maptest.dir/src/toolkit.cpp.o.provides.build
+.PHONY : CMakeFiles/maptest.dir/src/toolkit.cpp.o.provides
 
-CMakeFiles/maptest.dir/src/worldMap.cpp.o.provides.build: CMakeFiles/maptest.dir/src/worldMap.cpp.o
+CMakeFiles/maptest.dir/src/toolkit.cpp.o.provides.build: CMakeFiles/maptest.dir/src/toolkit.cpp.o
 
 
 # Object files for target maptest
 maptest_OBJECTS = \
+"CMakeFiles/maptest.dir/src/worldMap.cpp.o" \
 "CMakeFiles/maptest.dir/src/tile.cpp.o" \
 "CMakeFiles/maptest.dir/src/map.cpp.o" \
-"CMakeFiles/maptest.dir/src/toolkit.cpp.o" \
 "CMakeFiles/maptest.dir/src/maptest.cpp.o" \
 "CMakeFiles/maptest.dir/src/battleField.cpp.o" \
-"CMakeFiles/maptest.dir/src/worldMap.cpp.o"
+"CMakeFiles/maptest.dir/src/toolkit.cpp.o"
 
 # External object files for target maptest
 maptest_EXTERNAL_OBJECTS =
 
+build/maptest: CMakeFiles/maptest.dir/src/worldMap.cpp.o
 build/maptest: CMakeFiles/maptest.dir/src/tile.cpp.o
 build/maptest: CMakeFiles/maptest.dir/src/map.cpp.o
-build/maptest: CMakeFiles/maptest.dir/src/toolkit.cpp.o
 build/maptest: CMakeFiles/maptest.dir/src/maptest.cpp.o
 build/maptest: CMakeFiles/maptest.dir/src/battleField.cpp.o
-build/maptest: CMakeFiles/maptest.dir/src/worldMap.cpp.o
+build/maptest: CMakeFiles/maptest.dir/src/toolkit.cpp.o
 build/maptest: CMakeFiles/maptest.dir/build.make
-build/maptest: libSDL2_image-2.0.so.0.0.1
-build/maptest: libSDL2-2.0.so.0
-build/maptest: libsndio.so.6.1
-build/maptest: libdl.so
-build/maptest: libpthread.so
+build/maptest: libs/libSDL2_image-2.0.so
+build/maptest: libs/libSDL2.so
+build/maptest: libs/libsndio.so.6.1
+build/maptest: libs/libdl.so
+build/maptest: libs/libpthread.so
 build/maptest: CMakeFiles/maptest.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/gefer8/bold/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Linking CXX executable build/maptest"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/maptest.dir/link.txt --verbose=$(VERBOSE)
@@ -234,12 +234,12 @@ CMakeFiles/maptest.dir/build: build/maptest
 
 .PHONY : CMakeFiles/maptest.dir/build
 
+CMakeFiles/maptest.dir/requires: CMakeFiles/maptest.dir/src/worldMap.cpp.o.requires
 CMakeFiles/maptest.dir/requires: CMakeFiles/maptest.dir/src/tile.cpp.o.requires
 CMakeFiles/maptest.dir/requires: CMakeFiles/maptest.dir/src/map.cpp.o.requires
-CMakeFiles/maptest.dir/requires: CMakeFiles/maptest.dir/src/toolkit.cpp.o.requires
 CMakeFiles/maptest.dir/requires: CMakeFiles/maptest.dir/src/maptest.cpp.o.requires
 CMakeFiles/maptest.dir/requires: CMakeFiles/maptest.dir/src/battleField.cpp.o.requires
-CMakeFiles/maptest.dir/requires: CMakeFiles/maptest.dir/src/worldMap.cpp.o.requires
+CMakeFiles/maptest.dir/requires: CMakeFiles/maptest.dir/src/toolkit.cpp.o.requires
 
 .PHONY : CMakeFiles/maptest.dir/requires
 
