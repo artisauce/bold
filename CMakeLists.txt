@@ -27,6 +27,7 @@ if (${CMAKE_CXX_COMPILER_ID} STREQUAL Clang)
 #Bring the headers, such as Student.h into the project
 include_directories(include)
 include_directories(${CMAKE_SOURCE_DIR}/include/sdl/)
+include_directories(${CMAKE_SOURCE_DIR}/include/sdl_image/)
 
 #Can manually add the sources using the set command as follows:
 #set(SOURCES src/mainapp.cpp src/Student.cpp)
@@ -35,7 +36,9 @@ include_directories(${CMAKE_SOURCE_DIR}/include/sdl/)
 file(GLOB SOURCES "src/*.cpp")
 
 add_executable(maptest ${SOURCES})
-target_link_libraries(maptest ${CMAKE_SOURCE_DIR}/libSDL2.a)
-target_link_libraries(maptest ${CMAKE_SOURCE_DIR}/libsndio.so.6.1)
-target_link_libraries(maptest ${CMAKE_SOURCE_DIR}/libdl.so)
-target_link_libraries(maptest ${CMAKE_SOURCE_DIR}/libpthread.so)
+target_link_libraries(maptest ${CMAKE_SOURCE_DIR}/libs/libSDL2_image-2.0.so)
+target_link_libraries(maptest ${CMAKE_SOURCE_DIR}/libs/libSDL2.so)
+target_link_libraries(maptest ${CMAKE_SOURCE_DIR}/libs/libsndio.so.6.1)
+target_link_libraries(maptest ${CMAKE_SOURCE_DIR}/libs/libdl.so)
+target_link_libraries(maptest ${CMAKE_SOURCE_DIR}/libs/libpthread.so)
+
