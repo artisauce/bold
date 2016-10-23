@@ -14,6 +14,40 @@ SDL_Renderer* gRenderer = NULL;
 //The window we'll be rendering to
 SDL_Window* gWindow = NULL;
 
+// This shows nice printout of map. It's nice.
+void displayStuff(int sider, std::vector<int>& map, int maxHeight){
+	SDL_SetRenderDrawColor( gRenderer, 0x00, 0x00, 0x00, 0xFF );
+	SDL_RenderClear( gRenderer );
+	SDL_Rect fillRect;
+	int tileWidth = SCREEN_WIDTH/sider;
+	//std::cout << tileWidth << std::endl;
+	int tileWidthM = (SCREEN_WIDTH/sider) -1;
+	int tileHeight = SCREEN_HEIGHT/sider;
+	int tileHeightM = (SCREEN_HEIGHT/sider) -1;
+	for(int check = 0;check<sider*sider;check++){
+		fillRect = {tileWidth*(check%sider), tileHeight*(check/sider), tileWidthM, tileHeightM};
+		//RGBA
+		if(map[check] > 0){
+		//std::cout << tileWidth*(check%sider) << std::endl;
+		//usleep(20000);
+               	 SDL_SetRenderDrawColor( gRenderer, (int)(255.0*sqrt((float)(map[check])/(float)maxHeight)), 255, (int)(255.0*((float)(map[check])/(float)maxHeight)), 255 ); 
+		}
+		else if(map[check] == 0){
+               	 SDL_SetRenderDrawColor( gRenderer, 0, 0, 255, 255 ); 
+		}
+		else if(map[check] == -3){
+               	 SDL_SetRenderDrawColor( gRenderer, 255, 0, 255, 255 ); 
+		}
+		else {
+			SDL_SetRenderDrawColor( gRenderer, 0, 0, 0, 255 );
+		}
+               	SDL_RenderFillRect( gRenderer, &fillRect );
+		//SDL_RenderPresent( gRenderer );
+	}
+	//Update screenos
+	SDL_RenderPresent( gRenderer );
+}
+
 bool init()
 {
 	//Initialization flag
@@ -45,7 +79,7 @@ bool init()
 			else
 			{
 				//Initialize renderer color
-				SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
+				SDL_SetRenderDrawColor( gRenderer, 255, 255, 255, 255 );
 
 				//Initialize PNG loading
 				int imgFlags = IMG_INIT_PNG;
@@ -118,10 +152,6 @@ int main( int argc, char* args[] )
 			int playerMove = 1;
 			//Event handler
 			SDL_Event e;
-			SDL_Rect fillRect = { SCREEN_WIDTH / 4, SCREEN_HEIGHT / 4, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 };
-               	 	SDL_SetRenderDrawColor( gRenderer, 0xFF, 0x00, 0x00, 0xFF );        
-                	SDL_RenderFillRect( gRenderer, &fillRect );
-
 			//While application is running
 			while( !quit )
 			{
@@ -216,6 +246,7 @@ int main( int argc, char* args[] )
 							viewer.clear();
 							sider = view(newMap.bigMap[0], playerYRegion, playerXRegion, playerYTile, playerXTile, viewRadius,mapView,true,false,true,true,viewer);
 							printMapVector(viewer,sider,tileSet);
+							displayStuff(sider,viewer,8);
 						}
 					}
 				}
