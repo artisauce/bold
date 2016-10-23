@@ -1,20 +1,15 @@
 #include "worldMap.hpp"
 #include "SDL.h"
-// Current compile: clang maptest.cpp worldMap.cpp map.cpp tile.cpp toolkit.cpp battleField.cpp -lm -lstdc++ -std=c++11
+#include "SDL_image.h"
 
-//Key press surfaces constants
-enum KeyPressSurfaces
-{
-	KEY_PRESS_SURFACE_DEFAULT,
-	KEY_PRESS_SURFACE_UP,
-	KEY_PRESS_SURFACE_DOWN,
-	KEY_PRESS_SURFACE_LEFT,
-	KEY_PRESS_SURFACE_RIGHT,
-	KEY_PRESS_SURFACE_TOTAL
-};
+const int SCREEN_WIDTH = 640;
+const int SCREEN_HEIGHT = 480;
 
 //Starts up SDL and creates window
 bool init();
+
+//The window renderer
+SDL_Renderer* gRenderer = NULL;
 
 //The window we'll be rendering to
 SDL_Window* gWindow = NULL;
@@ -33,11 +28,33 @@ bool init()
 	else
 	{
 		//Create window
-		gWindow = SDL_CreateWindow( "MAP MOVE", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 300, 0, SDL_WINDOW_SHOWN );
+		gWindow = SDL_CreateWindow( "MAP MOVE", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,  SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN );
 		if( gWindow == NULL )
 		{
 			printf( "Window could not be created! SDL Error: %s\n", SDL_GetError() );
 			success = false;
+		}
+		else {
+			//Create renderer for window
+			gRenderer = SDL_CreateRenderer( gWindow, -1, SDL_RENDERER_ACCELERATED );
+			if( gRenderer == NULL )
+			{
+				printf( "Renderer could not be created! SDL Error: %s\n", SDL_GetError() );
+				success = false;
+			}
+			else
+			{
+				//Initialize renderer color
+				SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
+
+				//Initialize PNG loading
+				int imgFlags = IMG_INIT_PNG;
+				if( !( IMG_Init( imgFlags ) & imgFlags ) )
+				{
+					printf( "SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError() );
+					success = false;
+				}
+			}
 		}
 	}
 
@@ -97,9 +114,13 @@ int main( int argc, char* args[] )
 	{	
 			//Main loop flag
 			bool quit = false;
-
+			bool updateScreen = false;
+			int playerMove = 1;
 			//Event handler
 			SDL_Event e;
+			SDL_Rect fillRect = { SCREEN_WIDTH / 4, SCREEN_HEIGHT / 4, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 };
+               	 	SDL_SetRenderDrawColor( gRenderer, 0xFF, 0x00, 0x00, 0xFF );        
+                	SDL_RenderFillRect( gRenderer, &fillRect );
 
 			//While application is running
 			while( !quit )
@@ -116,11 +137,15 @@ int main( int argc, char* args[] )
 					//User presses a key
 					else if( e.type == SDL_KEYDOWN )
 					{
+						updateScreen = true;
 						//Select surfaces based on key press
 						switch( e.key.keysym.sym )
 						{
 							case SDLK_UP:
-							if(!playerYTile){
+							if(mapView){ // go fast
+								playerYRegion--;
+							}
+							else if(!playerYTile){
 								playerYRegion--;
 								playerYTile = tileSide-1;
 							}	
@@ -130,7 +155,10 @@ int main( int argc, char* args[] )
 							break;
 
 							case SDLK_DOWN:
-							if(playerYTile==tileSide-1){
+							if(mapView){ // go fast
+								playerYRegion++;
+							}
+							else if(playerYTile==tileSide-1){
 								playerYRegion++;
 								playerYTile = 0;
 							}	
@@ -140,7 +168,10 @@ int main( int argc, char* args[] )
 							break;
 
 							case SDLK_LEFT:
-							if(!playerXTile){
+							if(mapView){ // go fast
+								playerXRegion--;
+							}
+							else if(!playerXTile){
 								playerXRegion--;
 								playerXTile = tileSide-1;
 							}	
@@ -150,7 +181,10 @@ int main( int argc, char* args[] )
 							break;
 
 							case SDLK_RIGHT:
-							if(playerXTile==tileSide-1){
+							if(mapView){ // go fast
+								playerXRegion++;
+							}
+							else if(playerXTile==tileSide-1){
 								playerXRegion++;
 								playerXTile = 0;
 							}	
@@ -161,15 +195,28 @@ int main( int argc, char* args[] )
 
 							case SDLK_m:
 							mapView=!mapView;
-							SDL_Delay(500);
+							SDL_Delay(250);
+							break;
+
+							case SDLK_MINUS:
+							viewRadius--;
+							SDL_Delay(250);
+							break;
+
+							case SDLK_EQUALS:
+							viewRadius++;
+							SDL_Delay(250);
 							break;
 
 							default:
+							updateScreen = false;
 							break;
 						}
-						viewer.clear();
-						sider = view(newMap.bigMap[0], playerYRegion, playerXRegion, playerYTile, playerXTile, viewRadius,mapView,true,false,true,true,viewer);
-						printMapVector(viewer,sider,tileSet);
+						if(updateScreen){
+							viewer.clear();
+							sider = view(newMap.bigMap[0], playerYRegion, playerXRegion, playerYTile, playerXTile, viewRadius,mapView,true,false,true,true,viewer);
+							printMapVector(viewer,sider,tileSet);
+						}
 					}
 				}
 
@@ -182,10 +229,13 @@ int main( int argc, char* args[] )
 
 	//Free resources and close SDL
 	//Destroy window
+	SDL_DestroyRenderer( gRenderer );
 	SDL_DestroyWindow( gWindow );
 	gWindow = NULL;
+	gRenderer = NULL;
 
 	//Quit SDL subsystems
+	IMG_Quit();
 	SDL_Quit();
 
 	return 0;

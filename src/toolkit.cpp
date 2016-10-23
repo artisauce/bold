@@ -566,6 +566,16 @@ void circle(unsigned int seed, double pushCoefficient,
     randLine(rand(), pushCoefficient, yPointFour, xPointFour, yPointOne, xPointOne, placeMap, dotPlace,  ySpareList, xSpareList, side, 1, true, diagonal, debug); // Top right
 }
 
+//void genCaves(unsigned int seed, double pushCoefficient, 
+//    unsigned int startY, unsigned int startX, unsigned int endY, unsigned int endX, worldMap& theWorldMap, bool debug){
+//	//Idea's: generate for all of worldmap, connecting all isles, place cave tiles on map (by number), generate that number of 
+	// of caves in tile map. We also add random points around that the caves will also generate to (much lower chance for on 
+	// ocean tiles) on tilemap. We have a force connect to side if making cave from map to another, 
+	// and tile to another, and battlfield to another. Costumized randline required for the height of cave to not go above ground.
+//    srand(seed);
+//	
+//}
+
 // Precondition: It's applied on a valid index.
 void fillMap( int filler, int detect, int wall, int pointY, int pointX, unsigned int side, int* map, int* spareMap, bool wallMode, bool replace){ // An earlier bug is where it was just "unsigned side". Apparently that works...
     //std::cout << "GO" << " " << pointY << " " << pointX<< " "  << detect<< " "  << filler << std::endl;
@@ -656,7 +666,7 @@ void printMapVector(std::vector<int>& map, unsigned int side, std::vector<std::s
         if(i%side == 0){
         output+='\n';
         }
-        //usleep(500);
+        //usleep(100);
         if(map[i] < 0){
             if(map[i] == -1){
         output+=' '; // -1 is always blank.
