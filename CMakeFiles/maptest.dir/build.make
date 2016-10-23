@@ -220,6 +220,7 @@ build/maptest: CMakeFiles/maptest.dir/src/maptest.cpp.o
 build/maptest: CMakeFiles/maptest.dir/src/battleField.cpp.o
 build/maptest: CMakeFiles/maptest.dir/src/worldMap.cpp.o
 build/maptest: CMakeFiles/maptest.dir/build.make
+build/maptest: libSDL2_image-2.0.so.0.0.1
 build/maptest: libSDL2.a
 build/maptest: libsndio.so.6.1
 build/maptest: libdl.so
