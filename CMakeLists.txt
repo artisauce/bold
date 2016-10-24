@@ -13,6 +13,7 @@ SET (CMAKE_CXX_FLAGS "-std=c++11")
 
 if (${CMAKE_CXX_COMPILER_ID} STREQUAL Clang)
         set(FIPS_CLANG 1)
+	set(CMAKE_CXX_FLAGS_DEBUG   "${CMAKE_CXX_FLAGS_DEBUG} -g -O0 -g2 -gdwarf-2 -fexceptions")
         message("---------- GOOD: C++ Compiler: Clang (FIPS_CLANG)")
     elseif (${CMAKE_CXX_COMPILER_ID} STREQUAL GNU)
         set(FIPS_GCC 1)
