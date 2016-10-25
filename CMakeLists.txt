@@ -37,6 +37,8 @@ include_directories(${CMAKE_SOURCE_DIR}/include/sdl_image/)
 file(GLOB SOURCES "src/*.cpp")
 
 add_executable(maptest ${SOURCES})
+target_link_libraries(maptest ${CMAKE_SOURCE_DIR}/libs/libstdc++.so.6)
+target_link_libraries(maptest ${CMAKE_SOURCE_DIR}/libs/libxkbcommon.so.0)
 target_link_libraries(maptest ${CMAKE_SOURCE_DIR}/libs/libSDL2_image-2.0.so)
 target_link_libraries(maptest ${CMAKE_SOURCE_DIR}/libs/libSDL2_image-2.0.so.0)
 target_link_libraries(maptest ${CMAKE_SOURCE_DIR}/libs/libSDL2_image-2.0.so.0.0.1)
