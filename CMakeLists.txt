@@ -25,13 +25,9 @@ if (${CMAKE_CXX_COMPILER_ID} STREQUAL Clang)
         message("---------- BAD: C++ Compiler: Unknown")
     endif()
 
-#Bring the headers, such as Student.h into the project
 include_directories(include)
 include_directories(${CMAKE_SOURCE_DIR}/include/sdl/)
 include_directories(${CMAKE_SOURCE_DIR}/include/sdl_image/)
-
-#Can manually add the sources using the set command as follows:
-#set(SOURCES src/mainapp.cpp src/Student.cpp)
 
 #However, the file(GLOB...) allows for wildcard additions:
 file(GLOB SOURCES "src/*.cpp")
@@ -41,9 +37,10 @@ target_link_libraries(maptest ${CMAKE_SOURCE_DIR}/libs/libstdc++.so.6)
 target_link_libraries(maptest ${CMAKE_SOURCE_DIR}/libs/libxkbcommon.so.0)
 target_link_libraries(maptest ${CMAKE_SOURCE_DIR}/libs/libSDL2_image-2.0.so)
 target_link_libraries(maptest ${CMAKE_SOURCE_DIR}/libs/libSDL2_image-2.0.so.0)
-target_link_libraries(maptest ${CMAKE_SOURCE_DIR}/libs/libSDL2_image-2.0.so.0.0.1)
+target_link_libraries(maptest ${CMAKE_SOURCE_DIR}/libs/libSDL2_image-2.0.so.0.0.1) #No way the system can do a matrix dodge now.
 target_link_libraries(maptest ${CMAKE_SOURCE_DIR}/libs/libSDL2.so)
 target_link_libraries(maptest ${CMAKE_SOURCE_DIR}/libs/libsndio.so.6.1)
 target_link_libraries(maptest ${CMAKE_SOURCE_DIR}/libs/libdl.so.2)
 target_link_libraries(maptest ${CMAKE_SOURCE_DIR}/libs/libpthread.so)
-
+target_link_libraries(maptest ${CMAKE_SOURCE_DIR}/libs/librt.so.1)
+target_link_libraries(maptest ${CMAKE_SOURCE_DIR}/libs/libm.so)

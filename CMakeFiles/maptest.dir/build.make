@@ -229,6 +229,8 @@ build/maptest: libs/libSDL2.so
 build/maptest: libs/libsndio.so.6.1
 build/maptest: libs/libdl.so.2
 build/maptest: libs/libpthread.so
+build/maptest: libs/librt.so.1
+build/maptest: libs/libm.so
 build/maptest: CMakeFiles/maptest.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/gefer8/bold/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Linking CXX executable build/maptest"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/maptest.dir/link.txt --verbose=$(VERBOSE)
