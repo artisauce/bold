@@ -229,10 +229,27 @@ build/maptest: libs/libSDL2.so
 build/maptest: libs/libsndio.so.6.1
 build/maptest: libs/libdl.so.2
 build/maptest: libs/libpthread.so
+build/maptest: libs/libpthread.so.0
 build/maptest: libs/librt.so.1
 build/maptest: libs/libm.so
+build/maptest: libs/libm.so.6
 build/maptest: libs/libmvec_nonshared.a
 build/maptest: libs/libmvec.so.1
+build/maptest: libs/libgcc_s.so.1
+build/maptest: libs/libc.so.6
+build/maptest: libs/libpng12.so.0
+build/maptest: libs/libjpeg.so.8
+build/maptest: libs/libtiff.so.5
+build/maptest: libs/libwebp.so.5
+build/maptest: libs/libasound.so.2
+build/maptest: libs/libpulse.so.0
+build/maptest: libs/libX11.so.6
+build/maptest: libs/libXext.so.6
+build/maptest: libs/libXcursor.so.1
+build/maptest: libs/libXinerama.so.1
+build/maptest: libs/libXi.so.6
+build/maptest: libs/libXrandr.so.2
+build/maptest: libs/libXss.so.1
 build/maptest: CMakeFiles/maptest.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/gefer8/bold/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Linking CXX executable build/maptest"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/maptest.dir/link.txt --verbose=$(VERBOSE)
