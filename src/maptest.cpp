@@ -30,7 +30,12 @@ void displayStuff(int sider, std::vector<int>& map, int maxHeight){
 		fillRect = {tileWidth*(check%sider), tileHeight*(check/sider), tileWidthM, tileHeightM};
 		if(map[check] > 0){
 		//RGBA
-               	 SDL_SetRenderDrawColor( gRenderer, (int)(255.0*sqrt((float)(map[check])/(float)maxHeight)), 255, (int)(255.0*((float)(map[check])/(float)maxHeight)), 255 ); // Set to variable degree of GREEEEN
+				if(map[check]<=maxHeight){
+               	 SDL_SetRenderDrawColor( gRenderer, (int)(255.0*sqrt(((float)map[check])/(float)maxHeight)), 255, (int)(255.0*((float)(map[check])/(float)maxHeight)), 255 ); // Set to variable degree of GREEEEN
+				}
+				else {
+					SDL_SetRenderDrawColor( gRenderer, 255.0, 255.0, 255.0, 255 ); // Snow white
+				}
 		}
 		else if(map[check] == 0){ // BLUUUEEEE
                	 SDL_SetRenderDrawColor( gRenderer, 0, 0, 255, 255 ); 
