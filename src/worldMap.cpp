@@ -47,7 +47,7 @@ worldMap::~worldMap(){
 unsigned int view(	map& theMap,  int regionY, int regionX, 
 					 int tileY, int tileX, // Why int's? Because we'll want to still display even in negatives,
 								// top/left/topleft from the map. Don't worry about it too much.
-					int viewRadius, bool mapView, bool circle, bool borders, bool playerSee, bool wallMode, std::vector<int>& viewMap){
+					int viewRadius, bool VIEWMODE, bool mapView, bool circle, bool borders, bool playerSee, bool wallMode, std::vector<int>& viewMap){
 	// why there's problems: angles, viewing from a platau, you wouldn't be able to see below, from side, you would.
 	// view up: algorithm that's efficient. returns angles, compares. see notes in THE book.
 	int viewTileWidth = (viewRadius*2)+1;
@@ -170,17 +170,17 @@ unsigned int view(	map& theMap,  int regionY, int regionX,
 		for(int a = 0; a < viewTileWidth; a++)
 		{
 			// Getting most of them with this is a good, efficient idea and method.
-			viewLine(viewTileWidth,boolMap,viewMap,middle,middle, a, 0);
-			viewLine(viewTileWidth,boolMap,viewMap,middle,middle, a, viewTileWidth-1);
-			viewLine(viewTileWidth,boolMap,viewMap,middle,middle, 0, a);
-			viewLine(viewTileWidth,boolMap,viewMap,middle,middle, viewTileWidth-1, a);
+			viewLine(viewTileWidth,boolMap,VIEWMODE,viewMap,middle,middle, a, 0);
+			viewLine(viewTileWidth,boolMap,VIEWMODE,viewMap,middle,middle, a, viewTileWidth-1);
+			viewLine(viewTileWidth,boolMap,VIEWMODE,viewMap,middle,middle, 0, a);
+			viewLine(viewTileWidth,boolMap,VIEWMODE,viewMap,middle,middle, viewTileWidth-1, a);
 		}
 		for(int y = 1; y < viewTileWidth-1; y++)
 		{
 			for (int x = 1; x < viewTileWidth-1; x++)
 			{
 				if(!boolMap[(y*viewTileWidth)+x]){ // This will save a function call, more efficient than in viewLine function check.
-					viewLine(viewTileWidth,boolMap,viewMap,middle,middle, y, x);
+					viewLine(viewTileWidth,boolMap,VIEWMODE,viewMap,middle,middle, y, x);
 				}
 				//std::cout << y << " " << x << std::endl;
 			}

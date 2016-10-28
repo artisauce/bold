@@ -36,4 +36,4 @@ public:
 
 unsigned int view(map& theMap, int regionY, int regionX, 
 				int tileY,  int tileX,
-				int viewRadius, bool mapView,  bool circle, bool borders, bool playerSee, bool wallMode ,std::vector<int>& viewMap);
+				int viewRadius, bool VIEWMODE, bool mapView,  bool circle, bool borders, bool playerSee, bool wallMode ,std::vector<int>& viewMap);
