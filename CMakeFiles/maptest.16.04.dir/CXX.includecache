@@ -6,33 +6,33 @@
 
 #IncludeRegexTransform: 
 
-/home/gefer8/bold/src/battleField.cpp
+/home/dmagaril/bold/src/battleField.cpp
 map.hpp
-/home/gefer8/bold/src/map.hpp
+/home/dmagaril/bold/src/map.hpp
 
-/home/gefer8/bold/src/map.cpp
+/home/dmagaril/bold/src/map.cpp
 worldMap.hpp
-/home/gefer8/bold/src/worldMap.hpp
+/home/dmagaril/bold/src/worldMap.hpp
 
-/home/gefer8/bold/src/maptest.cpp
+/home/dmagaril/bold/src/maptest.cpp
 worldMap.hpp
-/home/gefer8/bold/src/worldMap.hpp
+/home/dmagaril/bold/src/worldMap.hpp
 SDL.h
-/home/gefer8/bold/src/SDL.h
+/home/dmagaril/bold/src/SDL.h
 SDL_image.h
-/home/gefer8/bold/src/SDL_image.h
+/home/dmagaril/bold/src/SDL_image.h
 
-/home/gefer8/bold/src/tile.cpp
+/home/dmagaril/bold/src/tile.cpp
 map.hpp
-/home/gefer8/bold/src/map.hpp
+/home/dmagaril/bold/src/map.hpp
 
-/home/gefer8/bold/src/toolkit.cpp
+/home/dmagaril/bold/src/toolkit.cpp
 toolkit.hpp
-/home/gefer8/bold/src/toolkit.hpp
+/home/dmagaril/bold/src/toolkit.hpp
 
-/home/gefer8/bold/src/worldMap.cpp
+/home/dmagaril/bold/src/worldMap.cpp
 worldMap.hpp
-/home/gefer8/bold/src/worldMap.hpp
+/home/dmagaril/bold/src/worldMap.hpp
 
 include/battleField.hpp
 toolkit.hpp
