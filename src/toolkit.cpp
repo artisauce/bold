@@ -241,7 +241,7 @@ void randLine(unsigned int seed, double pushCoefficient, int startY, int startX,
     
 }
 
-void viewLine(int length, bool* viewMap, std::vector<int>& actualMap, 
+void viewLine(int length, bool* viewMap, bool VIEWMODE, std::vector<int>& actualMap, 
     int playerY, int playerX, int yTar, int xTar){
     if(playerY == yTar && playerX == xTar){
         return;
@@ -260,7 +260,7 @@ void viewLine(int length, bool* viewMap, std::vector<int>& actualMap,
     //}
     //std::cout << "GORE2" << std::endl;
     // This algorithm is not meant for 100% certainty. 
-    int playerHeight = actualMap[(playerY*length)+playerX];
+    double playerHeight = actualMap[(playerY*length)+playerX];
     //std::cout << playerHeight << std::endl;
     int tarHeight = actualMap[(yTar*length)+xTar];
     int currHeight = playerHeight;
@@ -433,6 +433,9 @@ void viewLine(int length, bool* viewMap, std::vector<int>& actualMap,
     bool alternateAngle = false;
     bool ticker = true; // used for certain indents.
     //std::cout << "---xIndex: " << xIndex << " xTar: " << xTar << " yIndex: " << yIndex << " yTar: " << yTar << " playerY: " << playerY << " playerX: " << playerX << std::endl;
+    if(VIEWMODE){
+    playerHeight+=0.5;
+    }
     while(xIndex != xTar || yIndex  != yTar){
         // determine direction
         //std::cout << "GORE" << std::endl;

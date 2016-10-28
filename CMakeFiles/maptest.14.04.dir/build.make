@@ -95,32 +95,9 @@ CMakeFiles/maptest.14.04.dir/src/map.cpp.o.provides: CMakeFiles/maptest.14.04.di
 
 CMakeFiles/maptest.14.04.dir/src/map.cpp.o.provides.build: CMakeFiles/maptest.14.04.dir/src/map.cpp.o
 
-CMakeFiles/maptest.14.04.dir/src/maptest.cpp.o: CMakeFiles/maptest.14.04.dir/flags.make
-CMakeFiles/maptest.14.04.dir/src/maptest.cpp.o: src/maptest.cpp
-	$(CMAKE_COMMAND) -E cmake_progress_report /home/dmagaril/bold/CMakeFiles $(CMAKE_PROGRESS_3)
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object CMakeFiles/maptest.14.04.dir/src/maptest.cpp.o"
-	/usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/maptest.14.04.dir/src/maptest.cpp.o -c /home/dmagaril/bold/src/maptest.cpp
-
-CMakeFiles/maptest.14.04.dir/src/maptest.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/maptest.14.04.dir/src/maptest.cpp.i"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/dmagaril/bold/src/maptest.cpp > CMakeFiles/maptest.14.04.dir/src/maptest.cpp.i
-
-CMakeFiles/maptest.14.04.dir/src/maptest.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/maptest.14.04.dir/src/maptest.cpp.s"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/dmagaril/bold/src/maptest.cpp -o CMakeFiles/maptest.14.04.dir/src/maptest.cpp.s
-
-CMakeFiles/maptest.14.04.dir/src/maptest.cpp.o.requires:
-.PHONY : CMakeFiles/maptest.14.04.dir/src/maptest.cpp.o.requires
-
-CMakeFiles/maptest.14.04.dir/src/maptest.cpp.o.provides: CMakeFiles/maptest.14.04.dir/src/maptest.cpp.o.requires
-	$(MAKE) -f CMakeFiles/maptest.14.04.dir/build.make CMakeFiles/maptest.14.04.dir/src/maptest.cpp.o.provides.build
-.PHONY : CMakeFiles/maptest.14.04.dir/src/maptest.cpp.o.provides
-
-CMakeFiles/maptest.14.04.dir/src/maptest.cpp.o.provides.build: CMakeFiles/maptest.14.04.dir/src/maptest.cpp.o
-
 CMakeFiles/maptest.14.04.dir/src/tile.cpp.o: CMakeFiles/maptest.14.04.dir/flags.make
 CMakeFiles/maptest.14.04.dir/src/tile.cpp.o: src/tile.cpp
-	$(CMAKE_COMMAND) -E cmake_progress_report /home/dmagaril/bold/CMakeFiles $(CMAKE_PROGRESS_4)
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/dmagaril/bold/CMakeFiles $(CMAKE_PROGRESS_3)
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object CMakeFiles/maptest.14.04.dir/src/tile.cpp.o"
 	/usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/maptest.14.04.dir/src/tile.cpp.o -c /home/dmagaril/bold/src/tile.cpp
 
@@ -143,7 +120,7 @@ CMakeFiles/maptest.14.04.dir/src/tile.cpp.o.provides.build: CMakeFiles/maptest.1
 
 CMakeFiles/maptest.14.04.dir/src/toolkit.cpp.o: CMakeFiles/maptest.14.04.dir/flags.make
 CMakeFiles/maptest.14.04.dir/src/toolkit.cpp.o: src/toolkit.cpp
-	$(CMAKE_COMMAND) -E cmake_progress_report /home/dmagaril/bold/CMakeFiles $(CMAKE_PROGRESS_5)
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/dmagaril/bold/CMakeFiles $(CMAKE_PROGRESS_4)
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object CMakeFiles/maptest.14.04.dir/src/toolkit.cpp.o"
 	/usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/maptest.14.04.dir/src/toolkit.cpp.o -c /home/dmagaril/bold/src/toolkit.cpp
 
@@ -166,7 +143,7 @@ CMakeFiles/maptest.14.04.dir/src/toolkit.cpp.o.provides.build: CMakeFiles/maptes
 
 CMakeFiles/maptest.14.04.dir/src/worldMap.cpp.o: CMakeFiles/maptest.14.04.dir/flags.make
 CMakeFiles/maptest.14.04.dir/src/worldMap.cpp.o: src/worldMap.cpp
-	$(CMAKE_COMMAND) -E cmake_progress_report /home/dmagaril/bold/CMakeFiles $(CMAKE_PROGRESS_6)
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/dmagaril/bold/CMakeFiles $(CMAKE_PROGRESS_5)
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object CMakeFiles/maptest.14.04.dir/src/worldMap.cpp.o"
 	/usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/maptest.14.04.dir/src/worldMap.cpp.o -c /home/dmagaril/bold/src/worldMap.cpp
 
@@ -187,24 +164,47 @@ CMakeFiles/maptest.14.04.dir/src/worldMap.cpp.o.provides: CMakeFiles/maptest.14.
 
 CMakeFiles/maptest.14.04.dir/src/worldMap.cpp.o.provides.build: CMakeFiles/maptest.14.04.dir/src/worldMap.cpp.o
 
+CMakeFiles/maptest.14.04.dir/src/maptest.cpp.o: CMakeFiles/maptest.14.04.dir/flags.make
+CMakeFiles/maptest.14.04.dir/src/maptest.cpp.o: src/maptest.cpp
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/dmagaril/bold/CMakeFiles $(CMAKE_PROGRESS_6)
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object CMakeFiles/maptest.14.04.dir/src/maptest.cpp.o"
+	/usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/maptest.14.04.dir/src/maptest.cpp.o -c /home/dmagaril/bold/src/maptest.cpp
+
+CMakeFiles/maptest.14.04.dir/src/maptest.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/maptest.14.04.dir/src/maptest.cpp.i"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/dmagaril/bold/src/maptest.cpp > CMakeFiles/maptest.14.04.dir/src/maptest.cpp.i
+
+CMakeFiles/maptest.14.04.dir/src/maptest.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/maptest.14.04.dir/src/maptest.cpp.s"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/dmagaril/bold/src/maptest.cpp -o CMakeFiles/maptest.14.04.dir/src/maptest.cpp.s
+
+CMakeFiles/maptest.14.04.dir/src/maptest.cpp.o.requires:
+.PHONY : CMakeFiles/maptest.14.04.dir/src/maptest.cpp.o.requires
+
+CMakeFiles/maptest.14.04.dir/src/maptest.cpp.o.provides: CMakeFiles/maptest.14.04.dir/src/maptest.cpp.o.requires
+	$(MAKE) -f CMakeFiles/maptest.14.04.dir/build.make CMakeFiles/maptest.14.04.dir/src/maptest.cpp.o.provides.build
+.PHONY : CMakeFiles/maptest.14.04.dir/src/maptest.cpp.o.provides
+
+CMakeFiles/maptest.14.04.dir/src/maptest.cpp.o.provides.build: CMakeFiles/maptest.14.04.dir/src/maptest.cpp.o
+
 # Object files for target maptest.14.04
 maptest_14_04_OBJECTS = \
 "CMakeFiles/maptest.14.04.dir/src/battleField.cpp.o" \
 "CMakeFiles/maptest.14.04.dir/src/map.cpp.o" \
-"CMakeFiles/maptest.14.04.dir/src/maptest.cpp.o" \
 "CMakeFiles/maptest.14.04.dir/src/tile.cpp.o" \
 "CMakeFiles/maptest.14.04.dir/src/toolkit.cpp.o" \
-"CMakeFiles/maptest.14.04.dir/src/worldMap.cpp.o"
+"CMakeFiles/maptest.14.04.dir/src/worldMap.cpp.o" \
+"CMakeFiles/maptest.14.04.dir/src/maptest.cpp.o"
 
 # External object files for target maptest.14.04
 maptest_14_04_EXTERNAL_OBJECTS =
 
 build/maptest.14.04: CMakeFiles/maptest.14.04.dir/src/battleField.cpp.o
 build/maptest.14.04: CMakeFiles/maptest.14.04.dir/src/map.cpp.o
-build/maptest.14.04: CMakeFiles/maptest.14.04.dir/src/maptest.cpp.o
 build/maptest.14.04: CMakeFiles/maptest.14.04.dir/src/tile.cpp.o
 build/maptest.14.04: CMakeFiles/maptest.14.04.dir/src/toolkit.cpp.o
 build/maptest.14.04: CMakeFiles/maptest.14.04.dir/src/worldMap.cpp.o
+build/maptest.14.04: CMakeFiles/maptest.14.04.dir/src/maptest.cpp.o
 build/maptest.14.04: CMakeFiles/maptest.14.04.dir/build.make
 build/maptest.14.04: libs/14.04/libSDL2-2.0.so.0
 build/maptest.14.04: libs/14.04/libSDL2_image-2.0.so.0
@@ -218,10 +218,10 @@ CMakeFiles/maptest.14.04.dir/build: build/maptest.14.04
 
 CMakeFiles/maptest.14.04.dir/requires: CMakeFiles/maptest.14.04.dir/src/battleField.cpp.o.requires
 CMakeFiles/maptest.14.04.dir/requires: CMakeFiles/maptest.14.04.dir/src/map.cpp.o.requires
-CMakeFiles/maptest.14.04.dir/requires: CMakeFiles/maptest.14.04.dir/src/maptest.cpp.o.requires
 CMakeFiles/maptest.14.04.dir/requires: CMakeFiles/maptest.14.04.dir/src/tile.cpp.o.requires
 CMakeFiles/maptest.14.04.dir/requires: CMakeFiles/maptest.14.04.dir/src/toolkit.cpp.o.requires
 CMakeFiles/maptest.14.04.dir/requires: CMakeFiles/maptest.14.04.dir/src/worldMap.cpp.o.requires
+CMakeFiles/maptest.14.04.dir/requires: CMakeFiles/maptest.14.04.dir/src/maptest.cpp.o.requires
 .PHONY : CMakeFiles/maptest.14.04.dir/requires
 
 CMakeFiles/maptest.14.04.dir/clean:

@@ -2,8 +2,8 @@
 #include "SDL.h"
 #include "SDL_image.h"
 
-const int SCREEN_WIDTH = 640;
-const int SCREEN_HEIGHT = 480;
+const int SCREEN_WIDTH = 1920;
+const int SCREEN_HEIGHT = 1080;
 
 //Starts up SDL and creates window
 bool init();
@@ -104,8 +104,8 @@ int main( int argc, char* args[] )
     bool diagonal = true;
     double pushCoefficient = 0.1;
     size_t worldMapSide = 2;
-    size_t mapSide = 200;
-    size_t tileSide = 32;
+    size_t mapSide = 50;
+    size_t tileSide = 16;
     size_t battlefieldSide = 64;
     std::vector<std::string> tileSet;
     tileSet.push_back("@"); // as -3. Player
@@ -123,26 +123,25 @@ int main( int argc, char* args[] )
 	 int playerXTile = 11;
 	int playerYTile = 11;
 	int viewRadius = 42;
-	bool VIEWMODE = false;
 	unsigned int mapView = false;
-    sider = view(newMap.bigMap[0],playerYRegion,playerXRegion,playerYTile,playerXTile,viewRadius,VIEWMODE,mapView,true,false,true,false,viewer);
- //    std::cout << " VECTOR MAP " << std::endl;
- //    printMapVector(viewer,sider,tileSet);
- //    std::cout << " FULL MAP " << std::endl;
- //    printMap(newMap.bigMap[0].heightMap,mapSide,tileSet);
-	// // Top, should be barren snowland/rocky.
-	// battlefield newBattle(&(newMap.bigMap[0].regionMap[((mapSide/2)*mapSide)+(mapSide/2)]),tileSide/2,tileSide/2);
-	// printMap(newBattle.battleMap,battlefieldSide,tileSet);
-	// // A bit from the peak, less trees.
-	// battlefield newBattleTwo(&(newMap.bigMap[0].regionMap[((mapSide/2)*mapSide)+(mapSide/2)+2]),tileSide/2,tileSide/2);
-	// printMap(newBattleTwo.battleMap,battlefieldSide,tileSet);
-	// // On the mainland, most trees.
-	// battlefield newBattleThree(&(newMap.bigMap[0].regionMap[((mapSide/2)*mapSide)+(mapSide/4)]),tileSide/2,tileSide/2);
-	// printMap(newBattleThree.battleMap,battlefieldSide,tileSet);
-	// // Ocean. Should be nothing.
-	// battlefield newBattleFour(&(newMap.bigMap[0].regionMap[((mapSide/2)*mapSide)]),tileSide/2,tileSide/2);
-	// printMap(newBattleFour.battleMap,battlefieldSide,tileSet);
-	// //Start up SDL and create window
+    sider = view(newMap.bigMap[0],playerYRegion,playerXRegion,playerYTile,playerXTile,viewRadius,mapView,true,false,true,false,viewer);
+    std::cout << " VECTOR MAP " << std::endl;
+    printMapVector(viewer,sider,tileSet);
+    std::cout << " FULL MAP " << std::endl;
+    printMap(newMap.bigMap[0].heightMap,mapSide,tileSet);
+	// Top, should be barren snowland/rocky.
+	battlefield newBattle(&(newMap.bigMap[0].regionMap[((mapSide/2)*mapSide)+(mapSide/2)]),tileSide/2,tileSide/2);
+	printMap(newBattle.battleMap,battlefieldSide,tileSet);
+	// A bit from the peak, less trees.
+	battlefield newBattleTwo(&(newMap.bigMap[0].regionMap[((mapSide/2)*mapSide)+(mapSide/2)+2]),tileSide/2,tileSide/2);
+	printMap(newBattleTwo.battleMap,battlefieldSide,tileSet);
+	// On the mainland, most trees.
+	battlefield newBattleThree(&(newMap.bigMap[0].regionMap[((mapSide/2)*mapSide)+(mapSide/4)]),tileSide/2,tileSide/2);
+	printMap(newBattleThree.battleMap,battlefieldSide,tileSet);
+	// Ocean. Should be nothing.
+	battlefield newBattleFour(&(newMap.bigMap[0].regionMap[((mapSide/2)*mapSide)]),tileSide/2,tileSide/2);
+	printMap(newBattleFour.battleMap,battlefieldSide,tileSet);
+	//Start up SDL and create window
 	if( !init() )
 	{
 		printf( "Failed to initialize!\n" );
@@ -241,19 +240,14 @@ int main( int argc, char* args[] )
 							SDL_Delay(250);
 							break;
 
-							case SDLK_e: // Increase view
-							VIEWMODE=!VIEWMODE;
-							SDL_Delay(250);
-							break;
-
 							default:
 							updateScreen = false;
 							break;
 						}
 						if(updateScreen){
 							viewer.clear(); // Clear print console map.
-							sider = view(newMap.bigMap[0], playerYRegion, playerXRegion, playerYTile, playerXTile, viewRadius,VIEWMODE,mapView,true,false,true,true,viewer); // Sider is length.
-							//printMapVector(viewer,sider,tileSet); // This for console.
+							sider = view(newMap.bigMap[0], playerYRegion, playerXRegion, playerYTile, playerXTile, viewRadius,mapView,true,false,true,true,viewer); // Sider is length.
+							printMapVector(viewer,sider,tileSet); // This for console.
 							displayStuff(sider,viewer,8); // This for graphocs.
 						}
 					}
