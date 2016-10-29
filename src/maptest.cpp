@@ -2,8 +2,8 @@
 #include "SDL.h"
 #include "SDL_image.h"
 
-const int SCREEN_WIDTH = 640;
-const int SCREEN_HEIGHT = 480;
+const int SCREEN_WIDTH = 1024;
+const int SCREEN_HEIGHT = 768;
 
 //Starts up SDL and creates window
 bool init();
@@ -25,9 +25,11 @@ void displayStuff(int sider, std::vector<int>& map, int maxHeight){
 	int tileWidthM = (SCREEN_WIDTH/sider) -1;
 	int tileHeight = SCREEN_HEIGHT/sider;
 	int tileHeightM = (SCREEN_HEIGHT/sider) -1;
+	int startX = (SCREEN_WIDTH/2)-((tileWidth*sider)/2);
+	int startY = (SCREEN_HEIGHT/2)-((tileHeight*sider)/2);
 	for(int check = 0;check<sider*sider;check++){ // Go through each tile in the map inputted.
 		// Make the tile.
-		fillRect = {tileWidth*(check%sider), tileHeight*(check/sider), tileWidthM, tileHeightM};
+		fillRect = {startX+(tileWidth*(check%sider)), startY+(tileHeight*(check/sider)), tileWidthM, tileHeightM};
 		if(map[check] > 0){
 		//RGBA
 				if(map[check]<=maxHeight){
@@ -108,7 +110,7 @@ int main( int argc, char* args[] )
     bool debug = false;
     bool diagonal = true;
     double pushCoefficient = 0.1;
-    size_t worldMapSide = 2;
+    size_t worldMapSide = 1;
     size_t mapSide = 200;
     size_t tileSide = 32;
     size_t battlefieldSide = 64;
@@ -128,9 +130,10 @@ int main( int argc, char* args[] )
 	 int playerXTile = 11;
 	int playerYTile = 11;
 	int viewRadius = 42;
-	bool VIEWMODE = false;
+	float heightOffset = 0.5; // Ideal?
 	unsigned int mapView = false;
-    sider = view(newMap.bigMap[0],playerYRegion,playerXRegion,playerYTile,playerXTile,viewRadius,VIEWMODE,mapView,true,false,true,false,viewer);
+	bool optimize = true;
+    sider = view(newMap.bigMap[0],playerYRegion,playerXRegion,playerYTile,playerXTile,viewRadius,heightOffset,mapView,true,false,true,false,viewer,optimize);
  //    std::cout << " VECTOR MAP " << std::endl;
  //    printMapVector(viewer,sider,tileSet);
  //    std::cout << " FULL MAP " << std::endl;
@@ -246,8 +249,13 @@ int main( int argc, char* args[] )
 							SDL_Delay(250);
 							break;
 
-							case SDLK_e: // Increase view
-							VIEWMODE=!VIEWMODE;
+							case SDLK_RIGHTBRACKET: // Increase view height from base
+							heightOffset += 0.1;
+							SDL_Delay(250);
+							break;
+
+							case SDLK_LEFTBRACKET: // Decrease view height from base
+							heightOffset -= 0.1;
 							SDL_Delay(250);
 							break;
 
@@ -257,7 +265,7 @@ int main( int argc, char* args[] )
 						}
 						if(updateScreen){
 							viewer.clear(); // Clear print console map.
-							sider = view(newMap.bigMap[0], playerYRegion, playerXRegion, playerYTile, playerXTile, viewRadius,VIEWMODE,mapView,true,false,true,true,viewer); // Sider is length.
+							sider = view(newMap.bigMap[0], playerYRegion, playerXRegion, playerYTile, playerXTile, viewRadius,heightOffset,mapView,true,false,true,true,viewer,optimize); // Sider is length.
 							//printMapVector(viewer,sider,tileSet); // This for console.
 							displayStuff(sider,viewer,8); // This for graphocs.
 						}

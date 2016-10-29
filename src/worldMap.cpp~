@@ -47,7 +47,7 @@ worldMap::~worldMap(){
 unsigned int view(	map& theMap,  int regionY, int regionX, 
 					 int tileY, int tileX, // Why int's? Because we'll want to still display even in negatives,
 								// top/left/topleft from the map. Don't worry about it too much.
-					int viewRadius, float heightOffset, bool mapView, bool circle, bool borders, bool playerSee, bool wallMode, std::vector<int>& viewMap, bool optimize){
+					int viewRadius, float heightOffset, bool mapView, bool circle, bool borders, bool playerSee, bool wallMode, std::vector<int>& viewMap){
 	// why there's problems: angles, viewing from a platau, you wouldn't be able to see below, from side, you would.
 	// view up: algorithm that's efficient. returns angles, compares. see notes in THE book.
 	int viewTileWidth = (viewRadius*2)+1;

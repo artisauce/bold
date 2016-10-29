@@ -2,8 +2,8 @@
 #include "SDL.h"
 #include "SDL_image.h"
 
-const int SCREEN_WIDTH = 1920;
-const int SCREEN_HEIGHT = 1080;
+const int SCREEN_WIDTH = 1024;
+const int SCREEN_HEIGHT = 768;
 
 //Starts up SDL and creates window
 bool init();
@@ -25,12 +25,19 @@ void displayStuff(int sider, std::vector<int>& map, int maxHeight){
 	int tileWidthM = (SCREEN_WIDTH/sider) -1;
 	int tileHeight = SCREEN_HEIGHT/sider;
 	int tileHeightM = (SCREEN_HEIGHT/sider) -1;
+	int startX = (SCREEN_WIDTH/2)-((tileWidth*sider)/2);
+	int startY = (SCREEN_HEIGHT/2)-((tileHeight*sider)/2);
 	for(int check = 0;check<sider*sider;check++){ // Go through each tile in the map inputted.
 		// Make the tile.
-		fillRect = {tileWidth*(check%sider), tileHeight*(check/sider), tileWidthM, tileHeightM};
+		fillRect = {startX+(tileWidth*(check%sider)), startY+(tileHeight*(check/sider)), tileWidthM, tileHeightM};
 		if(map[check] > 0){
 		//RGBA
-               	 SDL_SetRenderDrawColor( gRenderer, (int)(255.0*sqrt((float)(map[check])/(float)maxHeight)), 255, (int)(255.0*((float)(map[check])/(float)maxHeight)), 255 ); // Set to variable degree of GREEEEN
+				if(map[check]<=maxHeight){
+               	 SDL_SetRenderDrawColor( gRenderer, (int)(255.0*sqrt(((float)map[check])/(float)maxHeight)), 255, (int)(255.0*((float)(map[check])/(float)maxHeight)), 255 ); // Set to variable degree of GREEEEN
+				}
+				else {
+					SDL_SetRenderDrawColor( gRenderer, 255.0, 255.0, 255.0, 255 ); // Snow white
+				}
 		}
 		else if(map[check] == 0){ // BLUUUEEEE
                	 SDL_SetRenderDrawColor( gRenderer, 0, 0, 255, 255 ); 
@@ -103,9 +110,9 @@ int main( int argc, char* args[] )
     bool debug = false;
     bool diagonal = true;
     double pushCoefficient = 0.1;
-    size_t worldMapSide = 2;
-    size_t mapSide = 50;
-    size_t tileSide = 16;
+    size_t worldMapSide = 1;
+    size_t mapSide = 200;
+    size_t tileSide = 32;
     size_t battlefieldSide = 64;
     std::vector<std::string> tileSet;
     tileSet.push_back("@"); // as -3. Player
@@ -123,25 +130,27 @@ int main( int argc, char* args[] )
 	 int playerXTile = 11;
 	int playerYTile = 11;
 	int viewRadius = 42;
+	float heightOffset = 0.5; // Ideal?
 	unsigned int mapView = false;
-    sider = view(newMap.bigMap[0],playerYRegion,playerXRegion,playerYTile,playerXTile,viewRadius,mapView,true,false,true,false,viewer);
-    std::cout << " VECTOR MAP " << std::endl;
-    printMapVector(viewer,sider,tileSet);
-    std::cout << " FULL MAP " << std::endl;
-    printMap(newMap.bigMap[0].heightMap,mapSide,tileSet);
-	// Top, should be barren snowland/rocky.
-	battlefield newBattle(&(newMap.bigMap[0].regionMap[((mapSide/2)*mapSide)+(mapSide/2)]),tileSide/2,tileSide/2);
-	printMap(newBattle.battleMap,battlefieldSide,tileSet);
-	// A bit from the peak, less trees.
-	battlefield newBattleTwo(&(newMap.bigMap[0].regionMap[((mapSide/2)*mapSide)+(mapSide/2)+2]),tileSide/2,tileSide/2);
-	printMap(newBattleTwo.battleMap,battlefieldSide,tileSet);
-	// On the mainland, most trees.
-	battlefield newBattleThree(&(newMap.bigMap[0].regionMap[((mapSide/2)*mapSide)+(mapSide/4)]),tileSide/2,tileSide/2);
-	printMap(newBattleThree.battleMap,battlefieldSide,tileSet);
-	// Ocean. Should be nothing.
-	battlefield newBattleFour(&(newMap.bigMap[0].regionMap[((mapSide/2)*mapSide)]),tileSide/2,tileSide/2);
-	printMap(newBattleFour.battleMap,battlefieldSide,tileSet);
-	//Start up SDL and create window
+	bool optimize = true;
+    sider = view(newMap.bigMap[0],playerYRegion,playerXRegion,playerYTile,playerXTile,viewRadius,heightOffset,mapView,true,false,true,false,viewer,optimize);
+ //    std::cout << " VECTOR MAP " << std::endl;
+ //    printMapVector(viewer,sider,tileSet);
+ //    std::cout << " FULL MAP " << std::endl;
+ //    printMap(newMap.bigMap[0].heightMap,mapSide,tileSet);
+	// // Top, should be barren snowland/rocky.
+	// battlefield newBattle(&(newMap.bigMap[0].regionMap[((mapSide/2)*mapSide)+(mapSide/2)]),tileSide/2,tileSide/2);
+	// printMap(newBattle.battleMap,battlefieldSide,tileSet);
+	// // A bit from the peak, less trees.
+	// battlefield newBattleTwo(&(newMap.bigMap[0].regionMap[((mapSide/2)*mapSide)+(mapSide/2)+2]),tileSide/2,tileSide/2);
+	// printMap(newBattleTwo.battleMap,battlefieldSide,tileSet);
+	// // On the mainland, most trees.
+	// battlefield newBattleThree(&(newMap.bigMap[0].regionMap[((mapSide/2)*mapSide)+(mapSide/4)]),tileSide/2,tileSide/2);
+	// printMap(newBattleThree.battleMap,battlefieldSide,tileSet);
+	// // Ocean. Should be nothing.
+	// battlefield newBattleFour(&(newMap.bigMap[0].regionMap[((mapSide/2)*mapSide)]),tileSide/2,tileSide/2);
+	// printMap(newBattleFour.battleMap,battlefieldSide,tileSet);
+	// //Start up SDL and create window
 	if( !init() )
 	{
 		printf( "Failed to initialize!\n" );
@@ -240,14 +249,24 @@ int main( int argc, char* args[] )
 							SDL_Delay(250);
 							break;
 
+							case SDLK_RIGHTBRACKET: // Increase view height from base
+							heightOffset += 0.1;
+							SDL_Delay(250);
+							break;
+
+							case SDLK_LEFTBRACKET: // Decrease view height from base
+							heightOffset -= 0.1;
+							SDL_Delay(250);
+							break;
+
 							default:
 							updateScreen = false;
 							break;
 						}
 						if(updateScreen){
 							viewer.clear(); // Clear print console map.
-							sider = view(newMap.bigMap[0], playerYRegion, playerXRegion, playerYTile, playerXTile, viewRadius,mapView,true,false,true,true,viewer); // Sider is length.
-							printMapVector(viewer,sider,tileSet); // This for console.
+							sider = view(newMap.bigMap[0], playerYRegion, playerXRegion, playerYTile, playerXTile, viewRadius,heightOffset,mapView,true,false,true,true,viewer,optimize); // Sider is length.
+							//printMapVector(viewer,sider,tileSet); // This for console.
 							displayStuff(sider,viewer,8); // This for graphocs.
 						}
 					}
