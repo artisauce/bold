@@ -47,7 +47,7 @@ worldMap::~worldMap(){
 unsigned int view(	map& theMap,  int regionY, int regionX, 
 					 int tileY, int tileX, // Why int's? Because we'll want to still display even in negatives,
 								// top/left/topleft from the map. Don't worry about it too much.
-					int viewRadius, float heightOffset, bool mapView, bool circle, bool borders, bool playerSee, bool wallMode, std::vector<int>& viewMap){
+					int viewRadius, float heightOffset, bool mapView, bool circle, bool borders, bool playerSee, bool wallMode, std::vector<int>& viewMap, std::vector<int>* optimizeArray){
 	// why there's problems: angles, viewing from a platau, you wouldn't be able to see below, from side, you would.
 	// view up: algorithm that's efficient. returns angles, compares. see notes in THE book.
 	int viewTileWidth = (viewRadius*2)+1;
@@ -76,9 +76,11 @@ unsigned int view(	map& theMap,  int regionY, int regionX,
 		centerPixelX = (float)tileX+0.5;
 		centerPixelY = (float)tileY+0.5;
 	}
-	for (int y = -(viewTileWidth/2); y <= (viewTileWidth/2); y++)
+	int halfTileWidth = (viewTileWidth/2);
+	for (int y = -halfTileWidth; y <= halfTileWidth; y++)
 	{
-		for (int x = -(viewTileWidth/2); x <= (viewTileWidth/2); x++)
+		
+		for (int x = -halfTileWidth; x <= halfTileWidth; x++)
 		{
 			if(circle){
 				float A = (float)x+(float)tileX;
@@ -94,12 +96,7 @@ unsigned int view(	map& theMap,  int regionY, int regionX,
 				float difference = (A*A)+(B*B);
 				if(difference > (viewRadius*viewRadius)){
 					//std::cout << "G" << std::endl;
-					if(x>=0){
-						viewMap.push_back(-2);
-					}
-					else{
-						viewMap.push_back(-1);
-					}
+					viewMap.push_back(-1);
 					continue;
 					//std::cout << "GO" << std::endl;
 				}
@@ -119,6 +116,7 @@ unsigned int view(	map& theMap,  int regionY, int regionX,
 					viewMap.push_back(0);
 					continue;
 				}
+				
 				viewMap.push_back(theMap.heightMap[(wy*tileSide)+ex]);
 				continue;
 			}
@@ -156,31 +154,29 @@ unsigned int view(	map& theMap,  int regionY, int regionX,
 				//std::cout << "---- SIDE: " << tileSide << " X: " << x << " Y: " << y << " EX: "<< ex << " WY: " << wy << std::endl;
 			//}
 			viewMap.push_back(theMap.regionMap[(regionYOffset*mapSide) + regionXOffset].tileMap[(wy*tileSide)+ex]);
-
 		}
 	}
 	bool boolMap[viewTileWidth*viewTileWidth];
-	int middle = (viewTileWidth/2);
 	if(wallMode && !borders){ // for the time being, it's incompatible with borders
 		for (int i = 0; i < viewTileWidth*viewTileWidth; i++)
 		{
 			boolMap[i] = false;
 		}
-		boolMap[(middle*viewTileWidth)+middle] = true;
+		boolMap[(halfTileWidth*viewTileWidth)+halfTileWidth] = true;
 		for(int a = 0; a < viewTileWidth; a++)
 		{
 			// Getting most of them with this is a good, efficient idea and method.
-			viewLine(viewTileWidth,boolMap,heightOffset,viewMap,middle,middle, a, 0);
-			viewLine(viewTileWidth,boolMap,heightOffset,viewMap,middle,middle, a, viewTileWidth-1);
-			viewLine(viewTileWidth,boolMap,heightOffset,viewMap,middle,middle, 0, a);
-			viewLine(viewTileWidth,boolMap,heightOffset,viewMap,middle,middle, viewTileWidth-1, a);
+			viewLine(viewTileWidth,boolMap,heightOffset,viewMap,halfTileWidth,halfTileWidth, a, 0);
+			viewLine(viewTileWidth,boolMap,heightOffset,viewMap,halfTileWidth,halfTileWidth, a, viewTileWidth-1);
+			viewLine(viewTileWidth,boolMap,heightOffset,viewMap,halfTileWidth,halfTileWidth, 0, a);
+			viewLine(viewTileWidth,boolMap,heightOffset,viewMap,halfTileWidth,halfTileWidth, viewTileWidth-1, a);
 		}
-		for(int y = 1; y < viewTileWidth-1; y++)
+		for(int y = 1; y < viewTileWidth; y++)
 		{
-			for (int x = 1; x < viewTileWidth-1; x++)
+			for (int x = 1; x < viewTileWidth; x++)
 			{
 				if(!boolMap[(y*viewTileWidth)+x]){ // This will save a function call, more efficient than in viewLine function check.
-					viewLine(viewTileWidth,boolMap,heightOffset,viewMap,middle,middle, y, x);
+					viewLine(viewTileWidth,boolMap,heightOffset,viewMap,halfTileWidth,halfTileWidth, y, x);
 				}
 				//std::cout << y << " " << x << std::endl;
 			}
@@ -192,8 +188,32 @@ unsigned int view(	map& theMap,  int regionY, int regionX,
 			}
 		}
 	}
+	if(optimizeArray != NULL){
+		int lastX;
+		int firstX;
+		for(int y = 0; y < viewTileWidth; y++)
+		{
+			lastX = 0;
+			firstX = 0;
+			for (int x = 0; x < viewTileWidth; x++)
+			{
+				if(boolMap[(y*viewTileWidth)+x]){
+					lastX = x;
+					if(!firstX){
+						firstX = x;
+					}
+				}
+			}
+			if(lastX!=viewTileWidth){
+				viewMap[(y*viewTileWidth)+lastX+1] = -2; // We detect last of X from the array itself.
+			}
+			optimizeArray->push_back(firstX); // We get the first x at the start of each Y.
+		}
+	}
+		
+	}
 	if(playerSee){
-		viewMap[(middle*viewTileWidth)+middle] = -3;
+		viewMap[(halfTileWidth*viewTileWidth)+halfTileWidth] = -3;
 	}
 	return viewTileWidth;
 }

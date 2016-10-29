@@ -433,9 +433,7 @@ void viewLine(int length, bool* viewMap, float heightOffset, std::vector<int>& a
     bool alternateAngle = false;
     bool ticker = true; // used for certain indents.
     //std::cout << "---xIndex: " << xIndex << " xTar: " << xTar << " yIndex: " << yIndex << " yTar: " << yTar << " playerY: " << playerY << " playerX: " << playerX << std::endl;
-    if(VIEWMODE){
-    playerHeight+=0.5;
-    }
+    playerHeight+=heightOffset;
     while(xIndex != xTar || yIndex  != yTar){
         // determine direction
         //std::cout << "GORE" << std::endl;

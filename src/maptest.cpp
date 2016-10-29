@@ -27,29 +27,88 @@ void displayStuff(int sider, std::vector<int>& map, int maxHeight){
 	int tileHeightM = (SCREEN_HEIGHT/sider) -1;
 	int startX = (SCREEN_WIDTH/2)-((tileWidth*sider)/2);
 	int startY = (SCREEN_HEIGHT/2)-((tileHeight*sider)/2);
-	for(int check = 0;check<sider*sider;check++){ // Go through each tile in the map inputted.
-		// Make the tile.
-		fillRect = {startX+(tileWidth*(check%sider)), startY+(tileHeight*(check/sider)), tileWidthM, tileHeightM};
-		if(map[check] > 0){
-		//RGBA
-				if(map[check]<=maxHeight){
-               	 SDL_SetRenderDrawColor( gRenderer, (int)(255.0*sqrt(((float)map[check])/(float)maxHeight)), 255, (int)(255.0*((float)(map[check])/(float)maxHeight)), 255 ); // Set to variable degree of GREEEEN
+	int index;
+	for(int y = 0;y<sider;y++){
+		for(int x = 0;x<sider;x++){
+			index = (y*sider) + x;
+			fillRect = {startX+(tileWidth*x), startY+(tileHeight*y), tileWidthM, tileHeightM};
+			if(map[index] > 0){
+			//RGBA
+				if(map[index]<=maxHeight){
+		       	 		SDL_SetRenderDrawColor( gRenderer, 
+								(int)(255.0*sqrt(((float)map[index])/(float)maxHeight)), 
+								255, 
+								(int)(255.0*((float)(map[index])/(float)maxHeight)), 
+								255 ); // Set to variable degree of GREEEEN
 				}
 				else {
 					SDL_SetRenderDrawColor( gRenderer, 255.0, 255.0, 255.0, 255 ); // Snow white
 				}
+			}
+			else if(map[index] == 0){ // BLUUUEEEE
+		       	 SDL_SetRenderDrawColor( gRenderer, 0, 0, 255, 255 ); 
+			}
+			else if(map[index] == -3){ /// Purple. That's you.
+		       	 SDL_SetRenderDrawColor( gRenderer, 255, 0, 255, 255 ); 
+			}
+			else {	// Black. That's everything else.
+				SDL_SetRenderDrawColor( gRenderer, 0, 0, 0, 255 );
+			}
+			// Fill in with color.
+		       	SDL_RenderFillRect( gRenderer, &fillRect );
 		}
-		else if(map[check] == 0){ // BLUUUEEEE
-               	 SDL_SetRenderDrawColor( gRenderer, 0, 0, 255, 255 ); 
+	}
+	//Update screenos
+	SDL_RenderPresent( gRenderer );
+}
+
+// This shows nice printout of map. It's nice.
+void displayStuffOptimized(int sider, std::vector<int>& map, int maxHeight, std::vector<int>& optimizeArray){
+	// Clears screen
+	SDL_SetRenderDrawColor( gRenderer, 0x00, 0x00, 0x00, 0xFF );
+	SDL_RenderClear( gRenderer );
+	SDL_Rect fillRect;
+	// We want to calculate these only once.
+	int tileWidth = SCREEN_WIDTH/sider;
+	int tileWidthM = (SCREEN_WIDTH/sider) -1;
+	int tileHeight = SCREEN_HEIGHT/sider;
+	int tileHeightM = (SCREEN_HEIGHT/sider) -1;
+	int startX = (SCREEN_WIDTH/2)-((tileWidth*sider)/2);
+	int startY = (SCREEN_HEIGHT/2)-((tileHeight*sider)/2);
+	int index;
+	int optimizeIndex = 0;
+	for(int y = 0;y<sider;y++){
+		for(int x = optimizeArray[optimizeIndex++];x<sider;x++){ //http://www.embedded.com/design/programming-languages-and-tools/4410601/Pre-increment-or-post-increment-in-C-C-
+			index = (y*sider) + x;
+			if(map[index] == -2){
+				break;
+			}
+			fillRect = {startX+(tileWidth*x), startY+(tileHeight*y), tileWidthM, tileHeightM};
+			if(map[index] > 0){
+			//RGBA
+				if(map[index]<=maxHeight){
+		       	 		SDL_SetRenderDrawColor( gRenderer, 
+								(int)(255.0*sqrt(((float)map[index])/(float)maxHeight)), 
+								255, 
+								(int)(255.0*((float)(map[index])/(float)maxHeight)), 
+								255 ); // Set to variable degree of GREEEEN
+				}
+				else {
+					SDL_SetRenderDrawColor( gRenderer, 255.0, 255.0, 255.0, 255 ); // Snow white
+				}
+			}
+			else if(map[index] == 0){ // BLUUUEEEE
+		       	 SDL_SetRenderDrawColor( gRenderer, 0, 0, 255, 255 ); 
+			}
+			else if(map[index] == -3){ /// Purple. That's you.
+		       	 SDL_SetRenderDrawColor( gRenderer, 255, 0, 255, 255 ); 
+			}
+			else {	// Black. That's everything else.
+				SDL_SetRenderDrawColor( gRenderer, 0, 0, 0, 255 );
+			}
+			// Fill in with color.
+		       	SDL_RenderFillRect( gRenderer, &fillRect );
 		}
-		else if(map[check] == -3){ /// Purple. That's you.
-               	 SDL_SetRenderDrawColor( gRenderer, 255, 0, 255, 255 ); 
-		}
-		else {	// Black. That's everything else.
-			SDL_SetRenderDrawColor( gRenderer, 0, 0, 0, 255 );
-		}
-		// Fill in with color.
-               	SDL_RenderFillRect( gRenderer, &fillRect );
 	}
 	//Update screenos
 	SDL_RenderPresent( gRenderer );
@@ -132,8 +191,8 @@ int main( int argc, char* args[] )
 	int viewRadius = 42;
 	float heightOffset = 0.5; // Ideal?
 	unsigned int mapView = false;
-	bool optimize = true;
-    sider = view(newMap.bigMap[0],playerYRegion,playerXRegion,playerYTile,playerXTile,viewRadius,heightOffset,mapView,true,false,true,false,viewer,optimize);
+	std::vector<int> optimizeArray;
+    sider = view(newMap.bigMap[0],playerYRegion,playerXRegion,playerYTile,playerXTile,viewRadius,heightOffset,mapView,true,false,true,false,viewer,&optimizeArray);
  //    std::cout << " VECTOR MAP " << std::endl;
  //    printMapVector(viewer,sider,tileSet);
  //    std::cout << " FULL MAP " << std::endl;
@@ -265,9 +324,10 @@ int main( int argc, char* args[] )
 						}
 						if(updateScreen){
 							viewer.clear(); // Clear print console map.
-							sider = view(newMap.bigMap[0], playerYRegion, playerXRegion, playerYTile, playerXTile, viewRadius,heightOffset,mapView,true,false,true,true,viewer,optimize); // Sider is length.
+							optimizeArray.clear(); // Clears optimization
+							sider = view(newMap.bigMap[0], playerYRegion, playerXRegion, playerYTile, playerXTile, viewRadius,heightOffset,mapView,true,false,true,true,viewer,&optimizeArray); // Sider is length.
 							//printMapVector(viewer,sider,tileSet); // This for console.
-							displayStuff(sider,viewer,8); // This for graphocs.
+							displayStuffOptimized(sider,viewer,8,optimizeArray); // This for graphocs.
 						}
 					}
 				}
