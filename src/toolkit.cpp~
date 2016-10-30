@@ -241,12 +241,12 @@ void randLine(unsigned int seed, double pushCoefficient, int startY, int startX,
     
 }
 
-void viewLine(int length, bool* viewMap, float heightOffset, std::vector<int>& actualMap, 
+void viewLine(int length, int* viewMap, float heightOffset, std::vector<int>& actualMap, 
     int playerY, int playerX, int yTar, int xTar){
     if(playerY == yTar && playerX == xTar){
         return;
     }
-    if(viewMap[(yTar*length)+xTar]){
+    if(viewMap[(yTar*length)+xTar] == 1){
         return;
     }
     //for(int y = 0; y < length; y++)
@@ -526,9 +526,14 @@ void viewLine(int length, bool* viewMap, float heightOffset, std::vector<int>& a
 
         }
         if(tempAngle>=minAngle){
-            viewMap[(yIndex*length)+xIndex] = true;
+            viewMap[(yIndex*length)+xIndex] = 1;
             minAngle=tempAngle;
         }
+	else if(minAngle>=0){
+		if(viewMap[(yIndex*length)+xIndex] != 1){
+			viewMap[(yIndex*length)+xIndex] = -1;
+		}
+	}
         //std::cout << "special: " << special << " tempAngle: " << tempAngle << " minAngle: " <<  minAngle << " maxAngle: " << maxAngle << " currHeight: " << currHeight << " checkOffset: " << checkOffset << " func: " << function << std::endl;
         //std::cout << "xIndex: " << xIndex << " xTar: " << xTar << " yIndex: " << yIndex << " yTar: " << yTar << " playerY: " << playerY << " playerX: " << playerX << std::endl;
         if(currHeight==-1){
@@ -678,7 +683,6 @@ void printMapVector(std::vector<int>& map, unsigned int side, std::vector<std::s
             else{
                 output+=tileSet[abs(map[i])-specialTiles-1]; // Tilesets
             }; // Tilesets
-            }
         }
         else{
         //std::cout <<map[i]<<std::endl;

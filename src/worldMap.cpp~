@@ -47,7 +47,7 @@ worldMap::~worldMap(){
 unsigned int view(	map& theMap,  int regionY, int regionX, 
 					 int tileY, int tileX, // Why int's? Because we'll want to still display even in negatives,
 								// top/left/topleft from the map. Don't worry about it too much.
-					int viewRadius, float heightOffset, bool mapView, bool circle, bool borders, bool playerSee, bool wallMode, std::vector<int>& viewMap, std::vector<int>* optimizeArray){
+					int viewRadius, float heightOffset, bool mapView, bool circle, bool borders, bool playerSee, bool wallMode, std::vector<int>& viewMap, std::vector<int>* optimizeArray, int specialTiles, bool InvisibleAboveCustom){
 	// why there's problems: angles, viewing from a platau, you wouldn't be able to see below, from side, you would.
 	// view up: algorithm that's efficient. returns angles, compares. see notes in THE book.
 	int viewTileWidth = (viewRadius*2)+1;
@@ -156,13 +156,13 @@ unsigned int view(	map& theMap,  int regionY, int regionX,
 			viewMap.push_back(theMap.regionMap[(regionYOffset*mapSide) + regionXOffset].tileMap[(wy*tileSide)+ex]);
 		}
 	}
-	bool boolMap[viewTileWidth*viewTileWidth];
+	int boolMap[viewTileWidth*viewTileWidth];
 	if(wallMode && !borders){ // for the time being, it's incompatible with borders
 		for (int i = 0; i < viewTileWidth*viewTileWidth; i++)
 		{
-			boolMap[i] = false;
+			boolMap[i] = 0;
 		}
-		boolMap[(halfTileWidth*viewTileWidth)+halfTileWidth] = true;
+		boolMap[(halfTileWidth*viewTileWidth)+halfTileWidth] = 1;
 		for(int a = 0; a < viewTileWidth; a++)
 		{
 			// Getting most of them with this is a good, efficient idea and method.
@@ -175,17 +175,30 @@ unsigned int view(	map& theMap,  int regionY, int regionX,
 		{
 			for (int x = 1; x < viewTileWidth; x++)
 			{
-				if(!boolMap[(y*viewTileWidth)+x]){ // This will save a function call, more efficient than in viewLine function check.
+				if(boolMap[(y*viewTileWidth)+x] == 0){ // This will save a function call, more efficient than in viewLine function check.
 					viewLine(viewTileWidth,boolMap,heightOffset,viewMap,halfTileWidth,halfTileWidth, y, x);
 				}
 				//std::cout << y << " " << x << std::endl;
 			}
 		}
-		for (int i = 0; i < viewTileWidth*viewTileWidth; i++)
-		{
-			std::cout << boolMap[i] << std::endl;
-			if(!boolMap[i]){ // Time to implement
-					viewMap[i] = -1;
+		if(InvisibleAboveCustom){ // More efficient than detecting every for loop.
+			for (int i = 0; i < viewTileWidth*viewTileWidth; i++)
+			{
+				//std::cout << boolMap[i] << std::endl;
+				if(boolMap[i] == 0){ // Time to implement
+						viewMap[i] = -1;
+				}
+				else if(boolMap[i] == -1){ // Above ground cannot see
+						viewMap[i] = -2;
+				}
+			}
+		}
+		else {
+			for (int i = 0; i < viewTileWidth*viewTileWidth; i++)
+			{
+				if(boolMap[i] != 1){ // Time to implement
+						viewMap[i] = -1;
+				}
 			}
 		}
 	}
@@ -195,24 +208,28 @@ unsigned int view(	map& theMap,  int regionY, int regionX,
 		for(int y = 0; y < viewTileWidth; y++)
 		{
 			lastX = 0;
-			firstX = 0;
+			firstX = -1;
 			for (int x = 0; x < viewTileWidth; x++)
 			{
-				if(boolMap[(y*viewTileWidth)+x]){
+				if(boolMap[(y*viewTileWidth)+x] != 0){ // Because we also want to see, in the case, custom invisible tiles.
 					lastX = x;
-					if(!firstX){
+					if(firstX==-1){
 						firstX = x;
 					}
 				}
 			}
-			if(lastX!=viewTileWidth){
-				viewMap[(y*viewTileWidth)+lastX+1] = -2; // We detect last of X from the array itself.
+			if(firstX==-1){
+				firstX = 0; // No found, firstX should = lastX
 			}
+			if(lastX!=viewTileWidth && lastX != viewTileWidth-1){
+				viewMap[(y*viewTileWidth)+lastX] = -3; // We detect last of X from the array itself.
+			}
+			std::cout << firstX << " " << lastX << std::endl;
 			optimizeArray->push_back(firstX); // We get the first x at the start of each Y.
 		}
 	}
 	if(playerSee){
-		viewMap[(halfTileWidth*viewTileWidth)+halfTileWidth] = -3;
+		viewMap[(halfTileWidth*viewTileWidth)+halfTileWidth] = (-specialTiles)-1;
 	}
 	return viewTileWidth;
 }

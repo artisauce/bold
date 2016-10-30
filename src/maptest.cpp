@@ -15,7 +15,7 @@ SDL_Renderer* gRenderer = NULL;
 SDL_Window* gWindow = NULL;
 
 // This shows nice printout of map. It's nice.
-void displayStuff(int sider, std::vector<int>& map, int maxHeight){
+void displayStuff(int sider, std::vector<int>& map, int maxHeight, int specialTiles){
 	// Clears screen
 	SDL_SetRenderDrawColor( gRenderer, 0x00, 0x00, 0x00, 0xFF );
 	SDL_RenderClear( gRenderer );
@@ -48,7 +48,7 @@ void displayStuff(int sider, std::vector<int>& map, int maxHeight){
 			else if(map[index] == 0){ // BLUUUEEEE
 		       	 SDL_SetRenderDrawColor( gRenderer, 0, 0, 255, 255 ); 
 			}
-			else if(map[index] == -3){ /// Purple. That's you.
+			else if(map[index] == (-specialTiles)-1){ /// Purple. That's you.
 		       	 SDL_SetRenderDrawColor( gRenderer, 255, 0, 255, 255 ); 
 			}
 			else {	// Black. That's everything else.
@@ -63,7 +63,7 @@ void displayStuff(int sider, std::vector<int>& map, int maxHeight){
 }
 
 // This shows nice printout of map. It's nice.
-void displayStuffOptimized(int sider, std::vector<int>& map, int maxHeight, std::vector<int>& optimizeArray){
+void displayStuffOptimized(int sider, std::vector<int>& map, int maxHeight, std::vector<int>& optimizeArray, int specialTiles){
 	// Clears screen
 	SDL_SetRenderDrawColor( gRenderer, 0x00, 0x00, 0x00, 0xFF );
 	SDL_RenderClear( gRenderer );
@@ -80,7 +80,8 @@ void displayStuffOptimized(int sider, std::vector<int>& map, int maxHeight, std:
 	for(int y = 0;y<sider;y++){
 		for(int x = optimizeArray[optimizeIndex++];x<sider;x++){ //http://www.embedded.com/design/programming-languages-and-tools/4410601/Pre-increment-or-post-increment-in-C-C-
 			index = (y*sider) + x;
-			if(map[index] == -2){
+			std::cout << y << ": " << map[index] << std::endl;
+			if(map[index] == -3){
 				break;
 			}
 			fillRect = {startX+(tileWidth*x), startY+(tileHeight*y), tileWidthM, tileHeightM};
@@ -100,8 +101,11 @@ void displayStuffOptimized(int sider, std::vector<int>& map, int maxHeight, std:
 			else if(map[index] == 0){ // BLUUUEEEE
 		       	 SDL_SetRenderDrawColor( gRenderer, 0, 0, 255, 255 ); 
 			}
-			else if(map[index] == -3){ /// Purple. That's you.
+			else if(map[index] == (-specialTiles)-1) { /// Purple. That's you.
 		       	 SDL_SetRenderDrawColor( gRenderer, 255, 0, 255, 255 ); 
+			}
+			else if(map[index] == -2) { /// Above ground invisible. That's you.
+		       	 SDL_SetRenderDrawColor( gRenderer, 89, 169, 215, 255 ); 
 			}
 			else {	// Black. That's everything else.
 				SDL_SetRenderDrawColor( gRenderer, 0, 0, 0, 255 );
@@ -191,9 +195,11 @@ int main( int argc, char* args[] )
 	int playerYTile = 11;
 	int viewRadius = 42;
 	float heightOffset = 0.5; // Ideal?
-	unsigned int mapView = false;
+	bool mapView = false;
+	bool seeAboveInvisible = false;
+	bool circleView = false;
 	std::vector<int> optimizeArray;
-    sider = view(newMap.bigMap[0],playerYRegion,playerXRegion,playerYTile,playerXTile,viewRadius,heightOffset,mapView,true,false,true,false,viewer,&optimizeArray);
+    sider = view(newMap.bigMap[0],playerYRegion,playerXRegion,playerYTile,playerXTile,viewRadius,heightOffset,mapView,true,false,true,false,viewer,&optimizeArray,specialTiles,seeAboveInvisible);
  //    std::cout << " VECTOR MAP " << std::endl;
  //    printMapVector(viewer,sider,tileSet);
  //    std::cout << " FULL MAP " << std::endl;
@@ -205,8 +211,10 @@ int main( int argc, char* args[] )
 	// battlefield newBattleTwo(&(newMap.bigMap[0].regionMap[((mapSide/2)*mapSide)+(mapSide/2)+2]),tileSide/2,tileSide/2);
 	// printMap(newBattleTwo.battleMap,battlefieldSide,tileSet);
 	// // On the mainland, most trees.
-	battlefield newBattleThree(&(newMap.bigMap[0].regionMap[((mapSide/2)*mapSide)+(mapSide/4)]),tileSide/2,tileSide/2,specialTiles);
-	printMap(newBattleThree.battleMap,battlefieldSide,tileSet,specialTiles);
+	
+	//battlefield newBattleThree(&(newMap.bigMap[0].regionMap[((mapSide/2)*mapSide)+(mapSide/4)]),tileSide/2,tileSide/2,specialTiles);
+	//printMap(newBattleThree.battleMap,battlefieldSide,tileSet,specialTiles);
+
 	// // Ocean. Should be nothing.
 	// battlefield newBattleFour(&(newMap.bigMap[0].regionMap[((mapSide/2)*mapSide)]),tileSide/2,tileSide/2);
 	// printMap(newBattleFour.battleMap,battlefieldSide,tileSet);
@@ -299,6 +307,16 @@ int main( int argc, char* args[] )
 							SDL_Delay(250);
 							break;
 
+							case SDLK_s: // Toggle custom see above invisible
+							seeAboveInvisible=!seeAboveInvisible;
+							SDL_Delay(250);
+							break;
+
+							case SDLK_r: // Toggle custom see above invisible
+							circleView=!circleView;
+							SDL_Delay(250);
+							break;
+
 							case SDLK_MINUS: // Decrease view
 							viewRadius--;
 							SDL_Delay(250);
@@ -326,9 +344,9 @@ int main( int argc, char* args[] )
 						if(updateScreen){
 							viewer.clear(); // Clear print console map.
 							optimizeArray.clear(); // Clears optimization
-							sider = view(newMap.bigMap[0], playerYRegion, playerXRegion, playerYTile, playerXTile, viewRadius,heightOffset,mapView,true,false,true,true,viewer,&optimizeArray); // Sider is length.
+							sider = view(newMap.bigMap[0], playerYRegion, playerXRegion, playerYTile, playerXTile, viewRadius,heightOffset,mapView,circleView,false,true,true,viewer,&optimizeArray,specialTiles,seeAboveInvisible); // Sider is length.
 							//printMapVector(viewer,sider,tileSet); // This for console.
-							displayStuffOptimized(sider,viewer,8,optimizeArray); // This for graphocs.
+							displayStuffOptimized(sider,viewer,8,optimizeArray,specialTiles); // This for graphocs.
 						}
 					}
 				}
