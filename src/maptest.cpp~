@@ -79,10 +79,10 @@ void displayStuffOptimized(int sider, std::vector<int>& map, int maxHeight, std:
 	int optimizeIndex = 0;
 	for(int y = 0;y<sider;y++){
 		for(int x = optimizeArray[optimizeIndex++];x<sider;x++){ //http://www.embedded.com/design/programming-languages-and-tools/4410601/Pre-increment-or-post-increment-in-C-C-
+			index = (y*sider) + x;
 			if(map[index] == -2){
 				break;
 			}
-			index = (y*sider) + x;
 			fillRect = {startX+(tileWidth*x), startY+(tileHeight*y), tileWidthM, tileHeightM};
 			if(map[index] > 0){
 			//RGBA
@@ -174,9 +174,10 @@ int main( int argc, char* args[] )
     size_t tileSide = 32;
     size_t battlefieldSide = 64;
     std::vector<std::string> tileSet;
-    tileSet.push_back("@"); // as -3. Player
-    tileSet.push_back("~"); // as -4. Ground
-    tileSet.push_back("T"); // as -5. Tree
+    tileSet.push_back("@"); // as -4. Player
+    tileSet.push_back("~"); // as -5. Ground
+    tileSet.push_back("T"); // as -6. Tree
+	int specialTiles = 3; // -1 (empty/hidden space) -2 (alternate hidden space), -3 (skipline)
     worldMap newMap(rand(), pushCoefficient, worldMapSide, mapSide, tileSide, battlefieldSide,  diagonal, debug);
     if(debug){
         std::cout << "--- EVERYTHING HAS BEEN MADE --- " << std::endl;
@@ -204,8 +205,8 @@ int main( int argc, char* args[] )
 	// battlefield newBattleTwo(&(newMap.bigMap[0].regionMap[((mapSide/2)*mapSide)+(mapSide/2)+2]),tileSide/2,tileSide/2);
 	// printMap(newBattleTwo.battleMap,battlefieldSide,tileSet);
 	// // On the mainland, most trees.
-	// battlefield newBattleThree(&(newMap.bigMap[0].regionMap[((mapSide/2)*mapSide)+(mapSide/4)]),tileSide/2,tileSide/2);
-	// printMap(newBattleThree.battleMap,battlefieldSide,tileSet);
+	battlefield newBattleThree(&(newMap.bigMap[0].regionMap[((mapSide/2)*mapSide)+(mapSide/4)]),tileSide/2,tileSide/2);
+	printMap(newBattleThree.battleMap,battlefieldSide,tileSet,specialTiles);
 	// // Ocean. Should be nothing.
 	// battlefield newBattleFour(&(newMap.bigMap[0].regionMap[((mapSide/2)*mapSide)]),tileSide/2,tileSide/2);
 	// printMap(newBattleFour.battleMap,battlefieldSide,tileSet);

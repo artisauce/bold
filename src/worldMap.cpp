@@ -183,6 +183,7 @@ unsigned int view(	map& theMap,  int regionY, int regionX,
 		}
 		for (int i = 0; i < viewTileWidth*viewTileWidth; i++)
 		{
+			//std::cout << boolMap[i] << std::endl;
 			if(!boolMap[i]){ // Time to implement
 					viewMap[i] = -1;
 			}
