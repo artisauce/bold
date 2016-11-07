@@ -44,7 +44,7 @@ worldMap::~worldMap(){
 }
 
 // Precondition: You're on a valid tile.
-unsigned int view(	map& theMap,  int regionY, int regionX, 
+unsigned int view(worldMap& theMap, int worldY, int worldX,  int regionY, int regionX, 
 					 int tileY, int tileX, // Why int's? Because we'll want to still display even in negatives,
 								// top/left/topleft from the map. Don't worry about it too much.
 					int viewRadius, float heightOffset, int playerHeight, bool mapView, bool circle, bool borders, bool playerSee, bool wallMode, std::vector<int>& viewMap, std::vector<int>* optimizeArray, int specialTiles, bool InvisibleAboveCustom, bool checkAll, bool debug){
@@ -53,6 +53,7 @@ unsigned int view(	map& theMap,  int regionY, int regionX,
 	int viewTileWidth = (viewRadius*2)+1;
 	int tileSide = theMap.tileSide;
 	int mapSide = theMap.mapSide;
+	int worldSide = theMap.worldMapSide;
 	unsigned int mapRadius;
 	//std::cout << "GO" << std::endl;
 	if(viewRadius == 0){
@@ -76,6 +77,15 @@ unsigned int view(	map& theMap,  int regionY, int regionX,
 		centerPixelX = (float)tileX+0.5;
 		centerPixelY = (float)tileY+0.5;
 	}
+	int wy;
+	int ex;
+	int worldYOffset;
+	int worldXOffset;
+	int regionYOffset;
+	int regionXOffset;
+	float A;
+	float B;
+	float difference;
 	int halfTileWidth = (viewTileWidth/2);
 	for (int y = -halfTileWidth; y <= halfTileWidth; y++)
 	{
@@ -83,8 +93,8 @@ unsigned int view(	map& theMap,  int regionY, int regionX,
 		for (int x = -halfTileWidth; x <= halfTileWidth; x++)
 		{
 			if(circle){
-				float A = (float)x+(float)tileX;
-				float B = (float)y+(float)tileY;
+				A = (float)x+(float)tileX;
+				B = (float)y+(float)tileY;
 				if(A < tileX){
 					A++;
 				}
@@ -93,7 +103,7 @@ unsigned int view(	map& theMap,  int regionY, int regionX,
 				}
 				B = B - centerPixelY; // Rogue bug: Found out these were swapped.
 				A = A - centerPixelX; // See? Takes hours just to finds these...
-				float difference = (A*A)+(B*B);
+				difference = (A*A)+(B*B);
 				if(difference > (viewRadius*viewRadius)){
 					//std::cout << "G" << std::endl;
 					viewMap.push_back(-3);
@@ -107,53 +117,105 @@ unsigned int view(	map& theMap,  int regionY, int regionX,
 					continue;
 				}
 			}
-			int wy = y+tileY;
-			int ex = x+tileX;
-			int regionYOffset = 0;
-			int regionXOffset = 0;
+			wy = y+tileY; // Relative positions, we need these
+			ex = x+tileX;
+			regionYOffset = 0;
+			regionXOffset = 0;
+			worldYOffset = 0;
+			worldXOffset = 0;
 			if(mapView){
-				if(wy<0 || wy >= tileSide || ex < 0 || ex >= tileSide){
+				if(wy<0){
+					worldYOffset = (wy-mapSide)/mapSide; // We determine how many worldspaces to left
+				}
+				else{
+					worldYOffset = wy/mapSide; // We determine how many worldspaces to right
+				}
+				wy-=(worldYOffset*mapSide); // Bring it back to index for appropiate region
+				if(wy == mapSide){
+					wy = 0;
+					worldYOffset++;
+				}
+				if(ex<0){
+					worldXOffset = (ex-mapSide)/mapSide;
+				}/////
+				else{
+					worldXOffset = ex/mapSide;
+				}
+				ex -=(worldXOffset*mapSide);
+				if(ex == mapSide){
+					ex = 0;
+					worldXOffset++;
+				}
+				worldYOffset+=worldY;
+				worldXOffset+=worldX;
+				if(worldXOffset<0 || worldYOffset<0 || worldXOffset >= worldSide || worldYOffset >=worldSide){
+					//std::cout << "WATER" << std::endl;
 					viewMap.push_back(0);
 					continue;
 				}
-				
-				viewMap.push_back(theMap.heightMap[(wy*tileSide)+ex]);
+				//std::cout << theMap.bigMap[worldYOffset * worldSide + worldXOffset].heightMap[(wy*tileSide)+ex] << std::endl;
+				viewMap.push_back(theMap.bigMap[worldYOffset * worldSide + worldXOffset].heightMap[(wy*tileSide)+ex]);
 				continue;
 			}
-			if(wy<0){
-				regionYOffset = (wy-tileSide)/tileSide;
-			}
 			else{
-				regionYOffset = wy/tileSide;
-			}
-			wy-=(regionYOffset*tileSide);
-			if(wy == tileSide){
-				wy = 0;
-				regionYOffset++;
-			}
-			if(ex<0){
-				regionXOffset = (ex-tileSide)/tileSide;
-			}
-			else{
-				regionXOffset = ex/tileSide;
-			}
-			ex -=(regionXOffset*tileSide);
-			if(ex == tileSide){
-				ex = 0;
-				regionXOffset++;
-			}
-			regionYOffset+=regionY;
-			regionXOffset+=regionX;
-			if(regionXOffset<0 || regionYOffset<0 || regionXOffset >= mapSide || regionYOffset >=mapSide){
-				//std::cout << "GO" << std::endl;
-				viewMap.push_back(0);
-				continue;
+				if(wy<0){
+					regionYOffset = (wy-tileSide)/tileSide;
+				}
+				else{
+					regionYOffset = wy/tileSide;
+				}
+				wy-=(regionYOffset*tileSide);
+				if(wy == tileSide){
+					wy = 0;
+					regionYOffset++;
+				}
+				if(ex<0){
+					regionXOffset = (ex-tileSide)/tileSide;
+				}
+				else{
+					regionXOffset = ex/tileSide;
+				}
+				ex -=(regionXOffset*tileSide);
+				if(ex == tileSide){
+					ex = 0;
+					regionXOffset++;
+				}
+				regionYOffset+=regionY;
+				regionXOffset+=regionX; // get the regions
+				if(regionYOffset<0){
+						worldYOffset = (regionYOffset-mapSide)/mapSide; // We determine how many worldspaces to left
+					}
+					else{
+						worldYOffset = regionYOffset/mapSide; // We determine how many worldspaces to right
+					}
+					regionYOffset-=(worldYOffset*mapSide); // Bring it back to index for appropiate region
+					if(regionYOffset == mapSide){
+						regionYOffset = 0;
+						worldYOffset++;
+					}
+					if(regionXOffset<0){
+						worldXOffset = (regionXOffset-mapSide)/mapSide;
+					}/////
+					else{
+						worldXOffset = regionXOffset/mapSide;
+					}
+					regionXOffset -=(worldXOffset*mapSide);
+					if(regionXOffset == mapSide){
+						regionXOffset = 0;
+						worldXOffset++;
+					}
+					worldYOffset+=worldY;
+					worldXOffset+=worldX;
+					if(worldXOffset<0 || worldYOffset<0 || worldXOffset >= worldSide || worldYOffset >=worldSide){
+						viewMap.push_back(0);
+						continue;
+					}
+					viewMap.push_back(theMap.bigMap[worldYOffset*worldSide + worldXOffset].regionMap[(regionYOffset*mapSide) + regionXOffset].tileMap[(wy*tileSide)+ex]);
 			}
 			//if(theMap.regionMap[(regionYOffset*mapSide) + regionXOffset].tileMap[(wy*tileSide)+ex] > 9){
 				//std::cout << theMap.regionMap[(regionYOffset*mapSide) + regionXOffset].tileMap[(wy*tileSide)+ex] << std::endl;
 				//std::cout << "---- SIDE: " << tileSide << " X: " << x << " Y: " << y << " EX: "<< ex << " WY: " << wy << std::endl;
 			//}
-			viewMap.push_back(theMap.regionMap[(regionYOffset*mapSide) + regionXOffset].tileMap[(wy*tileSide)+ex]);
 		}
 	}
 	int boolMap[viewTileWidth*viewTileWidth];

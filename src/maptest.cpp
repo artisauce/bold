@@ -173,7 +173,7 @@ int main( int argc, char* args[] )
     bool debug = false;
     bool diagonal = true;
     double pushCoefficient = 0.1;
-    size_t worldMapSide = 1;
+    size_t worldMapSide = 2;
     size_t mapSide = 100;
     size_t tileSide = 32;
     size_t battlefieldSide = 64;
@@ -193,6 +193,8 @@ int main( int argc, char* args[] )
 	int playerYRegion = 25;
 	 int playerXTile = 11;
 	int playerYTile = 11;
+	int playerXWorld = 0;
+	int playerYWorld = 0;
 	int viewRadius = 9;
 	float heightOffset = 0.5; // Ideal?
 	bool mapView = true;
@@ -202,12 +204,12 @@ int main( int argc, char* args[] )
 	bool playerFly = false;
 	bool checkAll; // See notes in viewline.
 	int calcHeight; // For calculating height.
-	int playerZ = newMap.bigMap[0].regionMap[playerYRegion*mapSide + playerXRegion].tileMap[playerYTile*tileSide + playerXTile];
+	int playerZ = newMap.bigMap[playerYWorld*worldMapSide + playerXWorld].regionMap[playerYRegion*mapSide + playerXRegion].tileMap[playerYTile*tileSide + playerXTile];
 	std::vector<int> optimizeArray;
 	std::cout << "Got here" << std::endl;
     	viewer.clear(); // Clear print console map.
 	optimizeArray.clear(); // Clears optimization
-	sider = view(newMap.bigMap[0], playerYRegion, playerXRegion, playerYTile, playerXTile, 
+	sider = view(newMap, playerYWorld,playerXWorld,playerYRegion, playerXRegion, playerYTile, playerXTile, 
 	viewRadius,heightOffset,playerZ,mapView,circleView,false,true,true,viewer,&optimizeArray,specialTiles,
 	seeAboveInvisible,checkAll,mapDebug); // Sider is length.
  //    std::cout << " VECTOR MAP " << std::endl;
@@ -273,6 +275,10 @@ int main( int argc, char* args[] )
 							else{
 								playerYTile--;
 							}
+							if(!playerYRegion){
+								playerYWorld--;
+								playerYRegion = mapSide-1;
+							}
 							break;
 
 							case SDLK_DOWN:
@@ -287,6 +293,10 @@ int main( int argc, char* args[] )
 							else{
 								playerYTile++;
 							}
+							if(playerYRegion==mapSide-1){
+								playerYWorld++;
+								playerYRegion = 0;
+							}	
 							break;
 
 							case SDLK_LEFT:
@@ -300,6 +310,10 @@ int main( int argc, char* args[] )
 							}	
 							else{
 								playerXTile--;
+							}
+							if(!playerXRegion){
+								playerXWorld--;
+								playerXRegion = mapSide-1;
 							}
 							break;
 
@@ -315,6 +329,10 @@ int main( int argc, char* args[] )
 							else{
 								playerXTile++;
 							}
+							if(playerXRegion==mapSide-1){
+								playerXWorld++;
+								playerXRegion = 0;
+							}	
 							break;
 
 							case SDLK_m: // Toggle map
@@ -394,25 +412,30 @@ int main( int argc, char* args[] )
 							break;
 						}
 						if(updateScreen){
-							if(!playerFly){
+							if(playerYWorld>=worldMapSide || playerXWorld>=worldMapSide || playerYWorld<0 || playerXWorld<0){
+								if(!playerFly){ // we cannot read height out of bounds.
+									playerZ = 0;
+								}
+							}
+							else if(!playerFly){
 								if(mapView){
-									playerZ = newMap.bigMap[0].heightMap[playerYRegion*mapSide + playerXRegion];
+									playerZ = newMap.bigMap[playerYWorld*worldMapSide + playerXWorld].heightMap[playerYRegion*mapSide + playerXRegion];
 								}
 								else{
-									playerZ = newMap.bigMap[0].regionMap[playerYRegion*mapSide + playerXRegion].tileMap[playerYTile*tileSide + playerXTile];
+									playerZ = newMap.bigMap[playerYWorld*worldMapSide + playerXWorld].regionMap[playerYRegion*mapSide + playerXRegion].tileMap[playerYTile*tileSide + playerXTile];
 								}
 								
 							}
 							else{
 								if(mapView){
-									calcHeight = newMap.bigMap[0].heightMap[playerYRegion*mapSide + playerXRegion];
+									calcHeight = newMap.bigMap[playerYWorld*worldMapSide + playerXWorld].heightMap[playerYRegion*mapSide + playerXRegion];
 									if(calcHeight > playerZ){
 										playerZ = calcHeight;
 									}
 									
 								}
 								else{
-									calcHeight = newMap.bigMap[0].regionMap[playerYRegion*mapSide + playerXRegion].tileMap[playerYTile*tileSide + playerXTile];
+									calcHeight = newMap.bigMap[playerYWorld*worldMapSide + playerXWorld].regionMap[playerYRegion*mapSide + playerXRegion].tileMap[playerYTile*tileSide + playerXTile];
 									if(calcHeight > playerZ){
 										playerZ = calcHeight;
 									}
@@ -420,7 +443,7 @@ int main( int argc, char* args[] )
 							}
 							viewer.clear(); // Clear print console map.
 							optimizeArray.clear(); // Clears optimization
-							sider = view(newMap.bigMap[0], playerYRegion, playerXRegion, playerYTile, playerXTile, 
+							sider = view(newMap, playerYWorld,playerXWorld,playerYRegion, playerXRegion, playerYTile, playerXTile, 
 							viewRadius,heightOffset,playerZ,mapView,circleView,false,true,true,viewer,&optimizeArray,
 							specialTiles,seeAboveInvisible,checkAll,mapDebug); // Sider is length.
 							//printMapVector(viewer,sider,tileSet); // This for console.
