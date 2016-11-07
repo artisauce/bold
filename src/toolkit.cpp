@@ -9,7 +9,7 @@ double dist(int startY, int startX, int endY, int endX){
     return(sqrt(dx*dx + dy*dy));
 }
 
-double distD(int startY, int startX, double endY, double endX){
+double distD(double startY, double startX, double endY, double endX){
     // Remember to rate the code, comment the code, and subscribe if you want to see code similar to this one.
     double dx = (endX-(double)startX);
     double dy = (endY-(double)startY);
