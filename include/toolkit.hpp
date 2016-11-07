@@ -19,7 +19,7 @@
 // Add more includes if needed.
 double dist(int startY, int startX, int endY, int endX);
 
-double distD(int startY, int startX, double endY, double endX);
+double distD(double startY, double startX, double endY, double endX);
 
 double func(double input, double multiplier, double addition);
 
