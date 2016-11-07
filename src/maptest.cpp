@@ -81,7 +81,7 @@ void displayStuffOptimized(int sider, std::vector<int>& map, int maxHeight, std:
 		for(int x = optimizeArray[optimizeIndex++];x<sider;x++){ //http://www.embedded.com/design/programming-languages-and-tools/4410601/Pre-increment-or-post-increment-in-C-C-
 			index = (y*sider) + x;
 			//std::cout << y << ": " << map[index] << std::endl;
-			if(map[index] == -3){
+			if(map[index] == -4){
 				break;
 			}
 			fillRect = {startX+(tileWidth*x), startY+(tileHeight*y), tileWidthM, tileHeightM};
@@ -181,7 +181,7 @@ int main( int argc, char* args[] )
     tileSet.push_back("@"); // as -4. Player
     tileSet.push_back("~"); // as -5. Ground
     tileSet.push_back("T"); // as -6. Tree
-	int specialTiles = 3; // -1 (empty/hidden space) -2 (alternate hidden space), -3 (skipline)
+	int specialTiles = 4; // -1 (empty/hidden space) -2 (alternate hidden space), -3 (circleInvsi) ,-4 (skipline)
     worldMap newMap(rand(), pushCoefficient, worldMapSide, mapSide, tileSide, battlefieldSide,  diagonal, debug);
     if(debug){
         std::cout << "--- EVERYTHING HAS BEEN MADE --- " << std::endl;
@@ -199,12 +199,17 @@ int main( int argc, char* args[] )
 	bool seeAboveInvisible = false;
 	bool circleView = false;
 	bool mapDebug = false;
+	bool playerFly = false;
 	bool checkAll; // See notes in viewline.
+	int calcHeight; // For calculating height.
+	int playerZ = newMap.bigMap[0].regionMap[playerYRegion*mapSide + playerXRegion].tileMap[playerYTile*tileSide + playerXTile];
 	std::vector<int> optimizeArray;
 	std::cout << "Got here" << std::endl;
     	viewer.clear(); // Clear print console map.
 	optimizeArray.clear(); // Clears optimization
-	sider = view(newMap.bigMap[0], playerYRegion, playerXRegion, playerYTile, playerXTile, viewRadius,heightOffset,mapView,circleView,false,true,true,viewer,&optimizeArray,specialTiles,seeAboveInvisible,checkAll,mapDebug); // Sider is length.
+	sider = view(newMap.bigMap[0], playerYRegion, playerXRegion, playerYTile, playerXTile, 
+	viewRadius,heightOffset,playerZ,mapView,circleView,false,true,true,viewer,&optimizeArray,specialTiles,
+	seeAboveInvisible,checkAll,mapDebug); // Sider is length.
  //    std::cout << " VECTOR MAP " << std::endl;
  //    printMapVector(viewer,sider,tileSet);
  //    std::cout << " FULL MAP " << std::endl;
@@ -330,6 +335,12 @@ int main( int argc, char* args[] )
 							SDL_Delay(250);
 							break;
 
+							case SDLK_f: // Toggle custom see above invisible
+							playerFly=!playerFly;
+							std::cout << "playerFly: " << playerFly << std::endl;
+							SDL_Delay(250);
+							break;
+
 							case SDLK_e: // Toggle map debug. Should probably turn off see above invisible first.
 							mapDebug=!mapDebug;
 							std::cout << "mapDebug: " << mapDebug << std::endl;
@@ -366,14 +377,52 @@ int main( int argc, char* args[] )
 							SDL_Delay(250);
 							break;
 
+							case SDLK_PERIOD: // Toggle checkAll. See viewline func
+							playerZ++;
+							std::cout << "playerZ: " << playerZ << std::endl;
+							SDL_Delay(250);
+							break;
+
+							case SDLK_COMMA: // Toggle checkAll. See viewline func
+							playerZ--;
+							std::cout << "playerZ: " << playerZ << std::endl;
+							SDL_Delay(250);
+							break;
+
 							default:
 							updateScreen = false;
 							break;
 						}
 						if(updateScreen){
+							if(!playerFly){
+								if(mapView){
+									playerZ = newMap.bigMap[0].heightMap[playerYRegion*mapSide + playerXRegion];
+								}
+								else{
+									playerZ = newMap.bigMap[0].regionMap[playerYRegion*mapSide + playerXRegion].tileMap[playerYTile*tileSide + playerXTile];
+								}
+								
+							}
+							else{
+								if(mapView){
+									calcHeight = newMap.bigMap[0].heightMap[playerYRegion*mapSide + playerXRegion];
+									if(calcHeight > playerZ){
+										playerZ = calcHeight;
+									}
+									
+								}
+								else{
+									calcHeight = newMap.bigMap[0].regionMap[playerYRegion*mapSide + playerXRegion].tileMap[playerYTile*tileSide + playerXTile];
+									if(calcHeight > playerZ){
+										playerZ = calcHeight;
+									}
+								}
+							}
 							viewer.clear(); // Clear print console map.
 							optimizeArray.clear(); // Clears optimization
-							sider = view(newMap.bigMap[0], playerYRegion, playerXRegion, playerYTile, playerXTile, viewRadius,heightOffset,mapView,circleView,false,true,true,viewer,&optimizeArray,specialTiles,seeAboveInvisible,checkAll,mapDebug); // Sider is length.
+							sider = view(newMap.bigMap[0], playerYRegion, playerXRegion, playerYTile, playerXTile, 
+							viewRadius,heightOffset,playerZ,mapView,circleView,false,true,true,viewer,&optimizeArray,
+							specialTiles,seeAboveInvisible,checkAll,mapDebug); // Sider is length.
 							//printMapVector(viewer,sider,tileSet); // This for console.
 							displayStuffOptimized(sider,viewer,8,optimizeArray,specialTiles); // This for graphocs.
 						}

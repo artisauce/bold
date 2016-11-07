@@ -47,7 +47,7 @@ worldMap::~worldMap(){
 unsigned int view(	map& theMap,  int regionY, int regionX, 
 					 int tileY, int tileX, // Why int's? Because we'll want to still display even in negatives,
 								// top/left/topleft from the map. Don't worry about it too much.
-					int viewRadius, float heightOffset, bool mapView, bool circle, bool borders, bool playerSee, bool wallMode, std::vector<int>& viewMap, std::vector<int>* optimizeArray, int specialTiles, bool InvisibleAboveCustom, bool checkAll, bool debug){
+					int viewRadius, float heightOffset, int playerHeight, bool mapView, bool circle, bool borders, bool playerSee, bool wallMode, std::vector<int>& viewMap, std::vector<int>* optimizeArray, int specialTiles, bool InvisibleAboveCustom, bool checkAll, bool debug){
 	// why there's problems: angles, viewing from a platau, you wouldn't be able to see below, from side, you would.
 	// view up: algorithm that's efficient. returns angles, compares. see notes in THE book.
 	int viewTileWidth = (viewRadius*2)+1;
@@ -96,14 +96,14 @@ unsigned int view(	map& theMap,  int regionY, int regionX,
 				float difference = (A*A)+(B*B);
 				if(difference > (viewRadius*viewRadius)){
 					//std::cout << "G" << std::endl;
-					viewMap.push_back(-1);
+					viewMap.push_back(-3);
 					continue;
 					//std::cout << "GO" << std::endl;
 				}
 			}
 			if(borders){
 				if( ((y+tileY)%tileSide) == 0 || ((x+tileX)%tileSide) == 0){
-					viewMap.push_back(-1);
+					viewMap.push_back(-3);
 					continue;
 				}
 			}
@@ -167,13 +167,13 @@ unsigned int view(	map& theMap,  int regionY, int regionX,
 		{
 			// Getting most of them with this is a good, efficient idea and method.
 			//std::cout << "FIRST " << std::endl;
-			viewLine(viewTileWidth,boolMap,heightOffset,viewMap,halfTileWidth,halfTileWidth, a, 0,debug);
+			viewLine(viewTileWidth,boolMap,heightOffset,viewMap,halfTileWidth,halfTileWidth,playerHeight, a, 0,debug);
 			//std::cout << "SECOND " << std::endl;
-			viewLine(viewTileWidth,boolMap,heightOffset,viewMap,halfTileWidth,halfTileWidth, a, viewTileWidth-1,debug);
+			viewLine(viewTileWidth,boolMap,heightOffset,viewMap,halfTileWidth,halfTileWidth,playerHeight, a, viewTileWidth-1,debug);
 			//std::cout << "THIRD " << std::endl;
-			viewLine(viewTileWidth,boolMap,heightOffset,viewMap,halfTileWidth,halfTileWidth, 0, a,debug);
+			viewLine(viewTileWidth,boolMap,heightOffset,viewMap,halfTileWidth,halfTileWidth,playerHeight, 0, a,debug);
 			//std::cout << "FOURTH " << std::endl;
-			viewLine(viewTileWidth,boolMap,heightOffset,viewMap,halfTileWidth,halfTileWidth, viewTileWidth-1, a,debug);
+			viewLine(viewTileWidth,boolMap,heightOffset,viewMap,halfTileWidth,halfTileWidth, playerHeight,viewTileWidth-1, a,debug);
 		}
 		//std::cout << "----END AROUND----" << std::endl;
 		for(int y = 1; y < viewTileWidth-1; y++)
@@ -181,7 +181,7 @@ unsigned int view(	map& theMap,  int regionY, int regionX,
 			for (int x = 1; x < viewTileWidth-1; x++)
 			{
 				if(boolMap[(y*viewTileWidth)+x] != 1 || checkAll){ // This will save a function call, more efficient than in viewLine function check.
-					viewLine(viewTileWidth,boolMap,heightOffset,viewMap,halfTileWidth,halfTileWidth, y, x,debug);
+					viewLine(viewTileWidth,boolMap,heightOffset,viewMap,halfTileWidth,halfTileWidth,playerHeight, y, x,debug);
 				}
 				//std::cout << y << " " << x << std::endl;
 			}
@@ -190,18 +190,20 @@ unsigned int view(	map& theMap,  int regionY, int regionX,
 			for (int i = 0; i < viewTileWidth*viewTileWidth; i++)
 			{
 				//std::cout << boolMap[i] << std::endl;
-				if(boolMap[i] == 0){ // Time to implement
-						viewMap[i] = -1;
-				}
-				else if(boolMap[i] == -1){ // Above ground cannot see
-						viewMap[i] = -2;
+				if(viewMap[i] != -3){
+					if(boolMap[i] == 0){ // Time to implement
+							viewMap[i] = -1;
+					}
+					else if(boolMap[i] == -1){ // Above ground cannot see
+							viewMap[i] = -2;
+					}
 				}
 			}
 		}
 		else {
 			for (int i = 0; i < viewTileWidth*viewTileWidth; i++)
 			{
-				if(boolMap[i] != 1){ // Time to implement
+				if(boolMap[i] != 1 && viewMap[i] != -3){ // Time to implement
 						viewMap[i] = -1;
 				}
 			}
@@ -227,7 +229,7 @@ unsigned int view(	map& theMap,  int regionY, int regionX,
 				firstX = 0; // No found, firstX should = lastX
 			}
 			if(lastX!=viewTileWidth && lastX != viewTileWidth-1){
-				viewMap[(y*viewTileWidth)+lastX+1] = -3; // We detect last of X from the array itself.
+				viewMap[(y*viewTileWidth)+lastX+1] = -4; // We detect last of X from the array itself.
 			}
 			//std::cout << firstX << " " << lastX << std::endl;
 			optimizeArray->push_back(firstX); // We get the first x at the start of each Y.

@@ -28,7 +28,7 @@ void randLine(unsigned int seed, double pushCoefficient, int startY, int startX,
     unsigned int side, unsigned int sideLimit, bool borderLimit, bool diagonal, bool debug);
 
 void viewLine(int length, int* viewMap, float heightOffset, std::vector<int>& actualMap, 
-	int playerY, int playerX, int yTar, int xTar, bool debug);
+	int playerY, int playerX, int playerHeightI, int yTar, int xTar, bool debug);
 
 void circle(unsigned int seed, double pushCoefficient, 
     unsigned int pointY, unsigned int pointX, int* placeMap, int dotPlace, unsigned int radiusY, unsigned int radiusX,
