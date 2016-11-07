@@ -3,7 +3,7 @@
 #include "SDL_image.h"
 
 const int SCREEN_WIDTH = 1024;
-const int SCREEN_HEIGHT = 768;
+const int SCREEN_HEIGHT = 1024;
 
 //Starts up SDL and creates window
 bool init();
@@ -80,7 +80,7 @@ void displayStuffOptimized(int sider, std::vector<int>& map, int maxHeight, std:
 	for(int y = 0;y<sider;y++){
 		for(int x = optimizeArray[optimizeIndex++];x<sider;x++){ //http://www.embedded.com/design/programming-languages-and-tools/4410601/Pre-increment-or-post-increment-in-C-C-
 			index = (y*sider) + x;
-			std::cout << y << ": " << map[index] << std::endl;
+			//std::cout << y << ": " << map[index] << std::endl;
 			if(map[index] == -3){
 				break;
 			}
@@ -168,13 +168,13 @@ bool init()
 int main( int argc, char* args[] )
 {
 	std::ios::sync_with_stdio(false); // This allows fast output for the move demo.
-    srand(time(NULL));
+    srand(1);
 	// Constants.
     bool debug = false;
     bool diagonal = true;
     double pushCoefficient = 0.1;
     size_t worldMapSide = 1;
-    size_t mapSide = 200;
+    size_t mapSide = 100;
     size_t tileSide = 32;
     size_t battlefieldSide = 64;
     std::vector<std::string> tileSet;
@@ -193,13 +193,18 @@ int main( int argc, char* args[] )
 	int playerYRegion = 25;
 	 int playerXTile = 11;
 	int playerYTile = 11;
-	int viewRadius = 42;
+	int viewRadius = 9;
 	float heightOffset = 0.5; // Ideal?
-	bool mapView = false;
+	bool mapView = true;
 	bool seeAboveInvisible = false;
 	bool circleView = false;
+	bool mapDebug = false;
+	bool checkAll; // See notes in viewline.
 	std::vector<int> optimizeArray;
-    sider = view(newMap.bigMap[0],playerYRegion,playerXRegion,playerYTile,playerXTile,viewRadius,heightOffset,mapView,true,false,true,false,viewer,&optimizeArray,specialTiles,seeAboveInvisible);
+	std::cout << "Got here" << std::endl;
+    	viewer.clear(); // Clear print console map.
+	optimizeArray.clear(); // Clears optimization
+	sider = view(newMap.bigMap[0], playerYRegion, playerXRegion, playerYTile, playerXTile, viewRadius,heightOffset,mapView,circleView,false,true,true,viewer,&optimizeArray,specialTiles,seeAboveInvisible,checkAll,mapDebug); // Sider is length.
  //    std::cout << " VECTOR MAP " << std::endl;
  //    printMapVector(viewer,sider,tileSet);
  //    std::cout << " FULL MAP " << std::endl;
@@ -225,6 +230,7 @@ int main( int argc, char* args[] )
 	}
 	else
 	{	
+			displayStuffOptimized(sider,viewer,8,optimizeArray,specialTiles); // For initial present
 			//Main loop flag
 			bool quit = false;
 			bool updateScreen = false;
@@ -251,6 +257,7 @@ int main( int argc, char* args[] )
 						switch( e.key.keysym.sym )
 						{
 							case SDLK_UP:
+							std::cout << "UP" << std::endl;
 							if(mapView){ // go fast
 								playerYRegion--;
 							}
@@ -264,6 +271,7 @@ int main( int argc, char* args[] )
 							break;
 
 							case SDLK_DOWN:
+							std::cout << "DOWN" << std::endl;
 							if(mapView){ // go fast
 								playerYRegion++;
 							}
@@ -277,6 +285,7 @@ int main( int argc, char* args[] )
 							break;
 
 							case SDLK_LEFT:
+							std::cout << "LEFT" << std::endl;
 							if(mapView){ // go fast
 								playerXRegion--;
 							}
@@ -290,6 +299,7 @@ int main( int argc, char* args[] )
 							break;
 
 							case SDLK_RIGHT:
+							std::cout << "RIGHT" << std::endl;
 							if(mapView){ // go fast
 								playerXRegion++;
 							}
@@ -304,36 +314,55 @@ int main( int argc, char* args[] )
 
 							case SDLK_m: // Toggle map
 							mapView=!mapView;
+							std::cout << "mapView: " << mapView << std::endl;
 							SDL_Delay(250);
 							break;
 
 							case SDLK_s: // Toggle custom see above invisible
 							seeAboveInvisible=!seeAboveInvisible;
+							std::cout << "seeAboveInvisible: " << seeAboveInvisible << std::endl;
 							SDL_Delay(250);
 							break;
 
 							case SDLK_r: // Toggle custom see above invisible
 							circleView=!circleView;
+							std::cout << "circleView: " << circleView << std::endl;
+							SDL_Delay(250);
+							break;
+
+							case SDLK_e: // Toggle map debug. Should probably turn off see above invisible first.
+							mapDebug=!mapDebug;
+							std::cout << "mapDebug: " << mapDebug << std::endl;
+							SDL_Delay(250);
+							break;
+
+							case SDLK_q: // Toggle checkAll. See viewline func
+							checkAll=!checkAll;
+							std::cout << "checkAll: " << checkAll << std::endl;
 							SDL_Delay(250);
 							break;
 
 							case SDLK_MINUS: // Decrease view
 							viewRadius--;
+							std::cout << "viewRadius: " << viewRadius << std::endl;
 							SDL_Delay(250);
 							break;
 
 							case SDLK_EQUALS: // Increase view
 							viewRadius++;
+							std::cout << "viewRadius: " << viewRadius << std::endl;
 							SDL_Delay(250);
 							break;
 
 							case SDLK_RIGHTBRACKET: // Increase view height from base
 							heightOffset += 0.1;
+							std::cout << "heightOffset: " << heightOffset << std::endl;
 							SDL_Delay(250);
 							break;
 
 							case SDLK_LEFTBRACKET: // Decrease view height from base
 							heightOffset -= 0.1;
+							std::cout << "heightOffset: " << heightOffset << std::endl;
 							SDL_Delay(250);
 							break;
 
@@ -344,7 +373,7 @@ int main( int argc, char* args[] )
 						if(updateScreen){
 							viewer.clear(); // Clear print console map.
 							optimizeArray.clear(); // Clears optimization
-							sider = view(newMap.bigMap[0], playerYRegion, playerXRegion, playerYTile, playerXTile, viewRadius,heightOffset,mapView,circleView,false,true,true,viewer,&optimizeArray,specialTiles,seeAboveInvisible); // Sider is length.
+							sider = view(newMap.bigMap[0], playerYRegion, playerXRegion, playerYTile, playerXTile, viewRadius,heightOffset,mapView,circleView,false,true,true,viewer,&optimizeArray,specialTiles,seeAboveInvisible,checkAll,mapDebug); // Sider is length.
 							//printMapVector(viewer,sider,tileSet); // This for console.
 							displayStuffOptimized(sider,viewer,8,optimizeArray,specialTiles); // This for graphocs.
 						}
@@ -374,4 +403,4 @@ int main( int argc, char* args[] )
 
 // TODO:
 // Have battlefields stored in tiles after a battle to re-use, as battles can impact terrain. (!)
-// Viewline changes - will need some changes. Player can't really see much that's useful. Too strict.
+// Viewline changes - double/triple line check.

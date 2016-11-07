@@ -242,307 +242,384 @@ void randLine(unsigned int seed, double pushCoefficient, int startY, int startX,
 }
 
 void viewLine(int length, int* viewMap, float heightOffset, std::vector<int>& actualMap, 
-    int playerY, int playerX, int yTar, int xTar){
+    int playerY, int playerX, int yTar, int xTar, bool debug){
+	// Just in case in the future, and people would find this out as some sort of bug...
+	// It isn't. It just isn't possible with the algorithm to detect every square's edge.
+	// So: We rely on the outer squares (the ones at the border of the screen) to create
+	// lines that detect alot of the squares. Most of these are pretty accurate, and reveal
+	// a lot. These also cause "view scarring", which means as you increase and decrease zoom,
+	// the outer squares relative positions and the lines from the player to the outer squares
+	// change. Which means things that are closer gets revealed/unrevealled because the lines
+	// that went through it previously didn't detect its very edges to find it.
+	// We detect later all unrevealled, and try to reveal it again directly.
+	// This typically won't work, but catches a few, particularly obvious ones.
+	// To put it simply: to fix this 'bug', you'll need to create a double/ triple check lines.
+	// This would create lines to the corners to the target square (from the same corners of
+	// the player's.) This would mean doing double/triple the per square.
+	// TODO Try it out. Maybe it's worth it. Or maybe with a memory mode, it won't matter.
+	// You can also just check every square. This new algorithm is a hell lot more efficient,
+	// it may be affordable. For now, will be a toggle for comparison. This would remove the
+	// problem entirely, particularly for tiles farther away, and is probably actually way
+	// worse for efficiency than the double/triple check lines.
     if(playerY == yTar && playerX == xTar){
-        return;
+        return; // Same tile. out
     }
-    if(viewMap[(yTar*length)+xTar] == 1){
-        return;
-    }
-    //for(int y = 0; y < length; y++)
-    //{
-    //    for (int x = 0; x < length; x++)
-    //    {
-    //        std::cout << actualMap[(y*length)+x];
-    //        
-    //    }
-    //    std::cout << std::endl;
+    //if(viewMap[(yTar*length)+xTar] == 1){
+    //    return; // If it's already revealled, get out.  // TURNED INTO A TOGGLE.
     //}
-    //std::cout << "GORE2" << std::endl;
-    // This algorithm is not meant for 100% certainty. 
-    double playerHeight = actualMap[(playerY*length)+playerX];
-    //std::cout << playerHeight << std::endl;
-    int tarHeight = actualMap[(yTar*length)+xTar];
-    int currHeight = playerHeight;
-    double maxAngle = 0.00; 
-    double minAngle = -100.00; //a depth of darkness
-    int yIndex = playerY;
-    int xIndex = playerX;
-
-    // -- inner / outer
-
-    double innerY = 0;
-    double innerX = 0;
-    double outerY = 1;
-    double outerX = 1;
-    double tarYInner = 1; // If target higher (less than, on the graph) than player then inner target (towards player) would need indent by 1.
-    double tarXInner = 1;
-    double tarYOuter = 0; 
-    double tarXOuter = 0;
-    if(yTar > playerY){
-        innerY = 1;
-        outerY = 0;
-        tarYInner = 0;
-        tarYOuter = 1;
-    }
-    if(xTar > playerX){
-        innerX = 1;
-        outerX = 0;
-        tarXInner = 0;
-        tarXOuter = 1;
-    }
-    //std::cout << "GORE4" << std::endl;
-    // functions
-    double function = 0;
-    int special = 0; // For special line cases.
-    int yDiff = yTar-playerY;
-    int xDiff = xTar-playerX;
-    int upMode = 0;
-    int rightMode = 0;
-    bool goUp = false;
-    //std::cout << "GORDON " << xDiff << " " << yDiff << std::endl;
-    if(abs(yDiff)>abs(xDiff)){
-        goUp = true;
-    }
-    if(xDiff!=0){
-        rightMode = abs(xDiff)/xDiff;
-    }
-    if(yDiff!=0){
-        upMode = abs(yDiff)/yDiff;
-    }
-    double checkOffset = 0;
-    double indentY;
-    double indentX;
-    double indentTarX;
-    double indentTarY;
-    bool playerIsHigher = false;
-    //std::cout << "GORE3" << std::endl;
-    if(xDiff == 0 || yDiff == 0 || abs(xDiff)==abs(yDiff)){
-        if(xDiff == 0){
-            if(yDiff > 0){
-                special = 1; // 1 is up/down
-            }
-            else {
-                special = -1;
-            }
-        }
-        else if(yDiff == 0){
-            if(xDiff > 0){
-                special = 2; // 2 is left/right
-            }
-            else {
-                special = -2;
-            }
-        }
-        else {
-            if(xDiff/yDiff > 0){
-                if(yDiff > 0){
-                    special = 3; // 3 is upright
-                }
-                else{
-                    special = -3; // bottom left
-                }
-            }
-            else {
-                if(yDiff > 0){
-                    special = 4; // 4 is upleft
-                }
-                else{
-                    special = -4; // bottomright
-                }
-            }
-        }
-    }
-    else {
-        if(goUp){
-            if(tarHeight>playerHeight){ // NOTE: You can swap the sign and the insides of the if/else to swap visibility behaviour of tiles that are same height.
-                function = ((xTar+tarXInner)-(playerX+outerX))/((yTar+tarYInner)-(playerY+outerY)); // multiply by current Y to get X.
-                indentTarX = tarXInner;
-                indentTarY = tarYInner;
-                indentX = outerX;
-                indentY = outerY;
-                // ((x - playerX)* functionX) + playerY
-            }
-            else {
-                playerIsHigher = true;
-                function = ((xTar+tarXOuter)-(playerX+innerX))/((yTar+tarYOuter)-(playerY+innerY)); // multiply by current Y to get X.
-                indentTarX = tarXOuter;
-                indentTarY = tarYOuter;
-                indentX = innerX;
-                indentY = innerY;
-                // ((x - playerX)* functionX) + playerY
-                //std::cout << "indent y: " << indentY << " x: " << indentX << " tar_indent_y: " << indentTarY << " tar_indent_x: " << indentTarX << " " << function << std::endl;
-                //std::cout << "tarx: " << xTar+tarXInner << " tary: " << (yTar+tarYInner) << " playerx: " << (playerX+outerX) << " playery: " << (playerY+outerY) << " "<< std::endl;
-                //std::cout << "x: " << ((xTar+tarXInner)-(playerX+outerX)) << " y: " << ((yTar+tarYInner)-(playerY+outerY)) << std::endl;
-                //std::cout << "all: " << ((xTar+tarXInner)-(playerX+outerX))/((yTar+tarYInner)-(playerY+outerY)) << std::endl;
-            }
-        }
-        else{
-            if(tarHeight>playerHeight){
-                function = ((yTar+tarYInner)-(playerY+outerY))/((xTar+tarXInner)-(playerX+outerX)); // multiply by current X to get Y.
-                //std::cout << "FUN: " << function << std::endl;
-                //std::cout << "FUN: " << function << std::endl;
-                indentTarX = tarXInner;
-                indentTarY = tarYInner;
-                indentX = outerX;
-                indentY = outerY;
-                // ((y - playerY)* functionX) + playerX
-            }
-            else {
-                playerIsHigher = true;
-                function = ((yTar+tarYOuter)-(playerY+innerY))/((xTar+tarXOuter)-(playerX+innerX)); // multiply by current X to get Y.
-                indentTarX = tarXOuter;
-                indentTarY = tarYOuter;
-                indentX = innerX;
-                indentY = innerY;
-                
-                // ((y - playerY)* functionX) + playerX
-            }
-        }
-    }
-    // technical
-    double xCheck = 0; // either 0.9999... or 0. For negative traversing
-    double yCheck = 0;
-    double xShift = 0; // either 0 or 0.0000...1. For negative traversing AND function.
-    double yShift = 0;
-    double inaccuracy = 0.001;
-    // technical
-    if(yDiff<0){
-        yCheck = 1-inaccuracy;
-        if(function<0){
-            yShift = inaccuracy;
-        }
-    }
-    //std::cout << "AHHHHH " << xDiff << std::endl;
-    //std::cout << "AHHHHH2 " << function << std::endl;
-    if(xDiff<0){
-        //std::cout << "CHECK " << xDiff << std::endl;
-        xCheck = 1-inaccuracy;
-        if(function<0){
-            //std::cout << "CHECK2 " << xDiff << std::endl;
-            xShift = inaccuracy;
-            
-        }
-    }
-    
-
-    // results
-    int aSpecial;
-    double tempAngle;
-    double indexHolder;
-    bool alternateAngle = false;
-    bool ticker = true; // used for certain indents.
-    //std::cout << "---xIndex: " << xIndex << " xTar: " << xTar << " yIndex: " << yIndex << " yTar: " << yTar << " playerY: " << playerY << " playerX: " << playerX << std::endl;
-    playerHeight+=heightOffset;
-    while(xIndex != xTar || yIndex  != yTar){
-        // determine direction
-        //std::cout << "GORE" << std::endl;
-        if(special==0){
-            if(goUp){ // dealing with y as input
-                yIndex+=upMode;
-                checkOffset = func(((double)(yIndex-indentY-playerY))+yCheck,function,((double)(playerX+indentX))-xShift);
-                //std::cout << "GORED " << checkOffset << " " <<yCheck <<  " " << xShift <<  " " << xCheck<< std::endl;
-                //std::cout <<  "GORED2 " << yIndex << 
-                //              " " << ((double)(yIndex-indentY-playerY)) <<  
-                //              " " << ((double)(yIndex-indentY-playerY))+yCheck <<  
-                //              " " << ((double)(playerX+indentX))-xShift<< std::endl;
-                if(xIndex != (int)(checkOffset) ){
-                    yIndex=(int)func((double)((int)(checkOffset-xShift)-indentX-playerX+xCheck),(1.00/function),((double)(indentY+playerY))-yShift);
-                    //std::cout << "GORE3" << std::endl;
-                    xIndex += rightMode;
-                    currHeight = actualMap[(yIndex*length)+xIndex];
-                    //std::cout << "height diff: " << (currHeight - playerHeight) << std::endl;
-                    //std::cout << "x calc " << xIndex << std::endl;
-                    //std::cout << "y calc: " << func((double)(xIndex-playerX-indentX),(1.00/function),(double)(playerY+indentY)) << std::endl;
-                    //std::cout << "x player calc: " << playerX << std::endl;
-                    //std::cout << "y player calc " << playerY << std::endl;
-                    tempAngle = (currHeight - playerHeight)/distD(playerY,playerX,func((double)(xIndex-playerX-indentX+xCheck),(1.00/function),(double)(playerY+indentY)),(double)xIndex); 
-                    // removed indents, xdiff and ydif is same anyhow, and that is used for calculating distance.
-                }
-                else{
-                    //std::cout << "GORE4" << std::endl;
-                    currHeight = actualMap[(yIndex*length)+xIndex];
-                    tempAngle = (currHeight - playerHeight)/distD(playerY,playerX,(double)yIndex,checkOffset); 
-                    //std::cout << "height diff: " << (currHeight - playerHeight) << std::endl;
-                    //std::cout << "x calc " << checkOffset << std::endl;
-                    //std::cout << "y calc: " << yIndex << std::endl;
-                    //std::cout << "x player calc: " << playerX << std::endl;
-                    //std::cout << "y player calc " << playerY << std::endl;
-                }
-            }
-            else{ // dealing with x as input
-                xIndex+=rightMode;
-                //std::cout << "yShift " << yShift << std::endl;
-                //std::cout << "GORE3 " << xShift << std::endl;
-                //std::cout << "GORE3 " << xIndex << std::endl;
-                checkOffset = func(((double)(xIndex-indentX-playerX)+xCheck),function,((double)(playerY+indentY))-yShift);
-                if(yIndex != (int)(checkOffset) ){
-                    xIndex=(int)func((double)((int)(checkOffset-yShift)-indentY-playerY+yCheck),(1.00/function),((double)(indentX+playerX))-xShift);
-                    //std::cout << "GORE3 " << xIndex << std::endl;
-                    yIndex += upMode;
-                    //std::cout << "height diff: " << (currHeight - playerHeight) << std::endl;
-                    //std::cout << "x calc " << func((double)(yIndex-playerY-indentY+yCheck),(1.00/function),(double)(playerX+indentX)) << std::endl;
-                    //std::cout << "y calc: " << yIndex << std::endl;
-                    //std::cout << "x player calc: " << playerX << std::endl;
-                    //std::cout << "y player calc " << playerY << std::endl;
-                    currHeight = actualMap[(yIndex*length)+xIndex];
-                    tempAngle = (currHeight - playerHeight)/distD(playerY,playerX,(double)yIndex,func((double)(yIndex-playerY-indentY+yCheck),(1.00/function),(double)(playerX+indentX))); 
-                    // removed indents, xdiff and ydif is same anyhow, and that is used for calculating distance.
-                }
-                else{
-                    //std::cout << "GORE4 " << checkOffset << std::endl;
-                    //std::cout << "GORE4" << std::endl;
-                    currHeight = actualMap[(yIndex*length)+xIndex];
-                    tempAngle = (currHeight - playerHeight)/distD(playerY,playerX,checkOffset,(double)xIndex); 
-                    //std::cout << "height diff: " << (currHeight - playerHeight) << std::endl;
-                    //std::cout << "x calc " << xIndex << std::endl;
-                    //std::cout << "y calc: " << checkOffset << std::endl;
-                    //std::cout << "x player calc: " << playerX << std::endl;
-                    //std::cout << "y player calc " << playerY << std::endl;
-                }
-                
-            }
-        }
-        else{
-            //std::cout << "GO2R" << std::endl;
-            aSpecial = abs(special)/special;
-            if(abs(special) == 1){
-                yIndex+=aSpecial;
-            }
-            else if(abs(special) == 2){
-                xIndex+=aSpecial;
-            }
-            else if(abs(special) == 3){
-                //std::cout << "xIndex: " << xIndex << " xTar: " << xTar << " yIndex: " << yIndex << " yTar: " << yTar << " playerY: " << playerY << " playerX: " << playerX << std::endl;
-                yIndex+=aSpecial;
-                xIndex+=aSpecial;
-            }
-            else{
-                yIndex+=aSpecial;
-                xIndex-=aSpecial;
-            }
-            currHeight = actualMap[(yIndex*length)+xIndex];
-            tempAngle = (currHeight - playerHeight)/dist(playerY,playerX,yIndex,xIndex);
-
-        }
-        if(tempAngle>=minAngle){
-            viewMap[(yIndex*length)+xIndex] = 1;
-            minAngle=tempAngle;
-        }
-	else if(tempAngle<0 && minAngle<=0){
-		if(viewMap[(yIndex*length)+xIndex] != 1){
-			viewMap[(yIndex*length)+xIndex] = -1;
+	//find case
+		//if(yTar == 11 && xTar == 0 && playerX == 25){
+		//	debug = true;
+		//}
+	//find case
+	std::cout << std::fixed << std::setprecision(19);
+    bool playerIsHigher = false; // If player is higher, we use lookUp Algorithm -> playerIsHigher == !lookUp
+	if(actualMap[(yTar*length)+xTar]<actualMap[(playerY*length)+playerX]){
+		playerIsHigher = true;
+	}
+	double minAngle = -100.00; //a depth of darkness
+	double playerHeight = actualMap[(playerY*length)+playerX];
+	bool yMode = false; // If function for x > 1, then we must use inverse algorithm.
+	int xDiff = xTar-playerX;
+	int yDiff = yTar-playerY;
+	int mode = 1; // For real traversing
+	if(abs(yDiff)>abs(xDiff)){
+		yMode=true;
+	}
+	
+	double function = 0; // For traversing -- mandatory!
+	int indent = 0; // To offset by 1 so we don't count beginning twice.
+	double xShift = 0; // Shifting X by some for calc
+	double yShift = 0; // Shifting Y by some for calc
+	double check = 0; // For checking current index -- either for y or x
+	double inaccuracy = 0.00000001;
+	double inaccuracyOne = 1.00 - inaccuracy;
+	int x = playerX;
+	int y = playerY;
+	if(debug){
+		std::cout << std::endl;
+		std::cout << "xDiff: " << xDiff << std::endl;
+		std::cout << "yDiff: " << yDiff << std::endl;
+		std::cout << "function: " << function << std::endl;
+		std::cout << "yTar: " << yTar << " xTar: " << xTar << std::endl;
+		std::cout << "playerY: " << playerY << " playerX: " << playerX << std::endl;
+		std::cout << "sFunc: " << (yTar - playerY) << std::endl;
+		std::cout << "higher: " << playerIsHigher << std::endl;
+	}
+	if(yMode){
+		function=(double)xDiff/(double)yDiff;
+		
+		if(xDiff<0){ // Going up in array - visual
+			indent = -1;
+			
+			if(function>=0){ // Func is positive
+				if(playerIsHigher){ // !lookup
+					check = 1.00;
+					if(debug)
+					std::cout << "MODE 1" << std::endl;
+				}
+				else { // lookup
+					check = inaccuracyOne;
+					yShift = inaccuracyOne;
+					xShift = inaccuracyOne;
+					if(debug)
+					std::cout << "MODE 2" << std::endl;
+				}
+			}
+			else{ // Func is negative
+				if(playerIsHigher){ // !lookup
+					yShift = inaccuracyOne;
+					check = 1.00;
+					if(debug)
+					std::cout << "MODE 3" << std::endl;
+				}
+				else { // lookup
+					check = inaccuracyOne;
+					xShift = inaccuracyOne;
+					if(debug)
+					std::cout << "MODE 4" << std::endl;
+				}
+			}
+		}
+		else { // Going down in array - visual
+			indent = 1;
+			if(function>=0){ // Func is positive
+				if(playerIsHigher){ // !lookup
+					check = -inaccuracy;
+					xShift = inaccuracyOne;
+					yShift = inaccuracyOne;
+					if(debug)
+					std::cout << "MODE 5" << std::endl;
+				}
+				else { // lookup
+					if(debug)
+					std::cout << "MODE 6" << std::endl;
+				}
+			}
+			else{ // Func is negative
+				if(playerIsHigher){ // !lookup
+					xShift = inaccuracyOne;
+					check = -inaccuracy;
+					
+					if(debug)
+					std::cout << "MODE 7" << std::endl;
+				}
+				else { // lookup
+					yShift = inaccuracyOne;
+					if(debug)
+					std::cout << "MODE 8" << std::endl;
+				}
+			}
+		}
+		if(yDiff<0){
+			mode=-1;
+		}
+		if(xDiff && playerIsHigher){
+			x+=indent;
 		}
 	}
-        //std::cout << "special: " << special << " tempAngle: " << tempAngle << " minAngle: " <<  minAngle << " maxAngle: " << maxAngle << " currHeight: " << currHeight << " checkOffset: " << checkOffset << " func: " << function << std::endl;
-        //std::cout << "xIndex: " << xIndex << " xTar: " << xTar << " yIndex: " << yIndex << " yTar: " << yTar << " playerY: " << playerY << " playerX: " << playerX << std::endl;
-        if(currHeight==-1){
-            break; // This is to save time for the real thing.
-        }
-        //std::cout << indentTarX << " " << indentTarY << " " << indentX << " " << indentY << std::endl;
-
-    }
-    //std::cout << "FIN" << std::endl;
+	else {
+		function=(double)yDiff/(double)xDiff;
+		if(debug){
+			std::cout << yDiff << " " << xDiff << std::endl;
+		}
+		if(yDiff<0){ // Going up in array - visual
+			indent = -1;
+			
+			if(function>=0){ // Func is positive
+				if(playerIsHigher){ // !lookup
+					check = 1.00;
+					if(debug)
+					std::cout << "MODE 9" << std::endl;
+				}
+				else { // lookup
+					check = inaccuracyOne;
+					xShift = inaccuracyOne;
+					yShift = inaccuracyOne;
+					if(debug)
+					std::cout << "MODE 10" << std::endl;
+				}
+			}
+			else{ // Func is negative
+				if(playerIsHigher){ // !lookup
+					xShift = inaccuracyOne;
+					check = 1.00;
+					if(debug)
+					std::cout << "MODE 11" << std::endl;
+				}
+				else { // lookup
+					check = inaccuracyOne;
+					yShift = inaccuracyOne;
+					if(debug)
+					std::cout << "MODE 12" << std::endl;
+				}
+			}
+		}
+		else { // Going down in array - visual
+			indent = 1;
+			if(function>=0){ // Func is positive
+				if(playerIsHigher){ // !lookup
+					check = -inaccuracy;
+					yShift = inaccuracyOne;
+					xShift = inaccuracyOne;
+					if(debug)
+					std::cout << "MODE 13" << std::endl;
+				}
+				else { // lookup
+					if(debug)
+					std::cout << "MODE 14" << std::endl;
+				}
+			}
+			else{ // Func is negative
+				if(playerIsHigher){ // !lookup
+					yShift = inaccuracyOne;
+					check = -inaccuracy;
+					
+					if(debug)
+					std::cout << "MODE 15" << std::endl;
+				}
+				else { // lookup
+					xShift = inaccuracyOne;
+					if(debug)
+					std::cout << "MODE 16" << std::endl;
+				}
+			}
+		}
+		if(xDiff<0){
+			mode=-1;
+		}
+		if(yDiff && playerIsHigher){
+			y+=indent;
+		}
+	}
+	double playerXD = playerX;
+	double playerYD = playerY;
+	double calc; // for precision
+	int get; // for getting index
+	int getTwo; // for getting another index
+	double tempAngle; // For getting the
+	bool goBack = false;
+	double currHeight;
+	double saveDouble; // intermediate for saving double value.
+	playerXD += xShift;
+	playerYD += yShift;
+	playerHeight+=heightOffset; // Because we want to look over edges to an extent.
+	if(debug)
+	std::cout << "---" << std::endl;
+	if(yMode){
+		while(x!=xTar || y!=yTar){
+			if(!goBack){
+			y+=mode;}
+			if(x<0 || y<0 || x == length || y == length){
+				break;
+			}
+			goBack = false; // we do this at start so we can calculate the last
+			calc = ((((double)(y) + yShift) - playerYD)*(function)) + playerXD;
+			get = calc;
+			if(debug){
+				std::cout << "startX: " << x << " startY: " << y << std::endl;
+				std::cout << "playerXD: " << playerXD << " playerYD: " << playerYD << std::endl;
+				std::cout << "calc: " << calc << " get: " << get << std::endl;
+				std::cout << "PLAYERISHIGHER: " << playerIsHigher << std::endl;
+			}
+			if(get != x){
+				calc = ((((double)get + check) - playerXD)/(function)) + playerYD;
+				saveDouble = ((double)get) + check;
+				x = saveDouble; // Both truncates
+				if((int)(calc) != (y-mode) && playerIsHigher){
+					goBack = true;
+				}
+				y = calc;
+				currHeight = actualMap[(y*length)+x];
+				tempAngle = (currHeight-playerHeight)/distD(playerYD,playerXD,calc,saveDouble);
+				if(debug){
+					std::cout << "intermX: " << x << " intermY: " << y << std::endl;
+					std::cout << "calc: " << calc << " saveDouble: " << get << std::endl;
+					std::cout << "heightDiff: " << (currHeight-playerHeight) << " distD: " << distD(playerYD,playerXD,calc,saveDouble) << std::endl;
+					std::cout << "tempAngle: " << tempAngle << std::endl;
+				}
+			}
+			else {
+				currHeight = actualMap[(y*length)+x];
+				tempAngle = (currHeight-playerHeight)/distD(playerYD,playerXD,(double)y + yShift,calc);
+				if(debug){
+					std::cout << "intermX: " << x << " intermY: " << y << std::endl;
+					std::cout << "heightDiff: " << (currHeight-playerHeight) << " distD: " << distD(playerYD,playerXD,(double)y + yShift,calc) << std::endl;
+					std::cout << "tempAngle: " << tempAngle << std::endl;
+				}
+			}
+			if(tempAngle>=minAngle-inaccuracy){
+				if(debug)
+				std::cout << "minAngle prev: " << minAngle << std::endl;
+		    		viewMap[(y*length)+x] = 1;
+				if(tempAngle>minAngle){
+		    			minAngle=tempAngle;
+				}
+				if(debug)
+				std::cout << "minAngle now: " << minAngle << std::endl;
+			}
+			else if(tempAngle<0 && minAngle<=0){
+				if(viewMap[(y*length)+x] != 1){
+					viewMap[(y*length)+x] = -1;
+				}
+			}
+			if(debug)
+			std::cout << "xBefore: " << x << std::endl;
+			x = get;
+			if(debug){
+				std::cout << "yMode: " << yMode << " x: " << x << " y: " << y << " func: " << function << std::endl;
+				std::cout << "yShift: " << yShift << " xShift: " << xShift << " mode: " << mode << " check: " << check << std::endl;
+				std::cout << "playerX: " << playerX << " playerY: " << playerY << " playerXD: " << playerXD << " playerYD: " << playerYD << std::endl;
+				std::cout << "xTar: " << xTar << " yTar: " << yTar << std::endl;
+				for(int i = 0; i<(length*length);i++){
+					if(i%length == 0){
+						std::cout << std::endl;
+					}
+					std::cout << viewMap[i];
+				}
+			}
+		}
+		if(debug) 
+		std::cout << "END YMODE FOR" << std::endl;
+		return;
+	}
+	while(y!=yTar || x!=xTar){
+		if(debug)
+		std::cout << "goBack: " << goBack << std::endl;
+		if(!goBack){
+		x+=mode;}
+		if(x<0 || y<0 || x == length || y == length){
+			break;
+		}
+		goBack = false; // we do this at start so we can calculate the last
+		calc = ((((double)(x) + xShift) - playerXD)*(function)) + playerYD;
+		get = calc;
+		if(debug){
+			std::cout << "startX: " << x << " startY: " << y << std::endl;
+			std::cout << "playerXD: " << playerXD << " playerYD: " << playerYD << std::endl;
+			std::cout << "calc: " << calc << " get: " << get << std::endl;
+			std::cout << "PLAYERISHIGHER: " << playerIsHigher << std::endl;
+		}
+		if(get != y){
+			calc = ((((double)get + check) - playerYD)/(function)) + playerXD;
+			saveDouble = ((double)get) + check;
+			y = saveDouble; // Both truncates
+			if((int)(calc) != (x-mode) && playerIsHigher){
+				goBack = true;
+			}
+			x = calc;
+			currHeight = actualMap[(y*length)+x];
+			tempAngle = (currHeight-playerHeight)/distD(playerYD,playerXD,saveDouble,calc);
+			if(debug){
+				std::cout << "intermX: " << x << " intermY: " << y << std::endl;
+				std::cout << "calc: " << calc << " saveDouble: " << get << std::endl;
+				std::cout << "heightDiff: " << (currHeight-playerHeight) << " distD: " << distD(playerYD,playerXD,saveDouble,calc) << std::endl;
+				std::cout << "tempAngle: " << tempAngle << std::endl;
+			}
+		}
+		else {
+			currHeight = actualMap[(y*length)+x];
+			tempAngle = (currHeight-playerHeight)/distD(playerYD,playerXD,calc,(double)x + xShift);
+			if(debug){
+				std::cout << "intermX: " << x << " intermY: " << y << std::endl;
+				std::cout << "heightDiff: " << (currHeight-playerHeight) << " distD: " << distD(playerYD,playerXD,calc,(double)x + xShift) << std::endl;
+				std::cout << "tempAngle: " << tempAngle << std::endl;
+			}
+		}
+		if(tempAngle>=minAngle-inaccuracy){
+			if(debug)
+			std::cout << "minAngle prev: " << minAngle << std::endl;
+            		viewMap[(y*length)+x] = 1;
+            		if(tempAngle>minAngle){
+		    		minAngle=tempAngle;
+			}
+			if(debug)
+			std::cout << "minAngle now: " << minAngle << std::endl;
+		}
+		else if(tempAngle<0 && minAngle<=0){
+			if(viewMap[(y*length)+x] != 1){
+				viewMap[(y*length)+x] = -1;
+			}
+		}
+		if(debug)
+		std::cout << "yBefore: " << y << std::endl;
+		y=get;
+		if(debug){
+			std::cout << "yMode: " << yMode << " x: " << x << " y: " << y << " func: " << function << std::endl;
+			std::cout << "yShift: " << yShift << " xShift: " << xShift << " mode: " << mode << " check: " << check << std::endl;
+			std::cout << "playerX: " << playerX << " playerY: " << playerY << " playerXD: " << playerXD << " playerYD: " << playerYD << std::endl;
+			std::cout << "xTar: " << xTar << " yTar: " << yTar << std::endl;
+			for(int i = 0; i<(length*length);i++){
+				if(i%length == 0){
+					std::cout << std::endl;
+				}
+				std::cout << viewMap[i];
+			}
+		}
+	}
+	if(debug)
+	std::cout << "END XMODE FOR" << std::endl;
+	return;
 }
 
 void circle(unsigned int seed, double pushCoefficient, 
