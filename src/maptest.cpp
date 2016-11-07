@@ -2,8 +2,8 @@
 #include "SDL.h"
 #include "SDL_image.h"
 
-const int SCREEN_WIDTH = 640;
-const int SCREEN_HEIGHT = 480;
+const int SCREEN_WIDTH = 1024;
+const int SCREEN_HEIGHT = 1024;
 
 //Starts up SDL and creates window
 bool init();
@@ -15,7 +15,7 @@ SDL_Renderer* gRenderer = NULL;
 SDL_Window* gWindow = NULL;
 
 // This shows nice printout of map. It's nice.
-void displayStuff(int sider, std::vector<int>& map, int maxHeight){
+void displayStuff(int sider, std::vector<int>& map, int maxHeight, int specialTiles){
 	// Clears screen
 	SDL_SetRenderDrawColor( gRenderer, 0x00, 0x00, 0x00, 0xFF );
 	SDL_RenderClear( gRenderer );
@@ -25,29 +25,94 @@ void displayStuff(int sider, std::vector<int>& map, int maxHeight){
 	int tileWidthM = (SCREEN_WIDTH/sider) -1;
 	int tileHeight = SCREEN_HEIGHT/sider;
 	int tileHeightM = (SCREEN_HEIGHT/sider) -1;
-	for(int check = 0;check<sider*sider;check++){ // Go through each tile in the map inputted.
-		// Make the tile.
-		fillRect = {tileWidth*(check%sider), tileHeight*(check/sider), tileWidthM, tileHeightM};
-		if(map[check] > 0){
-		//RGBA
-				if(map[check]<=maxHeight){
-               	 SDL_SetRenderDrawColor( gRenderer, (int)(255.0*sqrt(((float)map[check])/(float)maxHeight)), 255, (int)(255.0*((float)(map[check])/(float)maxHeight)), 255 ); // Set to variable degree of GREEEEN
+	int startX = (SCREEN_WIDTH/2)-((tileWidth*sider)/2);
+	int startY = (SCREEN_HEIGHT/2)-((tileHeight*sider)/2);
+	int index;
+	for(int y = 0;y<sider;y++){
+		for(int x = 0;x<sider;x++){
+			index = (y*sider) + x;
+			fillRect = {startX+(tileWidth*x), startY+(tileHeight*y), tileWidthM, tileHeightM};
+			if(map[index] > 0){
+			//RGBA
+				if(map[index]<=maxHeight){
+		       	 		SDL_SetRenderDrawColor( gRenderer, 
+								(int)(255.0*sqrt(((float)map[index])/(float)maxHeight)), 
+								255, 
+								(int)(255.0*((float)(map[index])/(float)maxHeight)), 
+								255 ); // Set to variable degree of GREEEEN
 				}
 				else {
 					SDL_SetRenderDrawColor( gRenderer, 255.0, 255.0, 255.0, 255 ); // Snow white
 				}
+			}
+			else if(map[index] == 0){ // BLUUUEEEE
+		       	 SDL_SetRenderDrawColor( gRenderer, 0, 0, 255, 255 ); 
+			}
+			else if(map[index] == (-specialTiles)-1){ /// Purple. That's you.
+		       	 SDL_SetRenderDrawColor( gRenderer, 255, 0, 255, 255 ); 
+			}
+			else {	// Black. That's everything else.
+				SDL_SetRenderDrawColor( gRenderer, 0, 0, 0, 255 );
+			}
+			// Fill in with color.
+		       	SDL_RenderFillRect( gRenderer, &fillRect );
 		}
-		else if(map[check] == 0){ // BLUUUEEEE
-               	 SDL_SetRenderDrawColor( gRenderer, 0, 0, 255, 255 ); 
+	}
+	//Update screenos
+	SDL_RenderPresent( gRenderer );
+}
+
+// This shows nice printout of map. It's nice.
+void displayStuffOptimized(int sider, std::vector<int>& map, int maxHeight, std::vector<int>& optimizeArray, int specialTiles){
+	// Clears screen
+	SDL_SetRenderDrawColor( gRenderer, 0x00, 0x00, 0x00, 0xFF );
+	SDL_RenderClear( gRenderer );
+	SDL_Rect fillRect;
+	// We want to calculate these only once.
+	int tileWidth = SCREEN_WIDTH/sider;
+	int tileWidthM = (SCREEN_WIDTH/sider) -1;
+	int tileHeight = SCREEN_HEIGHT/sider;
+	int tileHeightM = (SCREEN_HEIGHT/sider) -1;
+	int startX = (SCREEN_WIDTH/2)-((tileWidth*sider)/2);
+	int startY = (SCREEN_HEIGHT/2)-((tileHeight*sider)/2);
+	int index;
+	int optimizeIndex = 0;
+	for(int y = 0;y<sider;y++){
+		for(int x = optimizeArray[optimizeIndex++];x<sider;x++){ //http://www.embedded.com/design/programming-languages-and-tools/4410601/Pre-increment-or-post-increment-in-C-C-
+			index = (y*sider) + x;
+			//std::cout << y << ": " << map[index] << std::endl;
+			if(map[index] == -3){
+				break;
+			}
+			fillRect = {startX+(tileWidth*x), startY+(tileHeight*y), tileWidthM, tileHeightM};
+			if(map[index] > 0){
+			//RGBA
+				if(map[index]<=maxHeight){
+		       	 		SDL_SetRenderDrawColor( gRenderer, 
+								(int)(255.0*sqrt(((float)map[index])/(float)maxHeight)), 
+								255, 
+								(int)(255.0*((float)(map[index])/(float)maxHeight)), 
+								255 ); // Set to variable degree of GREEEEN
+				}
+				else {
+					SDL_SetRenderDrawColor( gRenderer, 255.0, 255.0, 255.0, 255 ); // Snow white
+				}
+			}
+			else if(map[index] == 0){ // BLUUUEEEE
+		       	 SDL_SetRenderDrawColor( gRenderer, 0, 0, 255, 255 ); 
+			}
+			else if(map[index] == (-specialTiles)-1) { /// Purple. That's you.
+		       	 SDL_SetRenderDrawColor( gRenderer, 255, 0, 255, 255 ); 
+			}
+			else if(map[index] == -2) { /// Above ground invisible. That's you.
+		       	 SDL_SetRenderDrawColor( gRenderer, 89, 169, 215, 255 ); 
+			}
+			else {	// Black. That's everything else.
+				SDL_SetRenderDrawColor( gRenderer, 0, 0, 0, 255 );
+			}
+			// Fill in with color.
+		       	SDL_RenderFillRect( gRenderer, &fillRect );
 		}
-		else if(map[check] == -3){ /// Purple. That's you.
-               	 SDL_SetRenderDrawColor( gRenderer, 255, 0, 255, 255 ); 
-		}
-		else {	// Black. That's everything else.
-			SDL_SetRenderDrawColor( gRenderer, 0, 0, 0, 255 );
-		}
-		// Fill in with color.
-               	SDL_RenderFillRect( gRenderer, &fillRect );
 	}
 	//Update screenos
 	SDL_RenderPresent( gRenderer );
@@ -103,19 +168,20 @@ bool init()
 int main( int argc, char* args[] )
 {
 	std::ios::sync_with_stdio(false); // This allows fast output for the move demo.
-    srand(time(NULL));
+    srand(1);
 	// Constants.
     bool debug = false;
     bool diagonal = true;
     double pushCoefficient = 0.1;
-    size_t worldMapSide = 2;
-    size_t mapSide = 200;
+    size_t worldMapSide = 1;
+    size_t mapSide = 100;
     size_t tileSide = 32;
     size_t battlefieldSide = 64;
     std::vector<std::string> tileSet;
-    tileSet.push_back("@"); // as -3. Player
-    tileSet.push_back("~"); // as -4. Ground
-    tileSet.push_back("T"); // as -5. Tree
+    tileSet.push_back("@"); // as -4. Player
+    tileSet.push_back("~"); // as -5. Ground
+    tileSet.push_back("T"); // as -6. Tree
+	int specialTiles = 3; // -1 (empty/hidden space) -2 (alternate hidden space), -3 (skipline)
     worldMap newMap(rand(), pushCoefficient, worldMapSide, mapSide, tileSide, battlefieldSide,  diagonal, debug);
     if(debug){
         std::cout << "--- EVERYTHING HAS BEEN MADE --- " << std::endl;
@@ -127,10 +193,18 @@ int main( int argc, char* args[] )
 	int playerYRegion = 25;
 	 int playerXTile = 11;
 	int playerYTile = 11;
-	int viewRadius = 42;
-	bool VIEWMODE = false;
-	unsigned int mapView = false;
-    sider = view(newMap.bigMap[0],playerYRegion,playerXRegion,playerYTile,playerXTile,viewRadius,VIEWMODE,mapView,true,false,true,false,viewer);
+	int viewRadius = 9;
+	float heightOffset = 0.5; // Ideal?
+	bool mapView = true;
+	bool seeAboveInvisible = false;
+	bool circleView = false;
+	bool mapDebug = false;
+	bool checkAll; // See notes in viewline.
+	std::vector<int> optimizeArray;
+	std::cout << "Got here" << std::endl;
+    	viewer.clear(); // Clear print console map.
+	optimizeArray.clear(); // Clears optimization
+	sider = view(newMap.bigMap[0], playerYRegion, playerXRegion, playerYTile, playerXTile, viewRadius,heightOffset,mapView,circleView,false,true,true,viewer,&optimizeArray,specialTiles,seeAboveInvisible,checkAll,mapDebug); // Sider is length.
  //    std::cout << " VECTOR MAP " << std::endl;
  //    printMapVector(viewer,sider,tileSet);
  //    std::cout << " FULL MAP " << std::endl;
@@ -142,8 +216,10 @@ int main( int argc, char* args[] )
 	// battlefield newBattleTwo(&(newMap.bigMap[0].regionMap[((mapSide/2)*mapSide)+(mapSide/2)+2]),tileSide/2,tileSide/2);
 	// printMap(newBattleTwo.battleMap,battlefieldSide,tileSet);
 	// // On the mainland, most trees.
-	// battlefield newBattleThree(&(newMap.bigMap[0].regionMap[((mapSide/2)*mapSide)+(mapSide/4)]),tileSide/2,tileSide/2);
-	// printMap(newBattleThree.battleMap,battlefieldSide,tileSet);
+	
+	//battlefield newBattleThree(&(newMap.bigMap[0].regionMap[((mapSide/2)*mapSide)+(mapSide/4)]),tileSide/2,tileSide/2,specialTiles);
+	//printMap(newBattleThree.battleMap,battlefieldSide,tileSet,specialTiles);
+
 	// // Ocean. Should be nothing.
 	// battlefield newBattleFour(&(newMap.bigMap[0].regionMap[((mapSide/2)*mapSide)]),tileSide/2,tileSide/2);
 	// printMap(newBattleFour.battleMap,battlefieldSide,tileSet);
@@ -154,6 +230,7 @@ int main( int argc, char* args[] )
 	}
 	else
 	{	
+			displayStuffOptimized(sider,viewer,8,optimizeArray,specialTiles); // For initial present
 			//Main loop flag
 			bool quit = false;
 			bool updateScreen = false;
@@ -180,6 +257,7 @@ int main( int argc, char* args[] )
 						switch( e.key.keysym.sym )
 						{
 							case SDLK_UP:
+							std::cout << "UP" << std::endl;
 							if(mapView){ // go fast
 								playerYRegion--;
 							}
@@ -193,6 +271,7 @@ int main( int argc, char* args[] )
 							break;
 
 							case SDLK_DOWN:
+							std::cout << "DOWN" << std::endl;
 							if(mapView){ // go fast
 								playerYRegion++;
 							}
@@ -206,6 +285,7 @@ int main( int argc, char* args[] )
 							break;
 
 							case SDLK_LEFT:
+							std::cout << "LEFT" << std::endl;
 							if(mapView){ // go fast
 								playerXRegion--;
 							}
@@ -219,6 +299,7 @@ int main( int argc, char* args[] )
 							break;
 
 							case SDLK_RIGHT:
+							std::cout << "RIGHT" << std::endl;
 							if(mapView){ // go fast
 								playerXRegion++;
 							}
@@ -233,21 +314,55 @@ int main( int argc, char* args[] )
 
 							case SDLK_m: // Toggle map
 							mapView=!mapView;
+							std::cout << "mapView: " << mapView << std::endl;
+							SDL_Delay(250);
+							break;
+
+							case SDLK_s: // Toggle custom see above invisible
+							seeAboveInvisible=!seeAboveInvisible;
+							std::cout << "seeAboveInvisible: " << seeAboveInvisible << std::endl;
+							SDL_Delay(250);
+							break;
+
+							case SDLK_r: // Toggle custom see above invisible
+							circleView=!circleView;
+							std::cout << "circleView: " << circleView << std::endl;
+							SDL_Delay(250);
+							break;
+
+							case SDLK_e: // Toggle map debug. Should probably turn off see above invisible first.
+							mapDebug=!mapDebug;
+							std::cout << "mapDebug: " << mapDebug << std::endl;
+							SDL_Delay(250);
+							break;
+
+							case SDLK_q: // Toggle checkAll. See viewline func
+							checkAll=!checkAll;
+							std::cout << "checkAll: " << checkAll << std::endl;
 							SDL_Delay(250);
 							break;
 
 							case SDLK_MINUS: // Decrease view
 							viewRadius--;
+							std::cout << "viewRadius: " << viewRadius << std::endl;
 							SDL_Delay(250);
 							break;
 
 							case SDLK_EQUALS: // Increase view
 							viewRadius++;
+							std::cout << "viewRadius: " << viewRadius << std::endl;
 							SDL_Delay(250);
 							break;
 
-							case SDLK_e: // Increase view
-							VIEWMODE=!VIEWMODE;
+							case SDLK_RIGHTBRACKET: // Increase view height from base
+							heightOffset += 0.1;
+							std::cout << "heightOffset: " << heightOffset << std::endl;
+							SDL_Delay(250);
+							break;
+
+							case SDLK_LEFTBRACKET: // Decrease view height from base
+							heightOffset -= 0.1;
+							std::cout << "heightOffset: " << heightOffset << std::endl;
 							SDL_Delay(250);
 							break;
 
@@ -257,9 +372,10 @@ int main( int argc, char* args[] )
 						}
 						if(updateScreen){
 							viewer.clear(); // Clear print console map.
-							sider = view(newMap.bigMap[0], playerYRegion, playerXRegion, playerYTile, playerXTile, viewRadius,VIEWMODE,mapView,true,false,true,true,viewer); // Sider is length.
+							optimizeArray.clear(); // Clears optimization
+							sider = view(newMap.bigMap[0], playerYRegion, playerXRegion, playerYTile, playerXTile, viewRadius,heightOffset,mapView,circleView,false,true,true,viewer,&optimizeArray,specialTiles,seeAboveInvisible,checkAll,mapDebug); // Sider is length.
 							//printMapVector(viewer,sider,tileSet); // This for console.
-							displayStuff(sider,viewer,8); // This for graphocs.
+							displayStuffOptimized(sider,viewer,8,optimizeArray,specialTiles); // This for graphocs.
 						}
 					}
 				}
@@ -287,4 +403,4 @@ int main( int argc, char* args[] )
 
 // TODO:
 // Have battlefields stored in tiles after a battle to re-use, as battles can impact terrain. (!)
-// Viewline changes - will need some changes. Player can't really see much that's useful. Too strict.
+// Viewline changes - double/triple line check.

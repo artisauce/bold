@@ -21,7 +21,7 @@ public:
 	std::string tileSet; // Different visuals for different places.
 	// -- Maps
 	
-	battlefield(const tile* parentTInput, const int yInput, const int xInput,int specialTiles);
+	battlefield(const tile* parentTInput, const int yInput, const int xInput);
 	battlefield(battlefield const& src);
 	~battlefield();
 	

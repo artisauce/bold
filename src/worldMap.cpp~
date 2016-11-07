@@ -180,7 +180,7 @@ unsigned int view(	map& theMap,  int regionY, int regionX,
 		{
 			for (int x = 1; x < viewTileWidth-1; x++)
 			{
-				if(boolMap[(y*viewTileWidth)+x] != 1 || checkAll){ // This will save a function call, more efficient than in viewLine function check.
+				if(boolMap[(y*viewTileWidth)+x] != 1){ // This will save a function call, more efficient than in viewLine function check.
 					viewLine(viewTileWidth,boolMap,heightOffset,viewMap,halfTileWidth,halfTileWidth, y, x,debug);
 				}
 				//std::cout << y << " " << x << std::endl;

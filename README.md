@@ -2,6 +2,8 @@
 
 ###Phase 1
 
+IF IT'S MISSING A LIBRARY, THEN RE-COMPILE. If there's error in making, your computer in not a linux 14.04 or 16.04. Get those.
+
 Here's some important bits. To compile cmake in clang++, do "sudo update-alternatives --config c++"
 
 and select clang++.
@@ -28,9 +30,17 @@ Game Instructions:
 
 Arrow keys to move up left down right.
 
-Press m to toggle big map mode.
+Press m to toggle big map mode. Like a big zoom.
+
+Press q to toggle checkAll mode. See viewline func for details
+
+Press s to toggle seeAboveInvisible mode. Distinguishes what you can't see.
+
+Press e to toggle map debug.
 
 +  and - modifies view distance.
+
+[  and ] modifies playerHeight.
 
 Remember to have the "MAP MOVE" window selected when doing this, and to press X on the window when done.
 
