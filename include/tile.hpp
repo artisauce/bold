@@ -28,6 +28,7 @@ public:
 	// -- Maps
 	int* seedMap;
 	int* tileMap;
+	int* tileMemoryMap;
 	// -- Maps
 	
 	tile(unsigned int seedInput, const map* parentMInput, const int yInput, 

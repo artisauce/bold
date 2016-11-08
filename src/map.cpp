@@ -20,10 +20,12 @@ map::map(unsigned int seedInput, const worldMap* parentWInput, const int yInput,
 	srand(seed);
 	heightMap = new int[mapSide*mapSide];
 	seedMap = new int[mapSide*mapSide];
+	regionMemoryMap = new int[mapSide*mapSide];
 	regionMap.reserve(mapSide*mapSide);
 	// For region map, I made it a vector because WAOW.
 	for (int i = 0; i < mapSide*mapSide; ++i)
 	{
+		regionMemoryMap[i] = 0;
 		seedMap[i] = rand();
 	}
 	// For now, we'll just generate one, big island.
@@ -62,11 +64,13 @@ map::map(map const& src): // For copying -- MANDATORY FOR VECTORS, SEE: Rule of 
 	}
 	heightMap = new int[mapSide*mapSide];
 	seedMap = new int[mapSide*mapSide];
+	regionMemoryMap = new int[mapSide*mapSide];
 	regionMap.reserve(mapSide*mapSide);
 	for (int i = 0; i < mapSide*mapSide; ++i)
 	{
 		heightMap[i] = src.heightMap[i];
 		seedMap[i] = src.seedMap[i];
+		regionMemoryMap[i] = src.regionMemoryMap[i];
 		regionMap.push_back(tile((src.regionMap)[i]));
 	}
 	ySpareList = src.ySpareList;

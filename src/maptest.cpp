@@ -63,7 +63,8 @@ void displayStuff(int sider, std::vector<int>& map, int maxHeight, int specialTi
 }
 
 // This shows nice printout of map. It's nice.
-void displayStuffOptimized(int sider, std::vector<int>& map, int maxHeight, std::vector<int>& optimizeArray, int specialTiles){
+void displayStuffOptimized(int sider, std::vector<int>& map, int maxHeight, std::vector<int>& optimizeArray,
+	std::vector<int>& memoryMap,int specialTiles){
 	// Clears screen
 	SDL_SetRenderDrawColor( gRenderer, 0x00, 0x00, 0x00, 0xFF );
 	SDL_RenderClear( gRenderer );
@@ -77,6 +78,10 @@ void displayStuffOptimized(int sider, std::vector<int>& map, int maxHeight, std:
 	int startY = (SCREEN_HEIGHT/2)-((tileHeight*sider)/2);
 	int index;
 	int optimizeIndex = 0;
+	int red;
+	int green;
+	int blue;
+	int grayscale;
 	for(int y = 0;y<sider;y++){
 		for(int x = optimizeArray[optimizeIndex++];x<sider;x++){ //http://www.embedded.com/design/programming-languages-and-tools/4410601/Pre-increment-or-post-increment-in-C-C-
 			index = (y*sider) + x;
@@ -88,10 +93,13 @@ void displayStuffOptimized(int sider, std::vector<int>& map, int maxHeight, std:
 			if(map[index] > 0){
 			//RGBA
 				if(map[index]<=maxHeight){
+					red =  (int)(255.0*sqrt(((float)map[index])/(float)maxHeight));
+					green = 255;
+					blue = (int)(255.0*sqrt(((float)map[index])/(float)maxHeight));
 		       	 		SDL_SetRenderDrawColor( gRenderer, 
-								(int)(255.0*sqrt(((float)map[index])/(float)maxHeight)), 
-								255, 
-								(int)(255.0*((float)(map[index])/(float)maxHeight)), 
+								red, 
+								green, 
+								blue, 
 								255 ); // Set to variable degree of GREEEEN
 				}
 				else {
@@ -104,10 +112,29 @@ void displayStuffOptimized(int sider, std::vector<int>& map, int maxHeight, std:
 			else if(map[index] == (-specialTiles)-1) { /// Purple. That's you.
 		       	 SDL_SetRenderDrawColor( gRenderer, 255, 0, 255, 255 ); 
 			}
+			else if(memoryMap.size() && memoryMap[index]){ // pro short circuit l33t get rekt
+				if(memoryMap[index] == 1){
+					SDL_SetRenderDrawColor( gRenderer, 0, 0, 255*0.5, 255 ); 
+				}
+				else{
+					// Grayscale channals: red = 30%, green = 59%, blue = 11%
+					// And we scale brightness down a bit just because.
+					red =  (int)(255.0*sqrt(((float)(memoryMap[index]-1))/(float)maxHeight));
+					green = 255.0;
+					blue = (int)(255.0*sqrt(((float)(memoryMap[index]-1))/(float)maxHeight));
+					//grayscale = (red+green+blue)*0.5;
+					SDL_SetRenderDrawColor( gRenderer, 
+									red*0.5, 
+									green*0.5, 
+									blue*0.5, 
+									255 ); // Set to variable degree of GREEEEN
+				}
+
+			}
 			else if(map[index] == -2) { /// Above ground invisible. That's you.
 		       	 SDL_SetRenderDrawColor( gRenderer, 89, 169, 215, 255 ); 
 			}
-			else {	// Black. That's everything else.
+			else {	// Black. That's everything else. We need this because of black between tile display.
 				SDL_SetRenderDrawColor( gRenderer, 0, 0, 0, 255 );
 			}
 			// Fill in with color.
@@ -202,15 +229,18 @@ int main( int argc, char* args[] )
 	bool circleView = false;
 	bool mapDebug = false;
 	bool playerFly = false;
-	bool checkAll; // See notes in viewline.
+	bool checkAll = false; // See notes in viewline.
+	bool memoryMode = false; // See what you saw before.
 	int calcHeight; // For calculating height.
 	int playerZ = newMap.bigMap[playerYWorld*worldMapSide + playerXWorld].regionMap[playerYRegion*mapSide + playerXRegion].tileMap[playerYTile*tileSide + playerXTile];
 	std::vector<int> optimizeArray;
+	std::vector<int> memoryMap;
 	std::cout << "Got here" << std::endl;
-    	viewer.clear(); // Clear print console map.
+    viewer.clear(); // Clear print console map.
 	optimizeArray.clear(); // Clears optimization
+	memoryMap.clear();
 	sider = view(newMap, playerYWorld,playerXWorld,playerYRegion, playerXRegion, playerYTile, playerXTile, 
-	viewRadius,heightOffset,playerZ,mapView,circleView,false,true,true,viewer,&optimizeArray,specialTiles,
+	viewRadius,heightOffset,playerZ,mapView,circleView,false,true,true,viewer,&optimizeArray,memoryMap,specialTiles,
 	seeAboveInvisible,checkAll,mapDebug); // Sider is length.
  //    std::cout << " VECTOR MAP " << std::endl;
  //    printMapVector(viewer,sider,tileSet);
@@ -237,7 +267,7 @@ int main( int argc, char* args[] )
 	}
 	else
 	{	
-			displayStuffOptimized(sider,viewer,8,optimizeArray,specialTiles); // For initial present
+			displayStuffOptimized(sider,viewer,8,optimizeArray,memoryMap,specialTiles); // For initial present
 			//Main loop flag
 			bool quit = false;
 			bool updateScreen = false;
@@ -371,6 +401,12 @@ int main( int argc, char* args[] )
 							SDL_Delay(250);
 							break;
 
+							case SDLK_z: // Toggle checkAll. See viewline func
+							memoryMode=!memoryMode;
+							std::cout << "memoryMode: " << memoryMode << std::endl;
+							SDL_Delay(250);
+							break;
+
 							case SDLK_MINUS: // Decrease view
 							viewRadius--;
 							std::cout << "viewRadius: " << viewRadius << std::endl;
@@ -443,11 +479,16 @@ int main( int argc, char* args[] )
 							}
 							viewer.clear(); // Clear print console map.
 							optimizeArray.clear(); // Clears optimization
+							memoryMap.clear();
 							sider = view(newMap, playerYWorld,playerXWorld,playerYRegion, playerXRegion, playerYTile, playerXTile, 
-							viewRadius,heightOffset,playerZ,mapView,circleView,false,true,true,viewer,&optimizeArray,
+							viewRadius,heightOffset,playerZ,mapView,circleView,false,true,true,viewer,&optimizeArray,memoryMap,
 							specialTiles,seeAboveInvisible,checkAll,mapDebug); // Sider is length.
 							//printMapVector(viewer,sider,tileSet); // This for console.
-							displayStuffOptimized(sider,viewer,8,optimizeArray,specialTiles); // This for graphocs.
+							if(!memoryMode){
+								memoryMap.clear();
+							}
+								displayStuffOptimized(sider,viewer,8,optimizeArray,memoryMap,specialTiles); // This for graphocs.
+
 						}
 					}
 				}

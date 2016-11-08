@@ -37,5 +37,5 @@ public:
 unsigned int view(worldMap& theMap, int worldY, int worldX, int regionY, int regionX, 
 				int tileY,  int tileX, int viewRadius, float heightOffset,int playerHeight, bool mapView,  
 				bool circle, bool borders, bool playerSee, bool wallMode ,std::vector<int>& viewMap, 
-				 std::vector<int>* optimizeArray, int specialTiles,bool InvisibleAboveCustom, bool checkAll ,
+				 std::vector<int>* optimizeArray,std::vector<int>& memoryMap, int specialTiles,bool InvisibleAboveCustom, bool checkAll ,
 				 bool debug);

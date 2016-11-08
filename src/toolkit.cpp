@@ -241,7 +241,7 @@ void randLine(unsigned int seed, double pushCoefficient, int startY, int startX,
     
 }
 
-void viewLine(int length, int* viewMap, float heightOffset, std::vector<int>& actualMap, 
+void viewLine(int length, int* viewMap, float heightOffset, std::vector<int>& actualMap, std::vector<int>& memoryMap,
     int playerY, int playerX, int playerHeightI, int yTar, int xTar, bool debug){
 	// Just in case in the future, and people would find this out as some sort of bug...
 	// It isn't. It just isn't possible with the algorithm to detect every square's edge.
@@ -512,6 +512,8 @@ void viewLine(int length, int* viewMap, float heightOffset, std::vector<int>& ac
 				if(debug)
 				std::cout << "minAngle prev: " << minAngle << std::endl;
 		    		viewMap[(y*length)+x] = 1;
+                    if(memoryMap.size() && memoryMap[(y*length)+x] == 0)
+                    memoryMap[(y*length)+x] = 2; // two indicates to be added onto real memory too.
 				if(tempAngle>minAngle){
 		    			minAngle=tempAngle;
 				}
@@ -590,6 +592,8 @@ void viewLine(int length, int* viewMap, float heightOffset, std::vector<int>& ac
 			if(debug)
 			std::cout << "minAngle prev: " << minAngle << std::endl;
             		viewMap[(y*length)+x] = 1;
+                    if(memoryMap.size() && memoryMap[(y*length)+x] == 0)
+                    memoryMap[(y*length)+x] = 2; // two indicates to be added onto real memory too.
             		if(tempAngle>minAngle){
 		    		minAngle=tempAngle;
 			}

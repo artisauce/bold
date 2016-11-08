@@ -29,6 +29,7 @@ public:
 	// -- Maps
 	int* seedMap;
 	int* heightMap;
+	int* regionMemoryMap;
 	std::vector<tile> regionMap; // Darn naming -- http://stackoverflow.com/questions/15802006/how-can-i-create-objects-while-adding-them-into-a-vector
 	// -- Maps
 
