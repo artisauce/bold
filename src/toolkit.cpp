@@ -241,8 +241,8 @@ void randLine(unsigned int seed, double pushCoefficient, int startY, int startX,
     
 }
 
-void viewLine(int length, int* viewMap, float heightOffset, std::vector<int>& actualMap, 
-    int playerY, int playerX, int yTar, int xTar, bool debug){
+void viewLine(int length, int* viewMap, float heightOffset, std::vector<int>& actualMap, std::vector<int>& memoryMap,
+    int playerY, int playerX, int playerHeightI, int yTar, int xTar, bool debug){
 	// Just in case in the future, and people would find this out as some sort of bug...
 	// It isn't. It just isn't possible with the algorithm to detect every square's edge.
 	// So: We rely on the outer squares (the ones at the border of the screen) to create
@@ -274,11 +274,11 @@ void viewLine(int length, int* viewMap, float heightOffset, std::vector<int>& ac
 	//find case
 	std::cout << std::fixed << std::setprecision(19);
     bool playerIsHigher = false; // If player is higher, we use lookUp Algorithm -> playerIsHigher == !lookUp
-	if(actualMap[(yTar*length)+xTar]<actualMap[(playerY*length)+playerX]){
+	if(actualMap[(yTar*length)+xTar]<playerHeightI){
 		playerIsHigher = true;
 	}
 	double minAngle = -100.00; //a depth of darkness
-	double playerHeight = actualMap[(playerY*length)+playerX];
+	double playerHeight = (double)playerHeightI;
 	bool yMode = false; // If function for x > 1, then we must use inverse algorithm.
 	int xDiff = xTar-playerX;
 	int yDiff = yTar-playerY;
@@ -512,6 +512,8 @@ void viewLine(int length, int* viewMap, float heightOffset, std::vector<int>& ac
 				if(debug)
 				std::cout << "minAngle prev: " << minAngle << std::endl;
 		    		viewMap[(y*length)+x] = 1;
+                    if(memoryMap.size() && memoryMap[(y*length)+x] == 0)
+                    memoryMap[(y*length)+x] = 2; // two indicates to be added onto real memory too.
 				if(tempAngle>minAngle){
 		    			minAngle=tempAngle;
 				}
@@ -590,6 +592,8 @@ void viewLine(int length, int* viewMap, float heightOffset, std::vector<int>& ac
 			if(debug)
 			std::cout << "minAngle prev: " << minAngle << std::endl;
             		viewMap[(y*length)+x] = 1;
+                    if(memoryMap.size() && memoryMap[(y*length)+x] == 0)
+                    memoryMap[(y*length)+x] = 2; // two indicates to be added onto real memory too.
             		if(tempAngle>minAngle){
 		    		minAngle=tempAngle;
 			}

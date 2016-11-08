@@ -19,8 +19,10 @@ tile::tile(unsigned int seedInput, const map* parentMInput, const int yInput,
 	srand(seed);
 	tileMap = new int[tileSide*tileSide];
 	seedMap = new int[tileSide*tileSide];
+	tileMemoryMap = new int[tileSide*tileSide];
 	for (int i = 0; i < tileSide*tileSide; ++i)
 	{
+		tileMemoryMap[i] = 0;
 		seedMap[i] = rand();
 	}
 	genTile(rand(),push,y,x,parentM->heightMap,parentM->mapSide,tileMap,tileSide,diagonal,debug);
@@ -48,11 +50,13 @@ tile::tile(tile const& src): // For copying -- MANDATORY FOR VECTORS, SEE: Rule 
 	}
 	tileMap = new int[tileSide*tileSide];
 	seedMap = new int[tileSide*tileSide];
+	tileMemoryMap = new int[tileSide*tileSide];
 	for (int i = 0; i < tileSide*tileSide; ++i)
 	{
 		//std::cout << i << std::endl;
 		tileMap[i] = src.tileMap[i];
 		seedMap[i] = src.seedMap[i];
+		tileMemoryMap[i] = src.tileMemoryMap[i];
 	}
 	ySpareList = src.ySpareList;
 	xSpareList = src.xSpareList;
@@ -69,6 +73,7 @@ tile::~tile(){
 	//printMap(tileMap,tileSide);
 	delete[] tileMap;
 	delete[] seedMap;
+	delete[] tileMemoryMap;
 	if(debug){
 		std::cout << "DONE DELETING TILEMAP " << this << " FOR " << parentM << " FOR " << parentM->parentW << std::endl;
 	}

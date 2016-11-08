@@ -38,9 +38,15 @@ Press s to toggle seeAboveInvisible mode. Distinguishes what you can't see.
 
 Press e to toggle map debug.
 
+Press f to toggle fly mode.
+
+Press z to toggle memory mode. So you can see what you saw.
+
 +  and - modifies view distance.
 
-[  and ] modifies playerHeight.
+[  and ] modifies playerHeight (an offset for accuracy)
+
+,  and . modifies playerZ (you're actual height.) Workable only with fly mode. Allows you to fly.
 
 Remember to have the "MAP MOVE" window selected when doing this, and to press X on the window when done.
 
