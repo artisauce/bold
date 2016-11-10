@@ -297,157 +297,68 @@ int main( int argc, char* args[] )
 							std::cout << "UP" << std::endl;
 							if(mapView){ // go fast
 								playerYRegion--;
+								break;
 							}
-							else if(!playerYTile){
-								playerYRegion--;
-								playerYTile = tileSide-1;
-							}	
-							else{
-								playerYTile--;
-							}
-							if(!playerYRegion){
-								playerYWorld--;
-								playerYRegion = mapSide-1;
-							}
+							playerYTile--;
 							break;
 
 							case SDLK_DOWN:
 							std::cout << "DOWN" << std::endl;
 							if(mapView){ // go fast
 								playerYRegion++;
+								break;
 							}
-							else if(playerYTile==tileSide-1){
-								playerYRegion++;
-								playerYTile = 0;
-							}	
-							else{
-								playerYTile++;
-							}
-							if(playerYRegion==mapSide-1){
-								playerYWorld++;
-								playerYRegion = 0;
-							}	
+							playerYTile++;
 							break;
 
 							case SDLK_LEFT:
 							std::cout << "LEFT" << std::endl;
 							if(mapView){ // go fast
 								playerXRegion--;
+								break;
 							}
-							else if(!playerXTile){
-								playerXRegion--;
-								playerXTile = tileSide-1;
-							}	
-							else{
-								playerXTile--;
-							}
-							if(!playerXRegion){
-								playerXWorld--;
-								playerXRegion = mapSide-1;
-							}
+							playerXTile--;
 							break;
 
 							case SDLK_RIGHT:
 							std::cout << "RIGHT" << std::endl;
 							if(mapView){ // go fast
 								playerXRegion++;
+								break;
 							}
-							else if(playerXTile==tileSide-1){
-								playerXRegion++;
-								playerXTile = 0;
-							}	
-							else{
-								playerXTile++;
-							}
-							if(playerXRegion==mapSide-1){
-								playerXWorld++;
-								playerXRegion = 0;
-							}	
+							playerXTile++;	
 							break;
 
 							// KEYPAD MOVEMENT
 							case SDLK_KP_9:
-							std::cout << "UP" << std::endl;
+							std::cout << "UP-RIGHT" << std::endl;
 							if(mapView){ // go fast
 								playerYRegion--;
-							}
-							else if(!playerYTile){
-								playerYRegion--;
-								playerYTile = tileSide-1;
-							}	
-							else{
-								playerYTile--;
-							}
-							if(!playerYRegion){
-								playerYWorld--;
-								playerYRegion = mapSide-1;
-							}
-							std::cout << "RIGHT" << std::endl;
-							if(mapView){ // go fast
 								playerXRegion++;
+								break;
 							}
-							else if(playerXTile==tileSide-1){
-								playerXRegion++;
-								playerXTile = 0;
-							}	
-							else{
-								playerXTile++;
-							}
-							if(playerXRegion==mapSide-1){
-								playerXWorld++;
-								playerXRegion = 0;
-							}	
+							playerYTile--;
+							playerXTile++;
 							break;
 
 							case SDLK_KP_8:
 							std::cout << "UP" << std::endl;
 							if(mapView){ // go fast
 								playerYRegion--;
+								break;
 							}
-							else if(!playerYTile){
-								playerYRegion--;
-								playerYTile = tileSide-1;
-							}	
-							else{
-								playerYTile--;
-							}
-							if(!playerYRegion){
-								playerYWorld--;
-								playerYRegion = mapSide-1;
-							}
+							playerYTile--;
 							break;
 
 							case SDLK_KP_7:
 							std::cout << "UP" << std::endl;
 							if(mapView){ // go fast
 								playerYRegion--;
-							}
-							else if(!playerYTile){
-								playerYRegion--;
-								playerYTile = tileSide-1;
-							}	
-							else{
-								playerYTile--;
-							}
-							if(!playerYRegion){
-								playerYWorld--;
-								playerYRegion = mapSide-1;
-							}
-							std::cout << "LEFT" << std::endl;
-							if(mapView){ // go fast
 								playerXRegion--;
+								break;
 							}
-							else if(!playerXTile){
-								playerXRegion--;
-								playerXTile = tileSide-1;
-							}	
-							else{
-								playerXTile--;
-							}
-							if(!playerXRegion){
-								playerXWorld--;
-								playerXRegion = mapSide-1;
-							}
+							playerYTile--;
+							playerXTile--;
 							break;
 
 
@@ -455,120 +366,49 @@ int main( int argc, char* args[] )
 							std::cout << "RIGHT" << std::endl;
 							if(mapView){ // go fast
 								playerXRegion++;
+								break;
 							}
-							else if(playerXTile==tileSide-1){
-								playerXRegion++;
-								playerXTile = 0;
-							}	
-							else{
-								playerXTile++;
-							}
-							if(playerXRegion==mapSide-1){
-								playerXWorld++;
-								playerXRegion = 0;
-							}	
+							playerXTile++;	
 							break;
 
 							case SDLK_KP_4:
 							std::cout << "LEFT" << std::endl;
 							if(mapView){ // go fast
 								playerXRegion--;
+								break;
 							}
-							else if(!playerXTile){
-								playerXRegion--;
-								playerXTile = tileSide-1;
-							}	
-							else{
-								playerXTile--;
-							}
-							if(!playerXRegion){
-								playerXWorld--;
-								playerXRegion = mapSide-1;
-							}
+							playerXTile--;
 							break;
 
 							case SDLK_KP_3:
 							std::cout << "DOWN" << std::endl;
 							if(mapView){ // go fast
 								playerYRegion++;
-							}
-							else if(playerYTile==tileSide-1){
-								playerYRegion++;
-								playerYTile = 0;
-							}	
-							else{
-								playerYTile++;
-							}
-							if(playerYRegion==mapSide-1){
-								playerYWorld++;
-								playerYRegion = 0;
-							}	
-							std::cout << "RIGHT" << std::endl;
-							if(mapView){ // go fast
 								playerXRegion++;
+								break;							
 							}
-							else if(playerXTile==tileSide-1){
-								playerXRegion++;
-								playerXTile = 0;
-							}	
-							else{
-								playerXTile++;
-							}
-							if(playerXRegion==mapSide-1){
-								playerXWorld++;
-								playerXRegion = 0;
-							}	
+							playerYTile++;
+							playerXTile++;
 							break;
 
 							case SDLK_KP_2:
 							std::cout << "DOWN" << std::endl;
 							if(mapView){ // go fast
 								playerYRegion++;
+								break;
 							}
-							else if(playerYTile==tileSide-1){
-								playerYRegion++;
-								playerYTile = 0;
-							}	
-							else{
-								playerYTile++;
-							}
-							if(playerYRegion==mapSide-1){
-								playerYWorld++;
-								playerYRegion = 0;
-							}	
+							playerYTile++;	
 							break;
 
 							case SDLK_KP_1:
 							std::cout << "DOWN" << std::endl;
 							if(mapView){ // go fast
 								playerYRegion++;
-							}
-							else if(playerYTile==tileSide-1){
-								playerYRegion++;
-								playerYTile = 0;
-							}	
-							else{
-								playerYTile++;
-							}
-							if(playerYRegion==mapSide-1){
-								playerYWorld++;
-								playerYRegion = 0;
-							}	
-							std::cout << "LEFT" << std::endl;
-							if(mapView){ // go fast
 								playerXRegion--;
+								break;
 							}
-							else if(!playerXTile){
-								playerXRegion--;
-								playerXTile = tileSide-1;
-							}	
-							else{
-								playerXTile--;
-							}
-							if(!playerXRegion){
-								playerXWorld--;
-								playerXRegion = mapSide-1;
-							}
+							playerYTile++;
+							playerXTile--;
 							break;
 
 							case SDLK_m: // Toggle map
@@ -654,6 +494,41 @@ int main( int argc, char* args[] )
 							break;
 						}
 						if(updateScreen){
+							// Move Y
+							if(playerYTile < 0){
+								playerYRegion--;
+								playerYTile = (tileSide - 1);
+							}
+							else if (playerYTile == tileSide){
+								playerYRegion++;
+								playerYTile = 0;
+							}
+							if(playerYRegion < 0){
+								playerYWorld--;
+								playerYRegion = mapSide-1;
+							}
+							else if(playerYRegion == mapSide){
+								playerYWorld++;
+								playerYRegion = 0;
+							}
+							// Move X
+							if(playerXTile < 0){
+								playerXRegion--;
+								playerXTile = (tileSide - 1);
+							}
+							else if (playerXTile == tileSide){
+								playerXRegion++;
+								playerXTile = 0;
+							}
+							if(playerXRegion < 0){
+								playerXWorld--;
+								playerXRegion = mapSide-1;
+							}
+							else if(playerXRegion == mapSide){
+								playerXWorld++;
+								playerXRegion = 0;
+							}
+							// Done move.
 							if(playerYWorld>=worldMapSide || playerXWorld>=worldMapSide || playerYWorld<0 || playerXWorld<0){
 								if(!playerFly){ // we cannot read height out of bounds.
 									playerZ = 0;
@@ -661,28 +536,33 @@ int main( int argc, char* args[] )
 							}
 							else if(!playerFly){
 								if(mapView){
-									playerZ = newMap.bigMap[playerYWorld*worldMapSide + playerXWorld].heightMap[playerYRegion*mapSide + playerXRegion];
+									playerZ = newMap.bigMap[(playerYWorld*worldMapSide) + playerXWorld].heightMap[playerYRegion*mapSide + playerXRegion];
 								}
 								else{
-									playerZ = newMap.bigMap[playerYWorld*worldMapSide + playerXWorld].regionMap[playerYRegion*mapSide + playerXRegion].tileMap[playerYTile*tileSide + playerXTile];
+									playerZ = newMap.bigMap[(playerYWorld*worldMapSide) + playerXWorld].regionMap[playerYRegion*mapSide + playerXRegion].tileMap[playerYTile*tileSide + playerXTile];
 								}
 								
 							}
 							else{
 								if(mapView){
-									calcHeight = newMap.bigMap[playerYWorld*worldMapSide + playerXWorld].heightMap[playerYRegion*mapSide + playerXRegion];
+									calcHeight = newMap.bigMap[(playerYWorld*worldMapSide) + playerXWorld].heightMap[playerYRegion*mapSide + playerXRegion];
 									if(calcHeight > playerZ){
 										playerZ = calcHeight;
 									}
 									
 								}
 								else{
-									calcHeight = newMap.bigMap[playerYWorld*worldMapSide + playerXWorld].regionMap[playerYRegion*mapSide + playerXRegion].tileMap[playerYTile*tileSide + playerXTile];
+									calcHeight = newMap.bigMap[(playerYWorld*worldMapSide) + playerXWorld].regionMap[playerYRegion*mapSide + playerXRegion].tileMap[playerYTile*tileSide + playerXTile];
 									if(calcHeight > playerZ){
 										playerZ = calcHeight;
 									}
 								}
 							}
+							std::cout << "PlayerZ: " << playerZ << std::endl;
+							std::cout << "tileY: " << playerYTile << " tileX: " << playerXTile << std::endl;
+							std::cout << "regionY: " << playerYRegion << " regionX: " << playerXRegion << std::endl;
+							std::cout << "worldY: " << playerYWorld << " worldX: " << playerXWorld << std::endl;
+							
 							viewer.clear(); // Clear print console map.
 							optimizeArray.clear(); // Clears optimization
 							memoryMap.clear();
