@@ -9,6 +9,7 @@
 #include <vector>
 #include <stdexcept>      // std::out_of_range
 #include <iomanip>
+#include <list>
 
 #ifdef _WIN32
 #include <Windows.h>

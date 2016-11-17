@@ -1,12 +1,17 @@
 #include "tile.hpp"
 // A game area - for reference, an island
-class worldMap; // We need dis
 class map {
 public:
 
 	// -- ESSENTIAL
+	const unsigned int worldSeed;
 	const unsigned int seed;
-	const worldMap* parentW;
+	const map* parentM;
+	const map* left;
+	const map* right;
+	const map* down;
+	const map* up;
+	bool activated;
 	// -- ESSENTIAL
 
 	// -- Settings
@@ -19,12 +24,15 @@ public:
 	const bool diagonal;
 	const bool debug;
 	// -- Settings
-	// -- Settings
 
 	// -- cordLists for randLine
 	std::vector<int> ySpareList;
     std::vector<int> xSpareList;
 	// -- cordLists for randLine
+
+	// -- memoryMap for tiles -- leftover from deactivation
+	std::vector<std::vector<int>>;
+	// -- memoryMap for tiles -- leftover from deactivation
 
 	// -- Maps
 	int* seedMap;
