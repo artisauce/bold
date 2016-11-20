@@ -25,13 +25,20 @@ playerSpace::playerSpace(unsigned int seedInput, int playerViewRadius, const dou
 	tileViewRadius = playerViewRadius;
 	regionViewRadius = playerViewRadius; // For now they are the same.
 	mapViewRadius = regionViewRadius / mapSide; // How far away we generatin'?
-	coordinate tempCord = 
+	
+	tempCord = {
 	if(debug){
     	std::cout << "CREATED PLAYERSPACE " << this << std::endl; 
     }
 }
 
-playerSpace::insertCoordinate(coordinate 
+playerSpace::insertCoordinate(int y, int x, map* pointer){
+
+
+
+
+
+}
 
 playerSpace::~playerSpace(){
 	if(debug){

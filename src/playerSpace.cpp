@@ -26,14 +26,14 @@ playerSpace::playerSpace(unsigned int seedInput, int playerViewRadius, const dou
 	regionViewRadius = playerViewRadius; // For now they are the same.
 	mapViewRadius = regionViewRadius / mapSide; // How far away we generatin'?
 	
-	tempCord
+	tempCord = {
 	if(debug){
     	std::cout << "CREATED PLAYERSPACE " << this << std::endl; 
     }
 }
 
 playerSpace::insertCoordinate(int y, int x, map* pointer){
-
+// if not found y, use mylist.insert (iterator,thingWeWantToPutIn); 
 
 
 

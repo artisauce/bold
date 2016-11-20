@@ -4,8 +4,8 @@ struct coordinate {
     int y;
     int x;
     map* pointer;
-	map* up;
-	map* down;
+	cordinate* up;
+	cordinate* down;
 };
 
 // A game area - for reference, an island
