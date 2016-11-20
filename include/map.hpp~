@@ -16,10 +16,10 @@ public:
 	const unsigned int worldSeed;
 	const unsigned int seed;
 	const map* parentM;
-	map* left;
-	map* right;
-	map* down;
-	map* up;
+	const map* left;
+	const map* right;
+	const map* down;
+	const map* up;
 	bool activated;
 	std::list<coordinate>::iterator xConnector; // For quick list accessing
 	std::list<std::list<coordinate>>::iterator yConnector;
