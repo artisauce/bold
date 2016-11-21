@@ -1,7 +1,7 @@
 #include "worldMap.hpp"
 // The weird include needs the definition of the worldMap class for map constructor.
 
-map::map(unsigned int worldSeedInput, int xInput, int yInput, const double pushInput, size_t mapSideInput, 
+map::map(unsigned int worldSeedInput, int yInput, int xInput, const double pushInput, size_t mapSideInput, 
 	size_t tileSideInput, size_t battlefieldSideInput, const bool diagonalInput, const bool debugInput):
 	x(xInput),
 	y(yInput),
@@ -20,6 +20,10 @@ map::map(unsigned int worldSeedInput, int xInput, int yInput, const double pushI
     }
     activated = false;
 	regionMemoryMap = new int[mapSide*mapSide];
+	up = NULL;
+	down = NULL;
+	right = NULL;
+	left = NULL;
 	for (int i = 0; i < mapSide*mapSide; ++i)
 	{
 		regionMemoryMap[i] = 0;
@@ -46,9 +50,13 @@ map::map(const map* parentMInput, int yDir, int xDir):
 {
 	if(debug){
     	std::cout << "CREATING MAP " << this << " FOR " << parentM << std::endl; 
-    }
-    activated = false;
+    	}
+    	activated = false;
 	regionMemoryMap = new int[mapSide*mapSide];
+	up = NULL;
+	down = NULL;
+	right = NULL;
+	left = NULL;
 	for (int i = 0; i < mapSide*mapSide; ++i)
 	{
 		regionMemoryMap[i] = 0;
@@ -56,9 +64,7 @@ map::map(const map* parentMInput, int yDir, int xDir):
 	if(debug){
 		std::cout << "CREATED MAP " << this << " FOR " << parentM << std::endl; 
 	}
-	if(yDir > 0 && xDir > 0){
-		
-	}
+	activate();
 }
 
 map::map(map const& src): // For copying -- MANDATORY FOR VECTORS, SEE: Rule of Three (C++)

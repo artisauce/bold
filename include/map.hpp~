@@ -41,6 +41,9 @@ public:
     std::vector<int> xSpareList;
 	// -- cordLists for randLine
 
+	// -- memoryMap for tiles -- leftover from deactivation
+	std::vector<std::vector<int>>;
+	// -- memoryMap for tiles -- leftover from deactivation
 
 	// -- Maps
 	int* seedMap;

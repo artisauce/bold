@@ -19,14 +19,69 @@ playerSpace::playerSpace(unsigned int seedInput, int playerViewRadius, const dou
 	playerRegionX=0;
 	playerTileY=0;
 	playerTileX=0;
-    	current = new map(seed,0,0,this,push,mapSide,tileSide,battlefieldSide,diagonal.debug); 
+    	current = new map(seed,0,0,push,mapSide,tileSide,battlefieldSide,diagonal.debug); 
+	map* tempMap;
 	std::cout << "PLAYERSPACE " << this << ": #" << 0 << " MAP CREATED: " << current << std::endl; 
 	mapCount = 1;
 	tileViewRadius = playerViewRadius;
 	regionViewRadius = playerViewRadius; // For now they are the same.
-	mapViewRadius = regionViewRadius / mapSide; // How far away we generatin'?
-	
-	tempCord = {
+	mapViewRadius = (regionViewRadius / mapSide) + 1; // How far away we generatin'? Must be >=1
+	//std::list<std::list<coordinate>> cordMap
+	coordinate tempCord = {0,0,current,NULL,NULL};
+	tempList = std::list<coordinates>;
+	for(int i = -mapViewRadius;i<=0;i++) cordMap.push_front(tempList); // This many rows for beginning.
+	std::list<std::list<coordinate>>::iterator temp = cordMap.end();
+	for(i = 0;i<mapViewRadius;i++) cordMap.push_front(tempList); // This many rows for beginning.
+	temp*.push_front(tempCord); // Attach the first cord to middle.
+	// Finally set up to start expanding.
+	std::list<coordinate>::iterator middle = temp*.begin();
+	//http://www.cplusplus.com/reference/list/list/insert/
+	//http://www.cplusplus.com/reference/list/list/push_front/ Val is copied !!!
+	bool isTop = 1;
+	std::list<coordinate>::iterator justHappened;
+	std::list<coordinate>::iterator it;
+	temp = NULL;
+	for(int y = -mapViewRadius;y<=mapViewRadius;y++){
+		for(int x = -mapViewRadius;x<=mapViewRadius;x++){
+			if(x==y && x==0) continue; // Skip current.
+			tempMap = new map(seed,y,x,push,mapSide,tileSide,battlefieldSide,diagonal.debug);
+			if(isTop)
+			tempCord = {y,x,tempMap,NULL,NULL}; // Basic, just put in deh grill
+			else {
+				tempCord = {y,x,tempMap,it,NULL);
+				if(!y){
+					if(x<0){
+						justHappened = temp.insert(&(*middle),tempCord); // insert, justHappened has pointer.
+						(*it).down = &(*justHappened); // Set the one above to point down to justHappened.
+					}
+					else{
+						temp.push_back(tempCord);
+						(*it).down = &(*temp.end());
+					}
+				}
+				else{
+					temp.push_back(tempCord);
+					(*it).down = &(*temp.end());
+				}
+			}
+			if(x==mapViewRadius) break; // End case.
+			it++;
+			// consider just having by itself instead of &(*...)
+			// consider not checking end case.
+		}
+		if(y==mapViewRadius){
+			break;
+		}
+		if(temp){
+			temp++;
+		}
+		else{
+			temp=cordMap.begin();
+		}
+		it = temp.begin();
+		isTop = 0;
+		
+	}
 	if(debug){
     	std::cout << "CREATED PLAYERSPACE " << this << std::endl; 
     }
@@ -34,7 +89,7 @@ playerSpace::playerSpace(unsigned int seedInput, int playerViewRadius, const dou
 
 playerSpace::insertCoordinate(int y, int x, map* pointer){
 // if not found y, use mylist.insert (iterator,thingWeWantToPutIn); 
-
+	
 
 
 
