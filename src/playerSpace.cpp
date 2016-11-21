@@ -34,7 +34,7 @@ playerSpace::playerSpace(unsigned int seedInput, int playerViewRadius, const dou
 	for(i = 0;i<mapViewRadius;i++) cordMap.push_front(tempList); // This many rows for beginning.
 	temp*.push_front(tempCord); // Attach the first cord to middle.
 	// Finally set up to start expanding.
-	std::list<coordinate>::iterator middle = temp*.begin();
+	std::list<coordinate>::iterator middle = temp->begin();
 	//http://www.cplusplus.com/reference/list/list/insert/
 	//http://www.cplusplus.com/reference/list/list/push_front/ Val is copied !!!
 	bool isTop = 1;
@@ -114,56 +114,151 @@ playerSpace::playerSpace(unsigned int seedInput, int playerViewRadius, const dou
     }
 }
 
-std::list<coordinate>::iterator* playerSpace::insertCoordinateRelative(std::list<std::list<coordinate>>::iterator yy, std::list<coordinate>::iterator xx, coordinate data, std::list<std::list<coordinate>>::iterator* yHolder){
+std::list<coordinate>::iterator playerSpace::insertCoordinateRelative(std::list<std::list<coordinate>>::iterator yy, std::list<coordinate>::iterator xx, coordinate data, std::list<std::list<coordinate>>::iterator* yHolder){
 // if not found y, use mylist.insert (iterator,thingWeWantToPutIn);
-	std::list<std::list<coordinate>>::iterator yCheckTop = cordMap.end();
-	std::list<std::list<coordinate>>::iterator yCheckBottom = cordMap.begin();
 	int wy = *(yy.begin()).y;
-	int ex =(*xx).x;
 	int tarX = data.x;
 	int tarY = data.y;
-	bool goLeft = true; //For technical insertion.
-	while(wy != tarY && ex != tarX){
+	bool goDir = true; //For technical insertion.
+	// WARNING: WE'RE NOT KEEPING TRACK OF EX AND WY THROUGH THIS.
+	if(tarY<cordList.begin()->begin()->y){ // test if y is out of range
+		std::list<coordinate> tempList;
+		tempList.push_front(data);
+		cordList.push_front(tempList);
+		yHolder = &(cordList.begin());
+		return cordList.begin()->begin();
+	}
+	else if(tarY>cordList.end()->begin()->y){
+		std::list<coordinate> tempList;
+		tempList.push_back(data);
+		cordList.push_back(tempList);
+		yHolder = &(cordList.end());
+		return cordList.end()->end();
+	}
+	bool tester;
+	while(1){ // Welp.
 		if(wy==tarY){
-			bool tester = ((*xx).x < tarX);
-			bool special = false;
-			while(tester || goLeft){ // while current is less than target and your going left
+			if(tarX < *(yy.begin()).x){ // test if x is out of range
+				yy.push_front(data);
+				yHolder = &yy;
+				return yy.begin();
+			}
+			else if (tarX > *(yy.end()).x){
+				yy.push_back(data);
+				yHolder = &yy;
+				return yy.end();
+			}
+			tester = ((*xx).x < tarX);
+			goDir = true;
+			while(tester || goDir){ // while current is less than target and your going left
 				if(tester){
 					xx++;
-					goLeft = false;
+					goDir = false;
 				}
 				else{
 					xx--;
-					goLeft = true;
+					goDir = true;
 				}
 				tester = ((*xx).x < tarX);
-				if(xx == yy.begin()){
-					yy.push_front(data);
-					yHolder = &yy;
-					return &xx;
-				}
-				else if(xx==yy.end()){
-					yy.push_back(data);
-					yHolder = &yy;
-					return &xx;
-				}
 			}
 			xx = yy.insert(xx,data);
+			yHolder = &yy;
+			return xx;
+		}
+		else{
+			wy=*((*yy).begin()).y;
+			tester = (wy < tarY);
+			while(tester || goDir){
+				if(tester){
+					yy++;
+					goDir = false;
+				}
+				else{
+					yy--;
+					goDir = true;
+				}
+				wy= *((*yy).begin()).y;
+				if(wy == tarY){
+					break; // Go get x now.
+				}
+				tester = (wy < tarY);
+			}
+			if(wy!=tarY){ // If it wasn't found, we make a new one.
+				std::list<coordinate> tempList;
+				tempList.push_back(data);
+				cordList.insert(yy,tempList);
+				yHolder = &yy;
+				return (*yy).begin();
+			}
+			xx = (*yy).end();
+			if(tarX - *((*yy).begin()).x < *((*yy).end()).x - tarX){ //quick comparison for comparison's sake
+				xx = (*yy).begin();
+			}
 		}
 	}
+}
 
+playerSpace::find(int Y, int X, )
 
+playerSpace::teleport(){
 
+}
+
+playerSpace::travel(int yT, int xT, int mode){
+	//0: tile mode
+	//1: region mode
+	//2: special, map mode
+	int worldXDest=playerWorldX;
+	int worldYDest=playerWorldY;
+	if(mode == 0){
+		playerTileY+=yT;
+		playerTileX+=xT;
+	}
+	else if(mode==1) {
+		playerRegionY+=yT;
+		playerRegionX+=xT;
+	}
+	else{
+		playerWorldY+=yT;
+		playerWorldX+=xT;
+	}
+	playerRegionY+=playerTileY/tileSide;
+	playerRegionX+=playerTileX/tileSide;
+	worldYDest+=playerRegionY/mapSide;
+	worldXDest+=playerRegionX/mapside;
+	playerTileX=playerTileX%tileSide;
+	playerTileY=playerTileY%tileSide;
+	playerRegionY=playerRegionY%mapSide;
+	playerRegionX=playerRegionX%mapSide;
+	int calcY = worldYDest-playerWorldY;
+	int calcX = worldXDest-playerWorldx;
+	playerWorldY=worldYDest;
+	playerWorldX=worldXDest;
+	if(abs(calcY) > 1 || abs(calcX) > 1){
+		teleport(); // whoosh
+	}
+	else if(calcY || calcX) {
+		// do complicated stuff here
+		if(calcY>0){
+
+		}
+		else{
+
+		}
+		if(calcX>0){
+
+		}
+	}
 }
 
 playerSpace::~playerSpace(){
 	if(debug){
-		std::cout << "DELETING WORLDMAP " << this << std::endl;
+		std::cout << "DELETING PLAYERSPACE " << this << std::endl;
 	}
 	delete[] seedMap;
 	bigMap = std::vector<map>();
 	if(debug){
-		std::cout << "DONE DELETING WORLDMAP " << this << std::endl;
+		std::cout << "DONE DELETING PLAYERSPACE " << this << std::endl;
 	}
 }
 

@@ -46,7 +46,7 @@ public:
 	~playerSpace();
 };
 
-unsigned int view(playerSpace& playerSpace, int viewRadius, float heightOffset,int playerHeight, bool mapView,  
+unsigned int view(playerSpace& playerSpace, float heightOffset,int playerHeight, bool mapView,  
 				bool circle, bool borders, bool playerSee, bool wallMode ,std::vector<int>& viewMap, 
 				 std::vector<int>* optimizeArray,std::vector<int>& memoryMap, int specialTiles,bool InvisibleAboveCustom, bool checkAll ,
 				 bool debug);
