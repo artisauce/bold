@@ -51,7 +51,7 @@ playerSpace::playerSpace(unsigned int seedInput, int playerViewRadius, const dou
 				tempCord = {y,x,tempMap,it,NULL);
 				if(!y){
 					if(x<0){
-						justHappened = temp.insert(&(*middle),tempCord); // insert, justHappened has pointer.
+						justHappened = temp.insert(middle,tempCord); // insert, justHappened has pointer.
 						(*it).down = &(*justHappened); // Set the one above to point down to justHappened.
 					}
 					else{
@@ -114,9 +114,43 @@ playerSpace::playerSpace(unsigned int seedInput, int playerViewRadius, const dou
     }
 }
 
-playerSpace::insertCoordinate(int y, int x, map* pointer){
-// if not found y, use mylist.insert (iterator,thingWeWantToPutIn); 
-	
+std::list<coordinate>::iterator* playerSpace::insertCoordinateRelative(std::list<std::list<coordinate>>::iterator yy, std::list<coordinate>::iterator xx, coordinate data, std::list<std::list<coordinate>>::iterator* yHolder){
+// if not found y, use mylist.insert (iterator,thingWeWantToPutIn);
+	std::list<std::list<coordinate>>::iterator yCheckTop = cordMap.end();
+	std::list<std::list<coordinate>>::iterator yCheckBottom = cordMap.begin();
+	int wy = *(yy.begin()).y;
+	int ex =(*xx).x;
+	int tarX = data.x;
+	int tarY = data.y;
+	bool goLeft = true; //For technical insertion.
+	while(wy != tarY && ex != tarX){
+		if(wy==tarY){
+			bool tester = ((*xx).x < tarX);
+			bool special = false;
+			while(tester || goLeft){ // while current is less than target and your going left
+				if(tester){
+					xx++;
+					goLeft = false;
+				}
+				else{
+					xx--;
+					goLeft = true;
+				}
+				tester = ((*xx).x < tarX);
+				if(xx == yy.begin()){
+					yy.push_front(data);
+					yHolder = &yy;
+					return &xx;
+				}
+				else if(xx==yy.end()){
+					yy.push_back(data);
+					yHolder = &yy;
+					return &xx;
+				}
+			}
+			xx = yy.insert(xx,data);
+		}
+	}
 
 
 
