@@ -82,6 +82,33 @@ playerSpace::playerSpace(unsigned int seedInput, int playerViewRadius, const dou
 		isTop = 0;
 		
 	}
+	temp=cordMap.begin();
+	for (y=-mapViewRadius;y<=mapViewRadius; y++)
+	{
+		it = temp.begin();
+		middle = temp; // This really just a temp value.
+		if(y!=mapViewRadius){
+			temp++;
+			justHappened = temp.begin(); // Temp value of stuff below.
+			temp--;
+		}
+
+		for (x=-mapViewRadius;x<=mapViewRadius; x++)
+		{
+			if(x!=mapViewRadius){
+				middle++;
+				(*it)->pointer.right = (*middle)->pointer;
+				(*middle)->pointer.left = (*it)->pointer;
+			}
+			if(y!=mapViewRadius){
+				(*it)->pointer.down = (*justHappened)->pointer;
+				(*justHappened)->pointer.up = (*it)->pointer;
+			}
+
+		}
+		it++;
+		justHappened++;
+	}
 	if(debug){
     	std::cout << "CREATED PLAYERSPACE " << this << std::endl; 
     }
