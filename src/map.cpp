@@ -1,4 +1,4 @@
-#include "worldMap.hpp"
+#include "playerSpace.hpp"
 // The weird include needs the definition of the worldMap class for map constructor.
 
 map::map(unsigned int worldSeedInput, int yInput, int xInput, const double pushInput, size_t mapSideInput, 
@@ -6,7 +6,7 @@ map::map(unsigned int worldSeedInput, int yInput, int xInput, const double pushI
 	x(xInput),
 	y(yInput),
 	worldSeed(worldSeedInput),
-	seed(worldSeed + (x + (y<<16))),
+	seed(worldSeed + (xInput + (yInput<<16))),
 	push(pushInput),
 	mapSide(mapSideInput),
 	tileSide(tileSideInput),
@@ -33,19 +33,19 @@ map::map(unsigned int worldSeedInput, int yInput, int xInput, const double pushI
 	activate();
 
 }
-
+/* Maybe one day this will have use. -----
 map::map(const map* parentMInput, int yDir, int xDir):
 	parentM(parentMInput),
 	worldSeed(parentM->worldSeed),
 	y((yDir + parentM->y)),
 	x((xDir + parentM->x)),
 	seed(worldSeed + (x + (y<<16))), // dem bits. This is position-based seeding.
-	push(parentW->push),
-	mapSide(parentW->mapSide),
-	tileSide(parentW->tileSide),
-	battlefieldSide(parentW->battlefieldSide),
-	diagonal(parentW->diagonal),
-	debug(parentW->debug)
+	push(parentM->push),
+	mapSide(parentM->mapSide),
+	tileSide(parentM->tileSide),
+	battlefieldSide(parentM->battlefieldSide),
+	diagonal(parentM->diagonal),
+	debug(parentM->debug)
 {
 	if(debug){
     	std::cout << "CREATING MAP " << this << " FOR " << parentM << std::endl; 
@@ -65,10 +65,11 @@ map::map(const map* parentMInput, int yDir, int xDir):
 	}
 	activate();
 }
-
+*/
 map::map(map const& src): // For copying -- MANDATORY FOR VECTORS, SEE: Rule of Three (C++)
 	seed(src.seed),
 	parentM(src.parentM),
+	worldSeed(src.worldSeed),
 	y(src.y),
 	x(src.x),
 	push(src.push),
@@ -78,9 +79,9 @@ map::map(map const& src): // For copying -- MANDATORY FOR VECTORS, SEE: Rule of 
 	diagonal(src.diagonal),
 	debug(src.debug)
 {
-	acivated = src.activated;
+	activated = src.activated;
 	if(debug){
-		std::cout << "CREATING MAP CPY " << this << " FOR " << parentW << std::endl;
+		std::cout << "CREATING MAP CPY " << this <<  std::endl;
 	}
 	if(activated){
 		heightMap = new int[mapSide*mapSide];
@@ -104,7 +105,7 @@ map::map(map const& src): // For copying -- MANDATORY FOR VECTORS, SEE: Rule of 
 		}
 	}
 	if(debug){
-		std::cout << "CREATED MAP CPY " << this << " FOR " << parentW << std::endl;
+		std::cout << "CREATED MAP CPY " << this << std::endl;
 	}
 }
 
@@ -127,7 +128,7 @@ map::~map(){
 	}
 }
 
-map::deactivate(){
+void map::deactivate(){
 	if(debug){
 		std::cout << "DEACTIVATING MAP " << this << std::endl;
 	}
@@ -144,7 +145,7 @@ map::deactivate(){
 	}
 }
 
-map::activate(){
+void map::activate(){
 	// -- For activation
 	if(activated == 1){
 		std::cout << "ERROR ALREADY ACTIVATED Y: " << y << " X: " << x << std::endl;
@@ -174,6 +175,6 @@ map::activate(){
 		}
 	}
 	if(debug){
-		std::cout << "ACTIVATED MAP " << this << " FOR " << parentW << std::endl; 
+		std::cout << "ACTIVATED MAP " << this << std::endl; 
 	}
 }

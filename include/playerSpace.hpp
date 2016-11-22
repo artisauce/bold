@@ -25,8 +25,8 @@ public:
 	// -- cordLists for randLine
 
 	// -- Player stats
-	int tileVewRadius; // Kinda important.
-	int regionVewRadius; // Kinda important.
+	int tileViewRadius; // Kinda important.
+	int regionViewRadius; // Kinda important.
 	int mapViewRadius; // For the extremes of testing.
 	int playerWorldY; // Cordinate of world.
 	int playerWorldX;
@@ -43,12 +43,12 @@ public:
 
 	playerSpace(unsigned int seedInput, int playerViewRadius, const double pushInput, size_t mapSideInput, 
 	size_t tileSideInput, size_t battlefieldSideInput, const bool diagonalInput, const bool debugInput);
-	insertCoordinateRelative(std::list<std::list<coordinate>>::iterator& yy, std::list<coordinate>::iterator& xx, coordinate data);
-	find(int y, int x, std::list<std::list<coordinate>>::iterator& yy, std::list<coordinate>::iterator& xx);
-	playerSpace::teleport();
-	playerSpace::travel(int yT, int xT, int mode);
+	void insertCoordinateRelative(std::list<std::list<coordinate>>::iterator& yy, std::list<coordinate>::iterator& xx, coordinate data);
+	bool find(int y, int x, std::list<std::list<coordinate>>::iterator& yy, std::list<coordinate>::iterator& xx);
+	void teleport();
+	void travel(int yT, int xT, int mode);
 	~playerSpace();
-	view(float heightOffset, int playerHeight, int mapView, bool circle,
+	unsigned int view(float heightOffset, int playerHeight, int mapView, bool circle,
 					 bool borders, bool playerSee, bool wallMode, std::vector<int>& viewMap, 
 					 std::vector<int>* optimizeArray, std::vector<int>& memoryMap,int specialTiles, bool InvisibleAboveCustom, bool checkAll, bool debug);
 };

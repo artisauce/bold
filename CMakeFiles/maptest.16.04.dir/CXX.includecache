@@ -6,33 +6,13 @@
 
 #IncludeRegexTransform: 
 
-/home/dmagaril/bold/src/battleField.cpp
-map.hpp
-/home/dmagaril/bold/src/map.hpp
-
-/home/dmagaril/bold/src/map.cpp
-worldMap.hpp
-/home/dmagaril/bold/src/worldMap.hpp
-
-/home/dmagaril/bold/src/maptest.cpp
-worldMap.hpp
-/home/dmagaril/bold/src/worldMap.hpp
+/home/gefer8/bold/src/maptest.cpp
+playerSpace.hpp
+/home/gefer8/bold/src/playerSpace.hpp
 SDL.h
-/home/dmagaril/bold/src/SDL.h
+/home/gefer8/bold/src/SDL.h
 SDL_image.h
-/home/dmagaril/bold/src/SDL_image.h
-
-/home/dmagaril/bold/src/tile.cpp
-map.hpp
-/home/dmagaril/bold/src/map.hpp
-
-/home/dmagaril/bold/src/toolkit.cpp
-toolkit.hpp
-/home/dmagaril/bold/src/toolkit.hpp
-
-/home/dmagaril/bold/src/worldMap.cpp
-worldMap.hpp
-/home/dmagaril/bold/src/worldMap.hpp
+/home/gefer8/bold/src/SDL_image.h
 
 include/battleField.hpp
 toolkit.hpp
@@ -41,6 +21,10 @@ include/toolkit.hpp
 include/map.hpp
 tile.hpp
 include/tile.hpp
+
+include/playerSpace.hpp
+map.hpp
+include/map.hpp
 
 include/sdl/SDL.h
 SDL_main.h
@@ -637,8 +621,4 @@ Windows.h
 -
 unistd.h
 -
-
-include/worldMap.hpp
-map.hpp
-include/map.hpp
 

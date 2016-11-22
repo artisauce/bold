@@ -19,8 +19,9 @@ playerSpace::playerSpace(unsigned int seedInput, int playerViewRadius, const dou
 	playerRegionX=0;
 	playerTileY=0;
 	playerTileX=0;
-    	current = new map(seed,0,0,push,mapSide,tileSide,battlefieldSide,diagonal.debug); 
+    	current = new map(seed,0,0,push,mapSide,tileSide,battlefieldSide,diagonal,debug); 
 	map* tempMap;
+	if(debug)
 	std::cout << "PLAYERSPACE " << this << ": #" << 0 << " MAP CREATED: " << current << std::endl; 
 	mapCount = 1;
 	tileViewRadius = playerViewRadius;
@@ -28,11 +29,11 @@ playerSpace::playerSpace(unsigned int seedInput, int playerViewRadius, const dou
 	mapViewRadius = (regionViewRadius / mapSide) + 1; // How far away we generatin'? Must be >=1
 	//std::list<std::list<coordinate>> cordMap
 	coordinate tempCord = {0,0,current,NULL,NULL};
-	tempList = std::list<coordinates>;
+	std::list<coordinate> tempList;
 	for(int i = -mapViewRadius;i<=0;i++) cordMap.push_front(tempList); // This many rows for beginning.
 	std::list<std::list<coordinate>>::iterator temp = cordMap.end();
-	for(i = 0;i<mapViewRadius;i++) cordMap.push_front(tempList); // This many rows for beginning.
-	temp*.push_front(tempCord); // Attach the first cord to middle.
+	for(int i = 0;i<mapViewRadius;i++) cordMap.push_front(tempList); // This many rows for beginning.
+	temp->push_front(tempCord); // Attach the first cord to middle.
 	// Finally set up to start expanding.
 	std::list<coordinate>::iterator middle = temp->begin();
 	//http://www.cplusplus.com/reference/list/list/insert/ Val also copied.
@@ -40,69 +41,70 @@ playerSpace::playerSpace(unsigned int seedInput, int playerViewRadius, const dou
 	bool isTop = 1;
 	std::list<coordinate>::iterator justHappened;
 	std::list<coordinate>::iterator it;
-	temp = NULL;
+	temp->clear();
 	for(int y = -mapViewRadius;y<=mapViewRadius;y++){
 		for(int x = -mapViewRadius;x<=mapViewRadius;x++){
 			if(x==y && x==0) continue; // Skip current.
-			tempMap = new map(seed,y,x,push,mapSide,tileSide,battlefieldSide,diagonal.debug);
+			tempMap = new map(seed,y,x,push,mapSide,tileSide,battlefieldSide,diagonal,debug);
+			if(debug) std::cout << "PLAYERSPACE " << this << ": #" << mapCount << " MAP CREATED: " << tempMap << std::endl; 
 			if(isTop)
 			tempCord = {y,x,tempMap,NULL,NULL}; // Basic, just put in deh grill
 			else {
-				tempCord = {y,x,tempMap,&it,NULL);
+				tempCord = {y,x,tempMap,&(*it),NULL};
 				if(!y){
 					if(x<0){
-						justHappened = temp.insert(middle,tempCord); // insert, justHappened has pointer.
-						(*it).down = &(*justHappened); // Set the one above to point down to justHappened.
+						justHappened = temp->insert(middle,tempCord); // insert, justHappened has pointer.
+						it->down = &(*justHappened); // Set the one above to point down to justHappened.
 					}
 					else{
-						temp.push_back(tempCord);
-						(*it).down = &(*temp.end());
+						temp->push_back(tempCord);
+						it->down = &(*temp->end());
 					}
 				}
 				else{
-					temp.push_back(tempCord);
-					(*it).down = &(*temp.end());
+					temp->push_back(tempCord);
+					it->down = &(*temp->end());
 				}
 			}
 			if(x==mapViewRadius) break; // End case.
 			it++;
-			// consider just having by itself instead of &(*...)
+			// consider just having by itself instead of &(*...) -- CONFIRMED BAD.
 			// consider not checking end case.
 		}
 		if(y==mapViewRadius){
 			break;
 		}
-		if(temp){
+		if(temp->size()){
 			temp++;
 		}
 		else{
 			temp=cordMap.begin();
 		}
-		it = temp.begin();
+		it = temp->begin();
 		isTop = 0;
 		
 	}
 	temp=cordMap.begin();
-	for (y=-mapViewRadius;y<=mapViewRadius; y++)
+	for (int y=-mapViewRadius;y<=mapViewRadius; y++)
 	{
-		it = temp.begin();
-		middle = temp; // This really just a temp value. -- is one ahead
+		it = temp->begin();
+		middle = it; // This really just a temp value. -- is one ahead
 		if(y!=mapViewRadius){
 			temp++;
-			justHappened = temp.begin(); // Temp value of stuff below. - same index as it
+			justHappened = temp->begin(); // Temp value of stuff below. - same index as it
 			temp--;
 		}
 
-		for (x=-mapViewRadius;x<=mapViewRadius; x++)
+		for (int x=-mapViewRadius;x<=mapViewRadius; x++)
 		{
 			if(x!=mapViewRadius){
 				middle++;
-				(*it)->pointer.right = (*middle)->pointer;
-				(*middle)->pointer.left = (*it)->pointer;
+				it->pointer->right = middle->pointer;
+				middle->pointer->left = it->pointer;
 			}
 			if(y!=mapViewRadius){
-				(*it)->pointer.down = (*justHappened)->pointer;
-				(*justHappened)->pointer.up = (*it)->pointer;
+				it->pointer->down = justHappened->pointer;
+				justHappened->pointer->up = it->pointer;
 			}
 			it=middle; // or it++;
 		}
@@ -113,40 +115,40 @@ playerSpace::playerSpace(unsigned int seedInput, int playerViewRadius, const dou
     }
 }
 
-playerSpace::insertCoordinateRelative(std::list<std::list<coordinate>>::iterator& yy, std::list<coordinate>::iterator& xx, coordinate data){
+void playerSpace::insertCoordinateRelative(std::list<std::list<coordinate>>::iterator& yy, std::list<coordinate>::iterator& xx, coordinate data){
 // if not found y, use mylist.insert (iterator,thingWeWantToPutIn);
-	int wy = *(xx).y;
+	int wy = xx->y;
 	int tarX = data.x;
 	int tarY = data.y;
 	bool goDir = true; //For technical insertion.
 	// WARNING: WE'RE NOT KEEPING TRACK OF EX AND WY THROUGH THIS.
-	if(tarY<cordList.begin()->begin()->y){ // test if y is out of range
+	if(tarY<cordMap.begin()->begin()->y){ // test if y is out of range
 		std::list<coordinate> tempList;
 		tempList.push_front(data);
-		cordList.push_front(tempList);
-		yy = (cordList.begin());
-		xx= cordList.begin()->begin();
+		cordMap.push_front(tempList);
+		yy = (cordMap.begin());
+		xx= cordMap.begin()->begin();
 		return;
 	}
-	else if(tarY>cordList.end()->begin()->y){
+	else if(tarY>cordMap.end()->begin()->y){
 		std::list<coordinate> tempList;
 		tempList.push_back(data);
-		cordList.push_back(tempList);
-		yy = (cordList.end());
-		xx= cordList.end()->end();
+		cordMap.push_back(tempList);
+		yy = (cordMap.end());
+		xx= cordMap.end()->end();
 		return;
 	}
 	bool tester;
 	while(1){ // Welp.
 		if(wy==tarY){
-			if(tarX < *(yy.begin()).x){ // test if x is out of range
-				yy.push_front(data);
-				xx= yy.begin();
+			if(tarX < yy->begin()->x){ // test if x is out of range
+				yy->push_front(data);
+				xx= yy->begin();
 				return;
 			}
-			else if (tarX > *(yy.end()).x){
-				yy.push_back(data);
-				xx= yy.end();
+			else if (tarX > yy->end()->x){
+				yy->push_back(data);
+				xx= yy->end();
 				return;
 			}
 			tester = ((*xx).x < tarX);
@@ -162,11 +164,11 @@ playerSpace::insertCoordinateRelative(std::list<std::list<coordinate>>::iterator
 				}
 				tester = ((*xx).x < tarX);
 			}
-			xx = yy.insert(xx,data);
+			xx = yy->insert(xx,data);
 			return;
 		}
 		else{
-			wy=*((*yy).begin()).y;
+			wy=yy->begin()->y;
 			tester = (wy < tarY);
 			while(tester || goDir){
 				if(tester){
@@ -177,7 +179,7 @@ playerSpace::insertCoordinateRelative(std::list<std::list<coordinate>>::iterator
 					yy--;
 					goDir = true;
 				}
-				wy= *((*yy).begin()).y;
+				wy= yy->begin()->y;
 				if(wy == tarY){
 					break; // Go get x now.
 				}
@@ -186,13 +188,13 @@ playerSpace::insertCoordinateRelative(std::list<std::list<coordinate>>::iterator
 			if(wy!=tarY){ // If it wasn't found, we make a new one.
 				std::list<coordinate> tempList;
 				tempList.push_back(data);
-				yy = cordList.insert(yy,tempList);
+				yy = cordMap.insert(yy,tempList);
 				xx= (*yy).begin();
 				return;
 			}
 			xx = (*yy).end();
-			if(tarX - *((*yy).begin()).x < *((*yy).end()).x - tarX){ //quick comparison for comparison's sake
-				xx = (*yy).begin();
+			if(tarX - yy->begin()->x < yy->end()->x - tarX){ //quick comparison for comparison's sake
+				xx = yy->begin();
 			}
 		}
 	}
@@ -234,8 +236,8 @@ bool playerSpace::find(int y, int x, std::list<std::list<coordinate>>::iterator&
 	}
 	if(searchX){
 		xx = yy->end();
-		if(x - *((*yy).begin()).x < *(xx).x - tarX){ //quick comparison for comparison's sake
-			xx = (*yy).begin();
+		if(x - yy->begin()->x < xx->x - x){ //quick comparison for comparison's sake
+			xx = yy->begin();
 		}
 	}
 	diff = x - xx->x;
@@ -258,12 +260,12 @@ bool playerSpace::find(int y, int x, std::list<std::list<coordinate>>::iterator&
 	return true;
 }
 
-playerSpace::teleport(){
+void playerSpace::teleport(){
 	// I'll implement later. For now, have this friendly neighborhood seg-fault
 	current = NULL;
 }
 
-playerSpace::travel(int yT, int xT, int mode){
+void playerSpace::travel(int yT, int xT, int mode){
 	//0: tile mode
 	//1: region mode
 	//2: special, map mode
@@ -284,13 +286,13 @@ playerSpace::travel(int yT, int xT, int mode){
 	playerRegionY+=playerTileY/tileSide;
 	playerRegionX+=playerTileX/tileSide;
 	worldYDest+=playerRegionY/mapSide;
-	worldXDest+=playerRegionX/mapside;
+	worldXDest+=playerRegionX/mapSide;
 	playerTileX=playerTileX%tileSide;
 	playerTileY=playerTileY%tileSide;
 	playerRegionY=playerRegionY%mapSide;
 	playerRegionX=playerRegionX%mapSide;
-	int calcY = worldYDest-playerWorldY;
-	int calcX = worldXDest-playerWorldx;
+	int calcY = worldYDest-current->y;
+	int calcX = worldXDest-current->x;
 	playerWorldY=worldYDest;
 	playerWorldX=worldXDest;
 	if(abs(calcY) > 1 || abs(calcX) > 1){
@@ -304,7 +306,7 @@ playerSpace::travel(int yT, int xT, int mode){
 		coordinate currCord = *xIt;
 		coordinate* foundCord;
 		coordinate* cordArray[(mapViewRadius*2)+1];
-		cordinate* theTestCord;
+		coordinate* theTestCord;
 		int y;
 		int x;
 		int startCord;
@@ -314,10 +316,10 @@ playerSpace::travel(int yT, int xT, int mode){
 			for (int i = 0; i < mapViewRadius; i++){
 				currCord = *(currCord.down); // GO DOWN TO DEACTIVATE
 			}
-			currCord.map->deactivate();
-			spareX = currCord.map->xConnector;
+			currCord.pointer->deactivate();
+			spareX = currCord.pointer->xConnector;
 			xIt = spareX;
-			for (i = 0; i < mapViewRadius; i++)
+			for (int i = 0; i < mapViewRadius; i++)
 			{
 				xIt--;
 				xIt->pointer->deactivate();
@@ -326,14 +328,14 @@ playerSpace::travel(int yT, int xT, int mode){
 			}
 			// now we set up list
 			currCord = *(current->xConnector);
-			for (i = 0; i < mapViewRadius; i++){
+			for (int i = 0; i < mapViewRadius; i++){
 				currCord = *(currCord.up); // GO UP TO FIND/SEARCH/ACTIVATE
 			}
-			cordArray[mapViewRadius] = &currentCord;
-			spareX = currCord.map->xConnector;
-			yIt = currCord.map->yConnector;
+			cordArray[mapViewRadius] = &currCord;
+			spareX = currCord.pointer->xConnector;
+			yIt = currCord.pointer->yConnector;
 			xIt = spareX;
-			for (i = 0; i < mapViewRadius; i++)
+			for (int i = 0; i < mapViewRadius; i++)
 			{
 				xIt--;
 				spareX++;
@@ -344,7 +346,7 @@ playerSpace::travel(int yT, int xT, int mode){
 			startCord = current->x - mapViewRadius;
 			x = startCord - 1; // keep this in place for now
 
-			for (i = -mapViewRadius; i <= mapViewRadius; i++)
+			for (int i = -mapViewRadius; i <= mapViewRadius; i++)
 			{
 				x++;
 				theTestCord = cordArray[i]->up;
@@ -368,7 +370,7 @@ playerSpace::travel(int yT, int xT, int mode){
 					}
 				}
 				else{
-					madeMap = new map(seed,y,x,push,mapSide,tileSide,battlefieldSide,diagonal.debug);
+					madeMap = new map(seed,y,x,push,mapSide,tileSide,battlefieldSide,diagonal,debug);
 					currCord = {y,x,madeMap,NULL,cordArray[i]}; // We don't use this anyways anymore.
 					insertCoordinateRelative(yIt,xIt,currCord);
 					foundCord = &(*xIt);
@@ -391,10 +393,10 @@ playerSpace::travel(int yT, int xT, int mode){
 			for (int i = 0; i < mapViewRadius; i++){
 				currCord = *(currCord.up); // GO UP TO DEACTIVATE
 			}
-			currCord.map->deactivate();
-			spareX = currCord.map->xConnector;
+			currCord.pointer->deactivate();
+			spareX = currCord.pointer->xConnector;
 			xIt = spareX;
-			for (i = 0; i < mapViewRadius; i++)
+			for (int i = 0; i < mapViewRadius; i++)
 			{
 				xIt--;
 				xIt->pointer->deactivate();
@@ -403,14 +405,14 @@ playerSpace::travel(int yT, int xT, int mode){
 			}
 			// now we set up list
 			currCord = *(current->xConnector);
-			for (i = 0; i < mapViewRadius; i++){
+			for (int i = 0; i < mapViewRadius; i++){
 				currCord = *(currCord.down); // GO DOWN TO FIND/SEARCH/ACTIVATE
 			}
-			cordArray[mapViewRadius] = &currentCord;
-			spareX = currCord.map->xConnector;
-			yIt = currCord.map->yConnector;
+			cordArray[mapViewRadius] = &currCord;
+			spareX = currCord.pointer->xConnector;
+			yIt = currCord.pointer->yConnector;
 			xIt = spareX;
-			for (i = 0; i < mapViewRadius; i++)
+			for (int i = 0; i < mapViewRadius; i++)
 			{
 				xIt--;
 				spareX++;
@@ -421,7 +423,7 @@ playerSpace::travel(int yT, int xT, int mode){
 			startCord = current->x - mapViewRadius;
 			x = startCord - 1; // keep this in place for now
 
-			for (i = -mapViewRadius; i <= mapViewRadius; i++)
+			for (int i = -mapViewRadius; i <= mapViewRadius; i++)
 			{
 				x++;
 				theTestCord = cordArray[i]->down;
@@ -441,7 +443,7 @@ playerSpace::travel(int yT, int xT, int mode){
 					cordArray[i]->pointer->down = foundCord->pointer;
 				}
 				else{
-					madeMap = new map(seed,y,x,push,mapSide,tileSide,battlefieldSide,diagonal.debug);
+					madeMap = new map(seed,y,x,push,mapSide,tileSide,battlefieldSide,diagonal,debug);
 					currCord = {y,x,madeMap,cordArray[i],NULL}; // We don't use this anyways anymore.
 					insertCoordinateRelative(yIt,xIt,currCord);
 					foundCord = &(*xIt);
@@ -463,41 +465,41 @@ playerSpace::travel(int yT, int xT, int mode){
 		coordinate spareCord = currCord;
 		cordNumber = -1;
 		map* mapArray[(mapViewRadius*2)+1];
-		madeMap = currentMap; // We'll use this as temp this time.
+		madeMap = current; // We'll use this as temp this time.
 		map* testMap;
 		if(calcX>0){
 			for (int i = 0; i < mapViewRadius; i++){
 				madeMap = madeMap->left; // GO LEFT TO DEACTIVATE
 			}
 			madeMap->deactivate();
-			spareCord = &(*(madeMap->xConnector));
+			spareCord = *(madeMap->xConnector);
 			currCord = spareCord;
-			for (i = 0; i < mapViewRadius; i++)
+			for (int i = 0; i < mapViewRadius; i++)
 			{
-				spareCord = spareCord->up;
-				spareCord->pointer->deactivate();
-				currCord = currCord->down;
-				currCord->pointer->deactivate();
+				spareCord = *spareCord.up;
+				spareCord.pointer->deactivate();
+				currCord = *currCord.down;
+				currCord.pointer->deactivate();
 			}
 			// now we set up list
-			madeMap = currentMap;
-			for (i = 0; i < mapViewRadius; i++){
+			madeMap = current;
+			for (int i = 0; i < mapViewRadius; i++){
 				madeMap = madeMap->right;  // GO RIGHT TO FIND/SEARCH/ACTIVATE
 			}
 			mapArray[mapViewRadius] = madeMap;
-			spareCord = &(*(madeMap->xConnector));
+			spareCord = *(madeMap->xConnector);
 			currCord = spareCord;
-			for (i = 0; i < mapViewRadius; i++)
+			for (int i = 0; i < mapViewRadius; i++)
 			{
-				spareCord = spareCord->up;
-				currCord = currCord->down;
-				mapArray[mapViewRadius-i] = spareCord->pointer;
-				mapArray[mapViewRadius+i] = currCord->pointer;
+				spareCord = *spareCord.up;
+				currCord = *currCord.down;
+				mapArray[mapViewRadius-i] = spareCord.pointer;
+				mapArray[mapViewRadius+i] = currCord.pointer;
 			}
 			x = current->x + mapViewRadius + 1;
 			startCord = current->y - mapViewRadius;
 			y = startCord - 1; // keep this in place for now
-			for (i = -mapViewRadius; i <= mapViewRadius; i++)
+			for (int i = -mapViewRadius; i <= mapViewRadius; i++)
 			{
 				y++;
 				testMap = mapArray[i]->right;
@@ -512,7 +514,7 @@ playerSpace::travel(int yT, int xT, int mode){
 					testMap->left = mapArray[i];
 				}
 				else{
-					madeMap = new map(seed,y,x,push,mapSide,tileSide,battlefieldSide,diagonal.debug);
+					madeMap = new map(seed,y,x,push,mapSide,tileSide,battlefieldSide,diagonal,debug);
 					currCord = {y,x,madeMap,NULL,NULL}; // We don't use this anyways anymore.
 					insertCoordinateRelative(yIt,xIt,currCord);
 					testMap = xIt->pointer;
@@ -533,34 +535,34 @@ playerSpace::travel(int yT, int xT, int mode){
 				madeMap = madeMap->right; // GO LEFT TO DEACTIVATE
 			}
 			madeMap->deactivate();
-			spareCord = &(*(madeMap->xConnector));
+			spareCord = *(madeMap->xConnector);
 			currCord = spareCord;
-			for (i = 0; i < mapViewRadius; i++)
+			for (int i = 0; i < mapViewRadius; i++)
 			{
-				spareCord = spareCord->up;
-				spareCord->pointer->deactivate();
-				currCord = currCord->down;
-				currCord->pointer->deactivate();
+				spareCord = *spareCord.up;
+				spareCord.pointer->deactivate();
+				currCord = *currCord.down;
+				currCord.pointer->deactivate();
 			}
 			// now we set up list
-			madeMap = currentMap;
-			for (i = 0; i < mapViewRadius; i++){
+			madeMap = current;
+			for (int i = 0; i < mapViewRadius; i++){
 				madeMap = madeMap->left;  // GO RIGHT TO FIND/SEARCH/ACTIVATE
 			}
 			mapArray[mapViewRadius] = madeMap;
-			spareCord = &(*(madeMap->xConnector));
+			spareCord = *(madeMap->xConnector);
 			currCord = spareCord;
-			for (i = 0; i < mapViewRadius; i++)
+			for (int i = 0; i < mapViewRadius; i++)
 			{
-				spareCord = spareCord->up;
-				currCord = currCord->down;
-				mapArray[mapViewRadius-i] = spareCord->pointer;
-				mapArray[mapViewRadius+i] = currCord->pointer;
+				spareCord = *spareCord.up;
+				currCord = *currCord.down;
+				mapArray[mapViewRadius-i] = spareCord.pointer;
+				mapArray[mapViewRadius+i] = currCord.pointer;
 			}
 			x = current->x - mapViewRadius - 1;
 			startCord = current->y - mapViewRadius;
 			y = startCord - 1; // keep this in place for now
-			for (i = -mapViewRadius; i <= mapViewRadius; i++)
+			for (int i = -mapViewRadius; i <= mapViewRadius; i++)
 			{
 				y++;
 				testMap = mapArray[i]->left;
@@ -575,7 +577,7 @@ playerSpace::travel(int yT, int xT, int mode){
 					testMap->right = mapArray[i];
 				}
 				else{
-					madeMap = new map(seed,y,x,push,mapSide,tileSide,battlefieldSide,diagonal.debug);
+					madeMap = new map(seed,y,x,push,mapSide,tileSide,battlefieldSide,diagonal,debug);
 					currCord = {y,x,madeMap,NULL,NULL}; // We don't use this anyways anymore.
 					insertCoordinateRelative(yIt,xIt,currCord);
 					testMap = xIt->pointer;
@@ -598,10 +600,10 @@ playerSpace::~playerSpace(){
 	if(debug){
 		std::cout << "DELETING PLAYERSPACE " << this << std::endl;
 	}
-	std::list<std::list<coordinate>> yy = cordMap.begin();
-	std::list<coordinate> xx;
-	std::list<std::list<coordinate>> yyEnd = cordMap.end();
-	std::list<coordinate> xxEnd;
+	std::list<std::list<coordinate>>::iterator yy = cordMap.begin();
+	std::list<coordinate>::iterator xx;
+	std::list<std::list<coordinate>>::iterator yyEnd = cordMap.end();
+	std::list<coordinate>::iterator xxEnd;
 	bool startY = true;
 	bool startX;
 	while(yy!=yyEnd){
@@ -655,14 +657,14 @@ unsigned int playerSpace::view(float heightOffset, int playerHeight, int mapView
 	int tileX;
 	int tileSideB;
 	if(mapView){
-		tileY=regionY;
-		tileX=regionX;
+		tileY=playerRegionY;
+		tileX=playerRegionX;
 		tileSideB=mapSide;
 		//This is a useful hack. coder plz
 	}
 	else{
 		tileY=playerTileY;
-		tileX=regionTileX;
+		tileX=playerTileX;
 		tileSideB=tileSide;
 	}
 	if(circle){
@@ -842,8 +844,8 @@ unsigned int playerSpace::view(float heightOffset, int playerHeight, int mapView
 					//	viewMap.push_back(0);
 					//	continue;
 					//}
-					viewMap.push_back(usedMap.regionMap[(regionYOffset*mapSide) + regionXOffset].tileMap[(wy*tileSide)+ex]);
-					memoryMap.push_back(usedMap.regionMap[(regionYOffset*mapSide) + regionXOffset].tileMemoryMap[(wy*tileSide)+ex]);
+					viewMap.push_back(usedMap->regionMap[(regionYOffset*mapSide) + regionXOffset].tileMap[(wy*tileSide)+ex]);
+					memoryMap.push_back(usedMap->regionMap[(regionYOffset*mapSide) + regionXOffset].tileMemoryMap[(wy*tileSide)+ex]);
 			}
 			//if(theMap.regionMap[(regionYOffset*mapSide) + regionXOffset].tileMap[(wy*tileSide)+ex] > 9){
 				//std::cout << theMap.regionMap[(regionYOffset*mapSide) + regionXOffset].tileMap[(wy*tileSide)+ex] << std::endl;
@@ -987,10 +989,10 @@ unsigned int playerSpace::view(float heightOffset, int playerHeight, int mapView
 							//	continue; // Skip OOB
 							//}
 							//std::cout << theMap.bigMap[worldYOffset * worldSide + worldXOffset].heightMap[(wy*tileSide)+ex] << std::endl;
-							usedMap.regionMemoryMap[(wy*tileSide)+ex] = 1;
+							usedMap->regionMemoryMap[(wy*tileSide)+ex] = 1;
 							//std::cout << "GI HERE " << theMap.bigMap[worldYOffset * worldSide + worldXOffset].regionMemoryMap[(wy*tileSide)+ex]<< std::endl;
 							if(trigger){
-								memoryMap[indexB] = usedMap.heightMap[(wy*tileSide)+ex]+1;
+								memoryMap[indexB] = usedMap->heightMap[(wy*tileSide)+ex]+1;
 								continue;
 							}
 							memoryMap[indexB] = 0;
@@ -1066,9 +1068,9 @@ unsigned int playerSpace::view(float heightOffset, int playerHeight, int mapView
 							//if(worldXOffset<0 || worldYOffset<0 || worldXOffset >= worldSide || worldYOffset >=worldSide){
 							//	continue; // Skip OOB
 							//}
-							usedMap.regionMap[(regionYOffset*mapSide) + regionXOffset].tileMemoryMap[(wy*tileSide)+ex] = 1;
+							usedMap->regionMap[(regionYOffset*mapSide) + regionXOffset].tileMemoryMap[(wy*tileSide)+ex] = 1;
 							if(trigger){
-								memoryMap[indexB] = usedMap.regionMap[(regionYOffset*mapSide) + regionXOffset].tileMap[(wy*tileSide)+ex]+1;
+								memoryMap[indexB] = usedMap->regionMap[(regionYOffset*mapSide) + regionXOffset].tileMap[(wy*tileSide)+ex]+1;
 								continue;
 							}
 							memoryMap[indexB] = 0;

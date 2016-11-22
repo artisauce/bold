@@ -10,7 +10,7 @@ battlefield::battlefield(const tile* parentTInput, const int yInput, const int x
 	debug(parentT->debug)
 {
 	if(debug){
-		std::cout << "CREATING BATTLEFIELD " << this << " FOR " << parentT << " FOR " << parentT->parentM << std::endl;
+		std::cout << "CREATING BATTLEFIELD " << this << " FOR " << parentT << " FOR " << parentT->parentM << " FOR " << parentT->parentM->parentW << std::endl;
 	}
 	unsigned int originalSeed = rand(); // From in-game. Should be unique each time.
 	srand(seed);
@@ -39,7 +39,7 @@ battlefield::battlefield(const tile* parentTInput, const int yInput, const int x
 		}
 	}
 	if(debug){
-		std::cout << "CREATED BATTLEFIELD "<< this << " FOR " << parentT << " FOR " << parentT->parentM <<  std::endl;
+		std::cout << "CREATED BATTLEFIELD "<< this << " FOR " << parentT << " FOR " << parentT->parentM << " FOR " << parentT->parentM->parentW << std::endl;
 	srand(originalSeed);
 	}
 }
@@ -54,7 +54,7 @@ battlefield::battlefield(battlefield const& src): // For copying -- MANDATORY FO
 	debug(src.debug)
 {
 	if(debug){
-		std::cout << "CREATING BATTLEFIELD CPY " << this << " FOR " << parentT << " FOR " << parentT->parentM << std::endl;
+		std::cout << "CREATING BATTLEFIELD CPY " << this << " FOR " << parentT << " FOR " << parentT->parentM << " FOR " << parentT->parentM->parentW << std::endl;
 	}
 	battleMap = new int[battlefieldSide*battlefieldSide];
 	for (int i = 0; i < battlefieldSide*battlefieldSide; ++i)
@@ -63,17 +63,17 @@ battlefield::battlefield(battlefield const& src): // For copying -- MANDATORY FO
 		battleMap[i] = src.battleMap[i];
 	}
 	if(debug){
-		std::cout << "CREATED BATTLEFIELD CPY " << this << " FOR " << parentT << " FOR " << parentT->parentM << std::endl;
+		std::cout << "CREATED BATTLEFIELD CPY " << this << " FOR " << parentT << " FOR " << parentT->parentM << " FOR " << parentT->parentM->parentW << std::endl;
 	}
 }
 
 
 battlefield::~battlefield(){
 	if(debug){
-		std::cout << "DELETING BATTLEFIELD " << this << " FOR " << parentT << " FOR " << parentT->parentM << " FOR " << std::endl;
+		std::cout << "DELETING BATTLEFIELD " << this << " FOR " << parentT << " FOR " << parentT->parentM << " FOR " << parentT->parentM->parentW << std::endl;
 	}
 	delete[] battleMap;
 	if(debug){
-		std::cout << "DONE DELETING BATTLEFIELD " << this << " FOR " << parentT << " FOR " << parentT->parentM <<  std::endl;
+		std::cout << "DONE DELETING BATTLEFIELD " << this << " FOR " << parentT << " FOR " << parentT->parentM << " FOR " << parentT->parentM->parentW << std::endl;
 	}
 }
