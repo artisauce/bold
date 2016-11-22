@@ -598,8 +598,29 @@ playerSpace::~playerSpace(){
 	if(debug){
 		std::cout << "DELETING PLAYERSPACE " << this << std::endl;
 	}
-	delete[] seedMap;
-	bigMap = std::vector<map>();
+	std::list<std::list<coordinate>> yy = cordMap.begin();
+	std::list<coordinate> xx;
+	std::list<std::list<coordinate>> yyEnd = cordMap.end();
+	std::list<coordinate> xxEnd;
+	bool startY = true;
+	bool startX;
+	while(yy!=yyEnd){
+		if(!startY){
+			yy++;
+		}
+		startY = false;
+		xx=yy->begin();
+		xxEnd=yy->end();
+		startX = true;
+		while(xx!=xxEnd){
+			if(!startX){
+				xx++;
+			}
+			startX = false;
+			delete xx->pointer;
+		}
+	}
+	cordMap = std::list<std::list<coordinate>>();
 	if(debug){
 		std::cout << "DONE DELETING PLAYERSPACE " << this << std::endl;
 	}
