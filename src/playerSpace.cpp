@@ -28,13 +28,26 @@ playerSpace::playerSpace(unsigned int seedInput, int playerViewRadius, const dou
 	regionViewRadius = playerViewRadius; // For now they are the same.
 	mapViewRadius = (regionViewRadius / mapSide) + 1; // How far away we generatin'? Must be >=1
 	//std::list<std::list<coordinate>> cordMap
+	std::cout << "CHECK0" << std::endl;
 	coordinate tempCord = {0,0,current,NULL,NULL};
 	std::list<coordinate> tempList;
-	for(int i = -mapViewRadius;i<=0;i++) cordMap.push_front(tempList); // This many rows for beginning.
+	std::cout << "CHECK1" << std::endl;
+	for(int i = -mapViewRadius;i<=0;i++) {
+		std::cout << "CHECKA" << std::endl;
+		cordMap.push_front(tempList); // This many rows for beginning.
+	}
+	std::cout << "CHECKAA" << std::endl;
 	std::list<std::list<coordinate>>::iterator temp = cordMap.end();
-	for(int i = 0;i<mapViewRadius;i++) cordMap.push_front(tempList); // This many rows for beginning.
+	std::cout << "CHECKB" << std::endl;
+	for(int i = 0;i<mapViewRadius;i++) {
+		std::cout << "CHECKC" << std::endl;
+		cordMap.push_front(tempList); // This many rows for beginning.
+	}
+	std::cout << "CHECKD " << &temp << " " << &tempCord <<std::endl;
 	temp->push_front(tempCord); // Attach the first cord to middle.
+	std::cout << "CHECKE" << std::endl;
 	// Finally set up to start expanding.
+	std::cout << "CHECK2" << std::endl;
 	std::list<coordinate>::iterator middle = temp->begin();
 	//http://www.cplusplus.com/reference/list/list/insert/ Val also copied.
 	//http://www.cplusplus.com/reference/list/list/push_front/ Val is copied !!!
@@ -42,7 +55,9 @@ playerSpace::playerSpace(unsigned int seedInput, int playerViewRadius, const dou
 	std::list<coordinate>::iterator justHappened;
 	std::list<coordinate>::iterator it;
 	temp->clear();
+	std::cout << "CHECK3" << std::endl;
 	for(int y = -mapViewRadius;y<=mapViewRadius;y++){
+		std::cout << "CHECK4 " << y << std::endl;
 		for(int x = -mapViewRadius;x<=mapViewRadius;x++){
 			if(x==y && x==0) continue; // Skip current.
 			tempMap = new map(seed,y,x,push,mapSide,tileSide,battlefieldSide,diagonal,debug);

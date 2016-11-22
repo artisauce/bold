@@ -200,9 +200,9 @@ int main( int argc, char* args[] )
     bool debug = true;
     bool diagonal = true;
     double pushCoefficient = 0.1;
-    size_t mapSide = 100;
-    size_t tileSide = 32;
-    size_t battlefieldSide = 64;
+    size_t mapSide = 64;
+    size_t tileSide = 16;
+    size_t battlefieldSide = 32;
     std::vector<std::string> tileSet;
     tileSet.push_back("@"); // as -4. Player
     tileSet.push_back("~"); // as -5. Ground

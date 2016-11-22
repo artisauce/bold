@@ -197,7 +197,7 @@ int main( int argc, char* args[] )
 	std::ios::sync_with_stdio(false); // This allows fast output for the move demo.
     srand(1);
 	// Constants.
-    bool debug = true;
+    bool debug = false;
     bool diagonal = true;
     double pushCoefficient = 0.1;
     size_t mapSide = 64;
