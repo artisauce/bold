@@ -8,7 +8,6 @@ map::map(unsigned int worldSeedInput, int yInput, int xInput, const double pushI
 	worldSeed(worldSeedInput),
 	seed(worldSeed + (x + (y<<16))),
 	push(pushInput),
-	parentM(NULL),
 	mapSide(mapSideInput),
 	tileSide(tileSideInput),
 	battlefieldSide(battlefieldSideInput),

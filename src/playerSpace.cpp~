@@ -34,8 +34,8 @@ playerSpace::playerSpace(unsigned int seedInput, int playerViewRadius, const dou
 	for(i = 0;i<mapViewRadius;i++) cordMap.push_front(tempList); // This many rows for beginning.
 	temp*.push_front(tempCord); // Attach the first cord to middle.
 	// Finally set up to start expanding.
-	std::list<coordinate>::iterator middle = temp*.begin();
-	//http://www.cplusplus.com/reference/list/list/insert/
+	std::list<coordinate>::iterator middle = temp->begin();
+	//http://www.cplusplus.com/reference/list/list/insert/ Val also copied.
 	//http://www.cplusplus.com/reference/list/list/push_front/ Val is copied !!!
 	bool isTop = 1;
 	std::list<coordinate>::iterator justHappened;
@@ -48,10 +48,10 @@ playerSpace::playerSpace(unsigned int seedInput, int playerViewRadius, const dou
 			if(isTop)
 			tempCord = {y,x,tempMap,NULL,NULL}; // Basic, just put in deh grill
 			else {
-				tempCord = {y,x,tempMap,it,NULL);
+				tempCord = {y,x,tempMap,&it,NULL);
 				if(!y){
 					if(x<0){
-						justHappened = temp.insert(&(*middle),tempCord); // insert, justHappened has pointer.
+						justHappened = temp.insert(middle,tempCord); // insert, justHappened has pointer.
 						(*it).down = &(*justHappened); // Set the one above to point down to justHappened.
 					}
 					else{
@@ -82,62 +82,590 @@ playerSpace::playerSpace(unsigned int seedInput, int playerViewRadius, const dou
 		isTop = 0;
 		
 	}
+	temp=cordMap.begin();
+	for (y=-mapViewRadius;y<=mapViewRadius; y++)
+	{
+		it = temp.begin();
+		middle = temp; // This really just a temp value. -- is one ahead
+		if(y!=mapViewRadius){
+			temp++;
+			justHappened = temp.begin(); // Temp value of stuff below. - same index as it
+			temp--;
+		}
+
+		for (x=-mapViewRadius;x<=mapViewRadius; x++)
+		{
+			if(x!=mapViewRadius){
+				middle++;
+				(*it)->pointer.right = (*middle)->pointer;
+				(*middle)->pointer.left = (*it)->pointer;
+			}
+			if(y!=mapViewRadius){
+				(*it)->pointer.down = (*justHappened)->pointer;
+				(*justHappened)->pointer.up = (*it)->pointer;
+			}
+			it=middle; // or it++;
+		}
+		temp++;
+	}
 	if(debug){
     	std::cout << "CREATED PLAYERSPACE " << this << std::endl; 
     }
 }
 
-playerSpace::insertCoordinate(int y, int x, map* pointer){
-// if not found y, use mylist.insert (iterator,thingWeWantToPutIn); 
-	
+playerSpace::insertCoordinateRelative(std::list<std::list<coordinate>>::iterator& yy, std::list<coordinate>::iterator& xx, coordinate data){
+// if not found y, use mylist.insert (iterator,thingWeWantToPutIn);
+	int wy = *(xx).y;
+	int tarX = data.x;
+	int tarY = data.y;
+	bool goDir = true; //For technical insertion.
+	// WARNING: WE'RE NOT KEEPING TRACK OF EX AND WY THROUGH THIS.
+	if(tarY<cordList.begin()->begin()->y){ // test if y is out of range
+		std::list<coordinate> tempList;
+		tempList.push_front(data);
+		cordList.push_front(tempList);
+		yy = (cordList.begin());
+		xx= cordList.begin()->begin();
+		return;
+	}
+	else if(tarY>cordList.end()->begin()->y){
+		std::list<coordinate> tempList;
+		tempList.push_back(data);
+		cordList.push_back(tempList);
+		yy = (cordList.end());
+		xx= cordList.end()->end();
+		return;
+	}
+	bool tester;
+	while(1){ // Welp.
+		if(wy==tarY){
+			if(tarX < *(yy.begin()).x){ // test if x is out of range
+				yy.push_front(data);
+				xx= yy.begin();
+				return;
+			}
+			else if (tarX > *(yy.end()).x){
+				yy.push_back(data);
+				xx= yy.end();
+				return;
+			}
+			tester = ((*xx).x < tarX);
+			goDir = true;
+			while(tester || goDir){ // while current is less than target and your going left
+				if(tester){
+					xx++;
+					goDir = false;
+				}
+				else{
+					xx--;
+					goDir = true;
+				}
+				tester = ((*xx).x < tarX);
+			}
+			xx = yy.insert(xx,data);
+			return;
+		}
+		else{
+			wy=*((*yy).begin()).y;
+			tester = (wy < tarY);
+			while(tester || goDir){
+				if(tester){
+					yy++;
+					goDir = false;
+				}
+				else{
+					yy--;
+					goDir = true;
+				}
+				wy= *((*yy).begin()).y;
+				if(wy == tarY){
+					break; // Go get x now.
+				}
+				tester = (wy < tarY);
+			}
+			if(wy!=tarY){ // If it wasn't found, we make a new one.
+				std::list<coordinate> tempList;
+				tempList.push_back(data);
+				yy = cordList.insert(yy,tempList);
+				xx= (*yy).begin();
+				return;
+			}
+			xx = (*yy).end();
+			if(tarX - *((*yy).begin()).x < *((*yy).end()).x - tarX){ //quick comparison for comparison's sake
+				xx = (*yy).begin();
+			}
+		}
+	}
+}
 
+bool playerSpace::find(int y, int x, std::list<std::list<coordinate>>::iterator& yy, std::list<coordinate>::iterator& xx){
+	if(y < cordMap.begin()->begin()->y){
+		return false;
+	}
+	else if(y > cordMap.end()->begin()->y){
+		return false;
+	}
+	bool searchX=false;
+	int diff = y - yy->begin()->y;
+	if(diff){
+		searchX=true;
+	}
+	while(diff){
+		if(diff>0){
+			yy++;
+			diff = y - yy->begin()->y;
+			if(diff<0){
+				return false;
+			}
+		}
+		else{
+			yy--;
+			diff = y - yy->begin()->y;
+			if(diff>0){
+				return false;
+			}
+		}
+	}
+	if(x>yy->end()->x){
+		return false;
+	}
+	if(x<yy->begin()->x){
+		return false;
+	}
+	if(searchX){
+		xx = yy->end();
+		if(x - *((*yy).begin()).x < *(xx).x - tarX){ //quick comparison for comparison's sake
+			xx = (*yy).begin();
+		}
+	}
+	diff = x - xx->x;
+	while(diff){
+		if(diff>0){
+			xx++;
+			diff = x - xx->x;
+			if(diff<0){
+				return false;
+			}
+		}
+		else{
+			xx--;
+			diff = x - xx->x;
+			if(diff>0){
+				return false;
+			}
+		}
+	}
+	return true;
+}
 
+playerSpace::teleport(){
+	// I'll implement later. For now, have this friendly neighborhood seg-fault
+	current = NULL;
+}
 
+playerSpace::travel(int yT, int xT, int mode){
+	//0: tile mode
+	//1: region mode
+	//2: special, map mode
+	int worldXDest=playerWorldX;
+	int worldYDest=playerWorldY;
+	if(mode == 0){
+		playerTileY+=yT;
+		playerTileX+=xT;
+	}
+	else if(mode==1) {
+		playerRegionY+=yT;
+		playerRegionX+=xT;
+	}
+	else{
+		playerWorldY+=yT;
+		playerWorldX+=xT;
+	}
+	playerRegionY+=playerTileY/tileSide;
+	playerRegionX+=playerTileX/tileSide;
+	worldYDest+=playerRegionY/mapSide;
+	worldXDest+=playerRegionX/mapside;
+	playerTileX=playerTileX%tileSide;
+	playerTileY=playerTileY%tileSide;
+	playerRegionY=playerRegionY%mapSide;
+	playerRegionX=playerRegionX%mapSide;
+	int calcY = worldYDest-playerWorldY;
+	int calcX = worldXDest-playerWorldx;
+	playerWorldY=worldYDest;
+	playerWorldX=worldXDest;
+	if(abs(calcY) > 1 || abs(calcX) > 1){
+		teleport(); // whoosh
+	}
+	else if(calcY || calcX) {
+		// do complicated stuff here
+		std::list<std::list<coordinate>>::iterator yIt = current->yConnector;
+		std::list<coordinate>::iterator xIt = current->xConnector;
+		std::list<coordinate>::iterator spareX;
+		coordinate currCord = *xIt;
+		coordinate* foundCord;
+		coordinate* cordArray[(mapViewRadius*2)+1];
+		cordinate* theTestCord;
+		int y;
+		int x;
+		int startCord;
+		int cordNumber = -1;
+		map* madeMap; // We also makes maps here. Insert doesn't do it for reasons.
+		if(calcY>0){
+			for (int i = 0; i < mapViewRadius; i++){
+				currCord = *(currCord.down); // GO DOWN TO DEACTIVATE
+			}
+			currCord.map->deactivate();
+			spareX = currCord.map->xConnector;
+			xIt = spareX;
+			for (i = 0; i < mapViewRadius; i++)
+			{
+				xIt--;
+				xIt->pointer->deactivate();
+				spareX++;
+				spareX->pointer->deactivate();
+			}
+			// now we set up list
+			currCord = *(current->xConnector);
+			for (i = 0; i < mapViewRadius; i++){
+				currCord = *(currCord.up); // GO UP TO FIND/SEARCH/ACTIVATE
+			}
+			cordArray[mapViewRadius] = &currentCord;
+			spareX = currCord.map->xConnector;
+			yIt = currCord.map->yConnector;
+			xIt = spareX;
+			for (i = 0; i < mapViewRadius; i++)
+			{
+				xIt--;
+				spareX++;
+				cordArray[mapViewRadius-i] = &(*xIt);
+				cordArray[mapViewRadius+i] = &(*spareX);
+			}
+			y = current->y + mapViewRadius + 1;
+			startCord = current->x - mapViewRadius;
+			x = startCord - 1; // keep this in place for now
+
+			for (i = -mapViewRadius; i <= mapViewRadius; i++)
+			{
+				x++;
+				theTestCord = cordArray[i]->up;
+				if(theTestCord){
+					theTestCord->pointer->activate();
+					if(cordNumber != -1){
+						cordNumber = i; // so we only do this once
+						yIt=theTestCord->pointer->yConnector;
+						xIt=theTestCord->pointer->xConnector;
+					}
+				}
+				else if(find(y,x,yIt,xIt)){
+					foundCord = &(*xIt);
+					cordArray[i]->up = foundCord; //coordinates connect
+					foundCord->down = cordArray[i];
+					foundCord->pointer->down = cordArray[i]->pointer; // update up/down map
+					cordArray[i]->pointer->up = foundCord->pointer;
+					if(x!=startCord){ // left/right. left is gauranteed to be something, so...
+						cordArray[i-1]->pointer->right = cordArray[i]->pointer;
+						cordArray[i]->pointer->left = cordArray[i-1]->pointer;
+					}
+				}
+				else{
+					madeMap = new map(seed,y,x,push,mapSide,tileSide,battlefieldSide,diagonal.debug);
+					currCord = {y,x,madeMap,NULL,cordArray[i]}; // We don't use this anyways anymore.
+					insertCoordinateRelative(yIt,xIt,currCord);
+					foundCord = &(*xIt);
+					cordArray[i]->up = foundCord; //coordinates connect
+					foundCord->pointer->down = cordArray[i]->pointer; // update up/down map
+					cordArray[i]->pointer->up = foundCord->pointer;
+					if(x!=startCord){ // left/right. left is gauranteed to be something, so...
+						cordArray[i-1]->pointer->right = cordArray[i]->pointer;
+						cordArray[i]->pointer->left = cordArray[i-1]->pointer;
+					}
+				}
+				if(x!=startCord){ // left/right. left is gauranteed to be something, so...
+					cordArray[i-1]->pointer->right = cordArray[i]->pointer;
+					cordArray[i]->pointer->left = cordArray[i-1]->pointer;
+				}
+			}
+			current = current->up; // we transfer over.
+		}
+		else if (calcY){
+			for (int i = 0; i < mapViewRadius; i++){
+				currCord = *(currCord.up); // GO UP TO DEACTIVATE
+			}
+			currCord.map->deactivate();
+			spareX = currCord.map->xConnector;
+			xIt = spareX;
+			for (i = 0; i < mapViewRadius; i++)
+			{
+				xIt--;
+				xIt->pointer->deactivate();
+				spareX++;
+				spareX->pointer->deactivate();
+			}
+			// now we set up list
+			currCord = *(current->xConnector);
+			for (i = 0; i < mapViewRadius; i++){
+				currCord = *(currCord.down); // GO DOWN TO FIND/SEARCH/ACTIVATE
+			}
+			cordArray[mapViewRadius] = &currentCord;
+			spareX = currCord.map->xConnector;
+			yIt = currCord.map->yConnector;
+			xIt = spareX;
+			for (i = 0; i < mapViewRadius; i++)
+			{
+				xIt--;
+				spareX++;
+				cordArray[mapViewRadius-i] = &(*xIt);
+				cordArray[mapViewRadius+i] = &(*spareX);
+			}
+			y = current->y - mapViewRadius - 1;
+			startCord = current->x - mapViewRadius;
+			x = startCord - 1; // keep this in place for now
+
+			for (i = -mapViewRadius; i <= mapViewRadius; i++)
+			{
+				x++;
+				theTestCord = cordArray[i]->down;
+				if(theTestCord){
+					theTestCord->pointer->activate();
+					if(cordNumber != -1){
+						cordNumber = i; // so we only do this once
+						yIt=theTestCord->pointer->yConnector;
+						xIt=theTestCord->pointer->xConnector;
+					}
+				}
+				else if(find(y,x,yIt,xIt)){
+					foundCord = &(*xIt);
+					cordArray[i]->down = foundCord; //coordinates connect
+					foundCord->up = cordArray[i];
+					foundCord->pointer->up = cordArray[i]->pointer; // update up/down map
+					cordArray[i]->pointer->down = foundCord->pointer;
+				}
+				else{
+					madeMap = new map(seed,y,x,push,mapSide,tileSide,battlefieldSide,diagonal.debug);
+					currCord = {y,x,madeMap,cordArray[i],NULL}; // We don't use this anyways anymore.
+					insertCoordinateRelative(yIt,xIt,currCord);
+					foundCord = &(*xIt);
+					cordArray[i]->down = foundCord; //coordinates connect
+					foundCord->pointer->up = cordArray[i]->pointer; // update up/down map
+					cordArray[i]->pointer->down = foundCord->pointer;
+				}
+				if(x!=startCord){ // left/right. left is gauranteed to be something, so...
+					cordArray[i-1]->pointer->right = cordArray[i]->pointer;
+					cordArray[i]->pointer->left = cordArray[i-1]->pointer;
+				}
+			}
+			current = current->down; // we transfer over.
+		}
+		// do complicated stuff here
+		yIt = current->yConnector;
+		xIt = current->xConnector;
+		currCord = *xIt;
+		coordinate spareCord = currCord;
+		cordNumber = -1;
+		map* mapArray[(mapViewRadius*2)+1];
+		madeMap = currentMap; // We'll use this as temp this time.
+		map* testMap;
+		if(calcX>0){
+			for (int i = 0; i < mapViewRadius; i++){
+				madeMap = madeMap->left; // GO LEFT TO DEACTIVATE
+			}
+			madeMap->deactivate();
+			spareCord = &(*(madeMap->xConnector));
+			currCord = spareCord;
+			for (i = 0; i < mapViewRadius; i++)
+			{
+				spareCord = spareCord->up;
+				spareCord->pointer->deactivate();
+				currCord = currCord->down;
+				currCord->pointer->deactivate();
+			}
+			// now we set up list
+			madeMap = currentMap;
+			for (i = 0; i < mapViewRadius; i++){
+				madeMap = madeMap->right;  // GO RIGHT TO FIND/SEARCH/ACTIVATE
+			}
+			mapArray[mapViewRadius] = madeMap;
+			spareCord = &(*(madeMap->xConnector));
+			currCord = spareCord;
+			for (i = 0; i < mapViewRadius; i++)
+			{
+				spareCord = spareCord->up;
+				currCord = currCord->down;
+				mapArray[mapViewRadius-i] = spareCord->pointer;
+				mapArray[mapViewRadius+i] = currCord->pointer;
+			}
+			x = current->x + mapViewRadius + 1;
+			startCord = current->y - mapViewRadius;
+			y = startCord - 1; // keep this in place for now
+			for (i = -mapViewRadius; i <= mapViewRadius; i++)
+			{
+				y++;
+				testMap = mapArray[i]->right;
+				yIt=mapArray[i]->yConnector; // Because now we're RIGHT beside it.
+				xIt=mapArray[i]->xConnector;
+				if(testMap){
+					testMap->activate();
+				}
+				else if(find(y,x,yIt,xIt)){
+					testMap = xIt->pointer;
+					mapArray[i]->right = testMap; //coordinates connect
+					testMap->left = mapArray[i];
+				}
+				else{
+					madeMap = new map(seed,y,x,push,mapSide,tileSide,battlefieldSide,diagonal.debug);
+					currCord = {y,x,madeMap,NULL,NULL}; // We don't use this anyways anymore.
+					insertCoordinateRelative(yIt,xIt,currCord);
+					testMap = xIt->pointer;
+					mapArray[i]->right = testMap; //coordinates connect
+					testMap->left = mapArray[i];
+				}
+				if(y!=startCord){ // left/right. left is gauranteed to be something, so...
+					mapArray[i-1]->down = mapArray[i];
+					mapArray[i]->up = mapArray[i-1]; 
+					mapArray[i-1]->xConnector->down = &(*(mapArray[i]->xConnector));
+					mapArray[i]->xConnector->up = &(*(mapArray[i-1]->xConnector));
+				}
+			}
+			current = current->right; // we transfer over.
+		}
+		else if (calcX){
+			for (int i = 0; i < mapViewRadius; i++){
+				madeMap = madeMap->right; // GO LEFT TO DEACTIVATE
+			}
+			madeMap->deactivate();
+			spareCord = &(*(madeMap->xConnector));
+			currCord = spareCord;
+			for (i = 0; i < mapViewRadius; i++)
+			{
+				spareCord = spareCord->up;
+				spareCord->pointer->deactivate();
+				currCord = currCord->down;
+				currCord->pointer->deactivate();
+			}
+			// now we set up list
+			madeMap = currentMap;
+			for (i = 0; i < mapViewRadius; i++){
+				madeMap = madeMap->left;  // GO RIGHT TO FIND/SEARCH/ACTIVATE
+			}
+			mapArray[mapViewRadius] = madeMap;
+			spareCord = &(*(madeMap->xConnector));
+			currCord = spareCord;
+			for (i = 0; i < mapViewRadius; i++)
+			{
+				spareCord = spareCord->up;
+				currCord = currCord->down;
+				mapArray[mapViewRadius-i] = spareCord->pointer;
+				mapArray[mapViewRadius+i] = currCord->pointer;
+			}
+			x = current->x - mapViewRadius - 1;
+			startCord = current->y - mapViewRadius;
+			y = startCord - 1; // keep this in place for now
+			for (i = -mapViewRadius; i <= mapViewRadius; i++)
+			{
+				y++;
+				testMap = mapArray[i]->left;
+				yIt=mapArray[i]->yConnector; // Because now we're RIGHT beside it.
+				xIt=mapArray[i]->xConnector;
+				if(testMap){
+					testMap->activate();
+				}
+				else if(find(y,x,yIt,xIt)){
+					testMap = xIt->pointer;
+					mapArray[i]->left = testMap; //coordinates connect
+					testMap->right = mapArray[i];
+				}
+				else{
+					madeMap = new map(seed,y,x,push,mapSide,tileSide,battlefieldSide,diagonal.debug);
+					currCord = {y,x,madeMap,NULL,NULL}; // We don't use this anyways anymore.
+					insertCoordinateRelative(yIt,xIt,currCord);
+					testMap = xIt->pointer;
+					mapArray[i]->left = testMap; //coordinates connect
+					testMap->right = mapArray[i];
+				}
+				if(y!=startCord){ // left/right. left is gauranteed to be something, so...
+					mapArray[i-1]->down = mapArray[i];
+					mapArray[i]->up = mapArray[i-1]; 
+					mapArray[i-1]->xConnector->down = &(*(mapArray[i]->xConnector));
+					mapArray[i]->xConnector->up = &(*(mapArray[i-1]->xConnector));
+				}
+			}
+			current = current->left; // we transfer over.
+		}
+	}
 }
 
 playerSpace::~playerSpace(){
 	if(debug){
-		std::cout << "DELETING WORLDMAP " << this << std::endl;
+		std::cout << "DELETING PLAYERSPACE " << this << std::endl;
 	}
-	delete[] seedMap;
-	bigMap = std::vector<map>();
+	std::list<std::list<coordinate>> yy = cordMap.begin();
+	std::list<coordinate> xx;
+	std::list<std::list<coordinate>> yyEnd = cordMap.end();
+	std::list<coordinate> xxEnd;
+	bool startY = true;
+	bool startX;
+	while(yy!=yyEnd){
+		if(!startY){
+			yy++;
+		}
+		startY = false;
+		xx=yy->begin();
+		xxEnd=yy->end();
+		startX = true;
+		while(xx!=xxEnd){
+			if(!startX){
+				xx++;
+			}
+			startX = false;
+			delete xx->pointer;
+		}
+	}
+	cordMap = std::list<std::list<coordinate>>();
 	if(debug){
-		std::cout << "DONE DELETING WORLDMAP " << this << std::endl;
+		std::cout << "DONE DELETING PLAYERSPACE " << this << std::endl;
 	}
 }
 
 // Precondition: You're on a valid tile.
-unsigned int view(worldMap& theMap, int worldY, int worldX,  int regionY, int regionX, 
-					 int tileY, int tileX, // Why int's? Because we'll want to still display even in negatives,
-								// top/left/topleft from the map. Don't worry about it too much.
-					int viewRadius, float heightOffset, int playerHeight, bool mapView, bool circle,
+unsigned int playerSpace::view(float heightOffset, int playerHeight, int mapView, bool circle,
 					 bool borders, bool playerSee, bool wallMode, std::vector<int>& viewMap, 
-					 std::vector<int>* optimizeArray, std::vector<int>& memoryMap,int specialTiles, bool InvisibleAboveCustom, 
-					 bool checkAll, bool debug){
+					 std::vector<int>* optimizeArray, std::vector<int>& memoryMap,int specialTiles, bool InvisibleAboveCustom, bool checkAll, bool debug){
 	// why there's problems: angles, viewing from a platau, you wouldn't be able to see below, from side, you would.
 	// view up: algorithm that's efficient. returns angles, compares. see notes in THE book.
+	int viewRadius;
+	if(mapView){
+		viewRadius= regionViewRadius;
+	}
+	else{
+		viewRadius= tileViewRadius;
+	}
 	int viewTileWidth = (viewRadius*2)+1;
-	int tileSide = theMap.tileSide;
-	int mapSide = theMap.mapSide;
-	int worldSide = theMap.worldMapSide;
 	unsigned int mapRadius;
 	//std::cout << "GO" << std::endl;
 	if(viewRadius == 0){
 		mapRadius = 0;
 	}
 	else{
-		mapRadius = 1 + (unsigned int)(viewRadius/theMap.tileSide);
+		mapRadius = 1 + (unsigned int)(viewRadius/tileSide);
 	}
 	unsigned int mapWidth = (mapRadius*2)+1;
 	viewMap.reserve(viewTileWidth*viewTileWidth);
 	//std::cout << "GO" << std::endl;
 	float centerPixelX;
 	float centerPixelY;
+	int tileY;
+	int tileX;
+	int tileSideB;
 	if(mapView){
 		tileY=regionY;
 		tileX=regionX;
-		tileSide=mapSide;
+		tileSideB=mapSide;
 		//This is a useful hack. coder plz
+	}
+	else{
+		tileY=playerTileY;
+		tileX=regionTileX;
+		tileSideB=tileSide;
 	}
 	if(circle){
 		centerPixelX = (float)tileX+0.5;
@@ -149,15 +677,19 @@ unsigned int view(worldMap& theMap, int worldY, int worldX,  int regionY, int re
 	int worldXOffset;
 	int regionYOffset;
 	int regionXOffset;
+	int regionX;
+	int regionY;
 	float A;
 	float B;
 	float difference;
+	map* usedMap;
 	int halfTileWidth = (viewTileWidth/2);
 	for (int y = -halfTileWidth; y <= halfTileWidth; y++)
 	{
 		
 		for (int x = -halfTileWidth; x <= halfTileWidth; x++)
 		{
+			map* usedMap = current;
 			if(circle){
 				A = (float)x+(float)tileX;
 				B = (float)y+(float)tileY;
@@ -176,13 +708,6 @@ unsigned int view(worldMap& theMap, int worldY, int worldX,  int regionY, int re
 					viewMap.push_back(-3);
 					continue;
 					//std::cout << "GO" << std::endl;
-				}
-			}
-			if(borders){
-				if( ((y+tileY)%tileSide) == 0 || ((x+tileX)%tileSide) == 0){
-					memoryMap.push_back(0);
-					viewMap.push_back(-3);
-					continue;
 				}
 			}
 			wy = y+tileY; // Relative positions, we need these
@@ -205,7 +730,7 @@ unsigned int view(worldMap& theMap, int worldY, int worldX,  int regionY, int re
 				}
 				if(ex<0){
 					worldXOffset = (ex-mapSide)/mapSide;
-				}/////
+				}
 				else{
 					worldXOffset = ex/mapSide;
 				}
@@ -214,17 +739,37 @@ unsigned int view(worldMap& theMap, int worldY, int worldX,  int regionY, int re
 					ex = 0;
 					worldXOffset++;
 				}
-				worldYOffset+=worldY;
-				worldXOffset+=worldX;
-				if(worldXOffset<0 || worldYOffset<0 || worldXOffset >= worldSide || worldYOffset >=worldSide){
-					//std::cout << "WATER" << std::endl;
-					memoryMap.push_back(0);
-					viewMap.push_back(0);
-					continue;
+				while(worldYOffset){
+					if(worldYOffset>0){
+						usedMap = usedMap->down;
+						worldYOffset--;
+					}
+					else if(worldYOffset<0){
+						usedMap = usedMap->up;
+						worldYOffset++;
+					}
 				}
+				while(worldXOffset){
+					if(worldXOffset>0){
+						usedMap = usedMap->right;
+						worldYOffset--;
+					}
+					else if(worldXOffset<0){
+						usedMap = usedMap->left;
+						worldXOffset++;
+					}
+				}
+				//worldYOffset+=worldY;
+				//worldXOffset+=worldX;
+				//if(worldXOffset<0 || worldYOffset<0 || worldXOffset >= worldSide || worldYOffset >=worldSide){
+				//	//std::cout << "WATER" << std::endl;
+				//	memoryMap.push_back(0);
+				//	viewMap.push_back(0);
+				//	continue;
+				//}
 				//std::cout << theMap.bigMap[worldYOffset * worldSide + worldXOffset].heightMap[(wy*tileSide)+ex] << std::endl;
-				viewMap.push_back(theMap.bigMap[worldYOffset * worldSide + worldXOffset].heightMap[(wy*tileSide)+ex]);
-				memoryMap.push_back(theMap.bigMap[worldYOffset * worldSide + worldXOffset].regionMemoryMap[(wy*tileSide)+ex]);
+				viewMap.push_back(usedMap->heightMap[(wy*tileSide)+ex]);
+				memoryMap.push_back(usedMap->regionMemoryMap[(wy*tileSide)+ex]);
 				continue;
 			}
 			else{
@@ -250,8 +795,8 @@ unsigned int view(worldMap& theMap, int worldY, int worldX,  int regionY, int re
 					ex = 0;
 					regionXOffset++;
 				}
-				regionYOffset+=regionY;
-				regionXOffset+=regionX; // get the regions
+				regionYOffset+=playerRegionY;
+				regionXOffset+=playerRegionX; // get the regions
 				if(regionYOffset<0){
 						worldYOffset = (regionYOffset-mapSide)/mapSide; // We determine how many worldspaces to left
 					}
@@ -274,15 +819,33 @@ unsigned int view(worldMap& theMap, int worldY, int worldX,  int regionY, int re
 						regionXOffset = 0;
 						worldXOffset++;
 					}
-					worldYOffset+=worldY;
-					worldXOffset+=worldX;
-					if(worldXOffset<0 || worldYOffset<0 || worldXOffset >= worldSide || worldYOffset >=worldSide){
-						memoryMap.push_back(0);
-						viewMap.push_back(0);
-						continue;
+					while(worldYOffset){
+						if(worldYOffset>0){
+							usedMap = usedMap->down;
+							worldYOffset--;
+						}
+						else if(worldYOffset<0){
+							usedMap = usedMap->up;
+							worldYOffset++;
+						}
 					}
-					viewMap.push_back(theMap.bigMap[worldYOffset*worldSide + worldXOffset].regionMap[(regionYOffset*mapSide) + regionXOffset].tileMap[(wy*tileSide)+ex]);
-					memoryMap.push_back(theMap.bigMap[worldYOffset*worldSide + worldXOffset].regionMap[(regionYOffset*mapSide) + regionXOffset].tileMemoryMap[(wy*tileSide)+ex]);
+					while(worldXOffset){
+						if(worldXOffset>0){
+							usedMap = usedMap->right;
+							worldYOffset--;
+						}
+						else if(worldXOffset<0){
+							usedMap = usedMap->left;
+							worldXOffset++;
+						}
+					}
+					//if(worldXOffset<0 || worldYOffset<0 || worldXOffset >= worldSide || worldYOffset >=worldSide){
+					//	memoryMap.push_back(0);
+					//	viewMap.push_back(0);
+					//	continue;
+					//}
+					viewMap.push_back(usedMap.regionMap[(regionYOffset*mapSide) + regionXOffset].tileMap[(wy*tileSide)+ex]);
+					memoryMap.push_back(usedMap.regionMap[(regionYOffset*mapSide) + regionXOffset].tileMemoryMap[(wy*tileSide)+ex]);
 			}
 			//if(theMap.regionMap[(regionYOffset*mapSide) + regionXOffset].tileMap[(wy*tileSide)+ex] > 9){
 				//std::cout << theMap.regionMap[(regionYOffset*mapSide) + regionXOffset].tileMap[(wy*tileSide)+ex] << std::endl;
@@ -378,6 +941,7 @@ unsigned int view(worldMap& theMap, int worldY, int worldX,  int regionY, int re
 					regionXOffset = 0;
 					worldYOffset = 0;
 					worldXOffset = 0;
+					usedMap = current;
 					if(mapView){
 							if(wy<0){
 								worldYOffset = (wy-mapSide)/mapSide; // We determine how many worldspaces to left
@@ -401,16 +965,34 @@ unsigned int view(worldMap& theMap, int worldY, int worldX,  int regionY, int re
 								ex = 0;
 								worldXOffset++;
 							}
-							worldYOffset+=worldY;
-							worldXOffset+=worldX;
-							if(worldXOffset<0 || worldYOffset<0 || worldXOffset >= worldSide || worldYOffset >=worldSide){
-								continue; // Skip OOB
+							while(worldYOffset){
+								if(worldYOffset>0){
+									usedMap = usedMap->down;
+									worldYOffset--;
+								}
+								else if(worldYOffset<0){
+									usedMap = usedMap->up;
+									worldYOffset++;
+								}
 							}
+							while(worldXOffset){
+								if(worldXOffset>0){
+									usedMap = usedMap->right;
+									worldYOffset--;
+								}
+								else if(worldXOffset<0){
+									usedMap = usedMap->left;
+									worldXOffset++;
+								}
+							}
+							//if(worldXOffset<0 || worldYOffset<0 || worldXOffset >= worldSide || worldYOffset >=worldSide){
+							//	continue; // Skip OOB
+							//}
 							//std::cout << theMap.bigMap[worldYOffset * worldSide + worldXOffset].heightMap[(wy*tileSide)+ex] << std::endl;
-							theMap.bigMap[worldYOffset * worldSide + worldXOffset].regionMemoryMap[(wy*tileSide)+ex] = 1;
+							usedMap.regionMemoryMap[(wy*tileSide)+ex] = 1;
 							//std::cout << "GI HERE " << theMap.bigMap[worldYOffset * worldSide + worldXOffset].regionMemoryMap[(wy*tileSide)+ex]<< std::endl;
 							if(trigger){
-								memoryMap[indexB] = theMap.bigMap[worldYOffset * worldSide + worldXOffset].heightMap[(wy*tileSide)+ex]+1;
+								memoryMap[indexB] = usedMap.heightMap[(wy*tileSide)+ex]+1;
 								continue;
 							}
 							memoryMap[indexB] = 0;
@@ -439,8 +1021,8 @@ unsigned int view(worldMap& theMap, int worldY, int worldX,  int regionY, int re
 								ex = 0;
 								regionXOffset++;
 							}
-							regionYOffset+=regionY;
-							regionXOffset+=regionX; // get the regions
+							regionYOffset+=playerRegionY;
+							regionXOffset+=playerRegionX; // get the regions
 							if(regionYOffset<0){
 								worldYOffset = (regionYOffset-mapSide)/mapSide; // We determine how many worldspaces to left
 							}
@@ -463,14 +1045,32 @@ unsigned int view(worldMap& theMap, int worldY, int worldX,  int regionY, int re
 								regionXOffset = 0;
 								worldXOffset++;
 							}
-							worldYOffset+=worldY;
-							worldXOffset+=worldX;
-							if(worldXOffset<0 || worldYOffset<0 || worldXOffset >= worldSide || worldYOffset >=worldSide){
-								continue; // Skip OOB
+							while(worldYOffset){
+								if(worldYOffset>0){
+									usedMap = usedMap->down;
+									worldYOffset--;
+								}
+								else if(worldYOffset<0){
+									usedMap = usedMap->up;
+									worldYOffset++;
+								}
 							}
-							theMap.bigMap[worldYOffset*worldSide + worldXOffset].regionMap[(regionYOffset*mapSide) + regionXOffset].tileMemoryMap[(wy*tileSide)+ex] = 1;
+							while(worldXOffset){
+								if(worldXOffset>0){
+									usedMap = usedMap->right;
+									worldYOffset--;
+								}
+								else if(worldXOffset<0){
+									usedMap = usedMap->left;
+									worldXOffset++;
+								}
+							}
+							//if(worldXOffset<0 || worldYOffset<0 || worldXOffset >= worldSide || worldYOffset >=worldSide){
+							//	continue; // Skip OOB
+							//}
+							usedMap.regionMap[(regionYOffset*mapSide) + regionXOffset].tileMemoryMap[(wy*tileSide)+ex] = 1;
 							if(trigger){
-								memoryMap[indexB] = theMap.bigMap[worldYOffset*worldSide + worldXOffset].regionMap[(regionYOffset*mapSide) + regionXOffset].tileMap[(wy*tileSide)+ex]+1;
+								memoryMap[indexB] = usedMap.regionMap[(regionYOffset*mapSide) + regionXOffset].tileMap[(wy*tileSide)+ex]+1;
 								continue;
 							}
 							memoryMap[indexB] = 0;

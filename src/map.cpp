@@ -177,18 +177,3 @@ map::activate(){
 		std::cout << "ACTIVATED MAP " << this << " FOR " << parentW << std::endl; 
 	}
 }
-
-map* map::update(int yDir, int xDir){
-	srand(this.seed); // so it's consistent as it gens
-	map* current = this;
-	int yCounter = yDir;
-	int xCounter = xDir;
-	while(yDir != 0)
-	{
-		if(yDir < 0){
-			if(this.down != NULL){
-
-			}
-		}
-	}
-}

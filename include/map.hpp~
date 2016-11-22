@@ -38,7 +38,7 @@ public:
 
 	// -- cordLists for randLine
 	std::vector<int> ySpareList;
-    std::vector<int> xSpareList;
+    	std::vector<int> xSpareList;
 	// -- cordLists for randLine
 
 	// -- memoryMap for tiles -- leftover from deactivation
@@ -52,9 +52,14 @@ public:
 	std::vector<tile> regionMap; // Darn naming -- http://stackoverflow.com/questions/15802006/how-can-i-create-objects-while-adding-them-into-a-vector
 	// -- Maps
 
-	map(unsigned int seedInput, const worldMap* parentW, const int yInput, 
-	const int xInput);
+	map(unsigned int worldSeedInput, int yInput, int xInput, const double pushInput, size_t mapSideInput, 
+	size_t tileSideInput, size_t battlefieldSideInput, const bool diagonalInput, const bool debugInput);
+	map::map(const map* parentMInput, int yDir, int xDir);
 	map(map const& src);
 	~map();
+	map::deactivate();
+	map::activate();
+	map* map::update;
+	
 
 };
