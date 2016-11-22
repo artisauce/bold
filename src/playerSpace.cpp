@@ -304,6 +304,7 @@ playerSpace::travel(int yT, int xT, int mode){
 		coordinate currCord = *xIt;
 		coordinate* foundCord;
 		coordinate* cordArray[(mapViewRadius*2)+1];
+		cordinate* theTestCord;
 		int y;
 		int x;
 		int startCord;
@@ -319,12 +320,12 @@ playerSpace::travel(int yT, int xT, int mode){
 			for (i = 0; i < mapViewRadius; i++)
 			{
 				xIt--;
-				xIt->map->deactivate();
+				xIt->pointer->deactivate();
 				spareX++;
-				spareX->map->deactivate();
+				spareX->pointer->deactivate();
 			}
 			// now we set up list
-			currentCord = *(current->xConnector);
+			currCord = *(current->xConnector);
 			for (i = 0; i < mapViewRadius; i++){
 				currCord = *(currCord.up); // GO UP TO FIND/SEARCH/ACTIVATE
 			}
@@ -348,43 +349,47 @@ playerSpace::travel(int yT, int xT, int mode){
 				x++;
 				theTestCord = cordArray[i]->up;
 				if(theTestCord){
-					theTestCord->map->activate();
+					theTestCord->pointer->activate();
 					if(cordNumber != -1){
 						cordNumber = i; // so we only do this once
-						yIt=theTestCord->map->yConnector;
-						xIt=theTestCord->map->xConnector;
+						yIt=theTestCord->pointer->yConnector;
+						xIt=theTestCord->pointer->xConnector;
 					}
 				}
 				else if(find(y,x,yIt,xIt)){
 					foundCord = &(*xIt);
 					cordArray[i]->up = foundCord; //coordinates connect
 					foundCord->down = cordArray[i];
-					foundCord->map->down = cordArray[i]->map; // update up/down map
-					cordArray[i]->map->up = foundCord->map;
+					foundCord->pointer->down = cordArray[i]->pointer; // update up/down map
+					cordArray[i]->pointer->up = foundCord->pointer;
 					if(x!=startCord){ // left/right. left is gauranteed to be something, so...
-						cordArray[i-1]->map->right = cordArray[i]->map;
-						cordArray[i]->map->left = cordArray[i-1]->map;
+						cordArray[i-1]->pointer->right = cordArray[i]->pointer;
+						cordArray[i]->pointer->left = cordArray[i-1]->pointer;
 					}
 				}
 				else{
 					madeMap = new map(seed,y,x,push,mapSide,tileSide,battlefieldSide,diagonal.debug);
-					currCord = {y,x,madeMap,cordArray[i]}; // We don't use this anyways anymore.
+					currCord = {y,x,madeMap,NULL,cordArray[i]}; // We don't use this anyways anymore.
 					insertCoordinateRelative(yIt,xIt,currCord);
 					foundCord = &(*xIt);
 					cordArray[i]->up = foundCord; //coordinates connect
-					foundCord->down = cordArray[i];
-					foundCord->map->down = cordArray[i]->map; // update up/down map
-					cordArray[i]->map->up = foundCord->map;
+					foundCord->pointer->down = cordArray[i]->pointer; // update up/down map
+					cordArray[i]->pointer->up = foundCord->pointer;
 					if(x!=startCord){ // left/right. left is gauranteed to be something, so...
-						cordArray[i-1]->map->right = cordArray[i]->map;
-						cordArray[i]->map->left = cordArray[i-1]->map;
+						cordArray[i-1]->pointer->right = cordArray[i]->pointer;
+						cordArray[i]->pointer->left = cordArray[i-1]->pointer;
 					}
 				}
+				if(x!=startCord){ // left/right. left is gauranteed to be something, so...
+					cordArray[i-1]->pointer->right = cordArray[i]->pointer;
+					cordArray[i]->pointer->left = cordArray[i-1]->pointer;
+				}
 			}
+			current = current->up; // we transfer over.
 		}
 		else{
 			for (int i = 0; i < mapViewRadius; i++){
-				currCord = *(currCord.up); // GO DOWN TO DEACTIVATE
+				currCord = *(currCord.up); // GO UP TO DEACTIVATE
 			}
 			currCord.map->deactivate();
 			spareX = currCord.map->xConnector;
@@ -392,14 +397,14 @@ playerSpace::travel(int yT, int xT, int mode){
 			for (i = 0; i < mapViewRadius; i++)
 			{
 				xIt--;
-				xIt->map->deactivate();
+				xIt->pointer->deactivate();
 				spareX++;
-				spareX->map->deactivate();
+				spareX->pointer->deactivate();
 			}
 			// now we set up list
-			currentCord = *(current->xConnector);
+			currCord = *(current->xConnector);
 			for (i = 0; i < mapViewRadius; i++){
-				currCord = *(currCord.down); // GO UP TO FIND/SEARCH/ACTIVATE
+				currCord = *(currCord.down); // GO DOWN TO FIND/SEARCH/ACTIVATE
 			}
 			cordArray[mapViewRadius] = &currentCord;
 			spareX = currCord.map->xConnector;
@@ -421,45 +426,170 @@ playerSpace::travel(int yT, int xT, int mode){
 				x++;
 				theTestCord = cordArray[i]->down;
 				if(theTestCord){
-					theTestCord->map->activate();
+					theTestCord->pointer->activate();
 					if(cordNumber != -1){
 						cordNumber = i; // so we only do this once
-						yIt=theTestCord->map->yConnector;
-						xIt=theTestCord->map->xConnector;
+						yIt=theTestCord->pointer->yConnector;
+						xIt=theTestCord->pointer->xConnector;
 					}
 				}
 				else if(find(y,x,yIt,xIt)){
 					foundCord = &(*xIt);
 					cordArray[i]->down = foundCord; //coordinates connect
 					foundCord->up = cordArray[i];
-					foundCord->map->up = cordArray[i]->map; // update up/down map
-					cordArray[i]->map->down = foundCord->map;
-					if(x!=startCord){ // left/right. left is gauranteed to be something, so...
-						cordArray[i-1]->map->right = cordArray[i]->map;
-						cordArray[i]->map->left = cordArray[i-1]->map;
-					}
+					foundCord->pointer->up = cordArray[i]->pointer; // update up/down map
+					cordArray[i]->pointer->down = foundCord->pointer;
 				}
 				else{
 					madeMap = new map(seed,y,x,push,mapSide,tileSide,battlefieldSide,diagonal.debug);
-					currCord = {y,x,madeMap,cordArray[i]}; // We don't use this anyways anymore.
+					currCord = {y,x,madeMap,cordArray[i],NULL}; // We don't use this anyways anymore.
 					insertCoordinateRelative(yIt,xIt,currCord);
 					foundCord = &(*xIt);
-					cordArray[i]->up = foundCord; //coordinates connect
-					foundCord->down = cordArray[i];
-					foundCord->map->down = cordArray[i]->map; // update up/down map
-					cordArray[i]->map->up = foundCord->map;
-					if(x!=startCord){ // left/right. left is gauranteed to be something, so...
-						cordArray[i-1]->map->right = cordArray[i]->map;
-						cordArray[i]->map->left = cordArray[i-1]->map;
-					}
+					cordArray[i]->down = foundCord; //coordinates connect
+					foundCord->pointer->up = cordArray[i]->pointer; // update up/down map
+					cordArray[i]->pointer->down = foundCord->pointer;
+				}
+				if(x!=startCord){ // left/right. left is gauranteed to be something, so...
+					cordArray[i-1]->pointer->right = cordArray[i]->pointer;
+					cordArray[i]->pointer->left = cordArray[i-1]->pointer;
 				}
 			}
+			current = current->down; // we transfer over.
 		}
+		// do complicated stuff here
+		yIt = current->yConnector;
+		xIt = current->xConnector;
+		currCord = *xIt;
+		coordinate spareCord = currCord;
+		cordNumber = -1;
+		map* mapArray[(mapViewRadius*2)+1];
+		madeMap = currentMap; // We'll use this as temp this time.
+		map* testMap;
 		if(calcX>0){
-			
+			for (int i = 0; i < mapViewRadius; i++){
+				madeMap = madeMap->left; // GO LEFT TO DEACTIVATE
+			}
+			madeMap->deactivate();
+			spareCord = &(*(madeMap->xConnector));
+			currCord = spareCord;
+			for (i = 0; i < mapViewRadius; i++)
+			{
+				spareCord = spareCord->up;
+				spareCord->pointer->deactivate();
+				currCord = currCord->down;
+				currCord->pointer->deactivate();
+			}
+			// now we set up list
+			madeMap = currentMap;
+			for (i = 0; i < mapViewRadius; i++){
+				madeMap = madeMap->right;  // GO RIGHT TO FIND/SEARCH/ACTIVATE
+			}
+			mapArray[mapViewRadius] = madeMap;
+			spareCord = &(*(madeMap->xConnector));
+			currCord = spareCord;
+			for (i = 0; i < mapViewRadius; i++)
+			{
+				spareCord = spareCord->up;
+				currCord = currCord->down;
+				mapArray[mapViewRadius-i] = spareCord->pointer;
+				mapArray[mapViewRadius+i] = currCord->pointer;
+			}
+			x = current->x + mapViewRadius + 1;
+			startCord = current->y - mapViewRadius;
+			y = startCord - 1; // keep this in place for now
+			for (i = -mapViewRadius; i <= mapViewRadius; i++)
+			{
+				y++;
+				testMap = mapArray[i]->right;
+				yIt=mapArray[i]->yConnector; // Because now we're RIGHT beside it.
+				xIt=mapArray[i]->xConnector;
+				if(testMap){
+					testMap->activate();
+				}
+				else if(find(y,x,yIt,xIt)){
+					testMap = xIt->pointer;
+					mapArray[i]->right = testMap; //coordinates connect
+					testMap->left = mapArray[i];
+				}
+				else{
+					madeMap = new map(seed,y,x,push,mapSide,tileSide,battlefieldSide,diagonal.debug);
+					currCord = {y,x,madeMap,NULL,NULL}; // We don't use this anyways anymore.
+					insertCoordinateRelative(yIt,xIt,currCord);
+					testMap = xIt->pointer;
+					mapArray[i]->right = testMap; //coordinates connect
+					testMap->left = mapArray[i];
+				}
+				if(y!=startCord){ // left/right. left is gauranteed to be something, so...
+					mapArray[i-1]->down = mapArray[i];
+					mapArray[i]->up = mapArray[i-1]; 
+					mapArray[i-1]->xConnector->down = &(*(mapArray[i]->xConnector));
+					mapArray[i]->xConnector->up = &(*(mapArray[i-1]->xConnector));
+				}
+			}
+			current = current->right; // we transfer over.
 		}
 		else{
-			
+			for (int i = 0; i < mapViewRadius; i++){
+				madeMap = madeMap->right; // GO LEFT TO DEACTIVATE
+			}
+			madeMap->deactivate();
+			spareCord = &(*(madeMap->xConnector));
+			currCord = spareCord;
+			for (i = 0; i < mapViewRadius; i++)
+			{
+				spareCord = spareCord->up;
+				spareCord->pointer->deactivate();
+				currCord = currCord->down;
+				currCord->pointer->deactivate();
+			}
+			// now we set up list
+			madeMap = currentMap;
+			for (i = 0; i < mapViewRadius; i++){
+				madeMap = madeMap->left;  // GO RIGHT TO FIND/SEARCH/ACTIVATE
+			}
+			mapArray[mapViewRadius] = madeMap;
+			spareCord = &(*(madeMap->xConnector));
+			currCord = spareCord;
+			for (i = 0; i < mapViewRadius; i++)
+			{
+				spareCord = spareCord->up;
+				currCord = currCord->down;
+				mapArray[mapViewRadius-i] = spareCord->pointer;
+				mapArray[mapViewRadius+i] = currCord->pointer;
+			}
+			x = current->x - mapViewRadius - 1;
+			startCord = current->y - mapViewRadius;
+			y = startCord - 1; // keep this in place for now
+			for (i = -mapViewRadius; i <= mapViewRadius; i++)
+			{
+				y++;
+				testMap = mapArray[i]->left;
+				yIt=mapArray[i]->yConnector; // Because now we're RIGHT beside it.
+				xIt=mapArray[i]->xConnector;
+				if(testMap){
+					testMap->activate();
+				}
+				else if(find(y,x,yIt,xIt)){
+					testMap = xIt->pointer;
+					mapArray[i]->left = testMap; //coordinates connect
+					testMap->right = mapArray[i];
+				}
+				else{
+					madeMap = new map(seed,y,x,push,mapSide,tileSide,battlefieldSide,diagonal.debug);
+					currCord = {y,x,madeMap,NULL,NULL}; // We don't use this anyways anymore.
+					insertCoordinateRelative(yIt,xIt,currCord);
+					testMap = xIt->pointer;
+					mapArray[i]->left = testMap; //coordinates connect
+					testMap->right = mapArray[i];
+				}
+				if(y!=startCord){ // left/right. left is gauranteed to be something, so...
+					mapArray[i-1]->down = mapArray[i];
+					mapArray[i]->up = mapArray[i-1]; 
+					mapArray[i-1]->xConnector->down = &(*(mapArray[i]->xConnector));
+					mapArray[i]->xConnector->up = &(*(mapArray[i-1]->xConnector));
+				}
+			}
+			current = current->left; // we transfer over.
 		}
 	}
 }
