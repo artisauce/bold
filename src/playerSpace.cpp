@@ -31,7 +31,7 @@ playerSpace::playerSpace(unsigned int seedInput, int playerViewRadius, const dou
 	//std::list<std::list<coordinate>> cordMap
 	std::cout << "CHECK0" << std::endl;
 	coordinate tempCord = {0,0,current,NULL,NULL};
-	std::list<coordinate>* tempList;
+	std::list<coordinate>* tempList = new std::list<coordinate>(); // DEALLOC PER EACH WITHIN CORDMAP
 	std::cout << "CHECK1" << std::endl;
 	for(int i = -mapViewRadius;i<=0;i++) {
 		std::cout << "CHECKA" << std::endl;
@@ -46,17 +46,17 @@ playerSpace::playerSpace(unsigned int seedInput, int playerViewRadius, const dou
 	}
 	long unsigned int sizer = (*(cordMap->end()))->size();
 	std::cout << "CHECKD " << &temp << " " << &tempCord << " " << sizer << std::endl;
-	temp->push_front(tempCord); // Attach the first cord to middle.
+	(*temp)->push_front(tempCord); // Attach the first cord to middle.
 	std::cout << "CHECKE" << std::endl;
 	// Finally set up to start expanding.
 	std::cout << "CHECK2" << std::endl;
-	std::list<coordinate>::iterator middle = temp->begin();
+	std::list<coordinate>::iterator middle = (*temp)->begin();
 	//http://www.cplusplus.com/reference/list/list/insert/ Val also copied.
 	//http://www.cplusplus.com/reference/list/list/push_front/ Val is copied !!!
 	bool isTop = 1;
 	std::list<coordinate>::iterator justHappened;
 	std::list<coordinate>::iterator it;
-	temp->clear();
+	(*temp)->clear();
 	std::cout << "CHECK3" << std::endl;
 	for(int y = -mapViewRadius;y<=mapViewRadius;y++){
 		std::cout << "CHECK4 " << y << std::endl;
@@ -70,17 +70,17 @@ playerSpace::playerSpace(unsigned int seedInput, int playerViewRadius, const dou
 				tempCord = {y,x,tempMap,&(*it),NULL};
 				if(!y){
 					if(x<0){
-						justHappened = temp->insert(middle,tempCord); // insert, justHappened has pointer.
+						justHappened = (*temp)->insert(middle,tempCord); // insert, justHappened has pointer.
 						it->down = &(*justHappened); // Set the one above to point down to justHappened.
 					}
 					else{
-						temp->push_back(tempCord);
-						it->down = &(*temp->end());
+						(*temp)->push_back(tempCord);
+						it->down = &(*(*temp)->end());
 					}
 				}
 				else{
-					temp->push_back(tempCord);
-					it->down = &(*temp->end());
+					(*temp)->push_back(tempCord);
+					it->down = &(*(*temp)->end());
 				}
 			}
 			if(x==mapViewRadius) break; // End case.
@@ -91,25 +91,25 @@ playerSpace::playerSpace(unsigned int seedInput, int playerViewRadius, const dou
 		if(y==mapViewRadius){
 			break;
 		}
-		if(temp->size()){
-			temp++;
+		if((*temp)->size()){
+			(*temp)++;
 		}
 		else{
-			temp=cordMap->begin();
+			(*temp)=*(cordMap->begin());
 		}
-		it = temp->begin();
+		it = (*temp)->begin();
 		isTop = 0;
 		
 	}
-	temp=cordMap->begin();
+	(*temp)=*(cordMap->begin());
 	for (int y=-mapViewRadius;y<=mapViewRadius; y++)
 	{
-		it = temp->begin();
+		it = (*temp)->begin();
 		middle = it; // This really just a temp value. -- is one ahead
 		if(y!=mapViewRadius){
-			temp++;
-			justHappened = temp->begin(); // Temp value of stuff below. - same index as it
-			temp--;
+			(*temp)++;
+			justHappened = (*temp)->begin(); // Temp value of stuff below. - same index as it
+			(*temp)--;
 		}
 
 		for (int x=-mapViewRadius;x<=mapViewRadius; x++)
@@ -125,7 +125,7 @@ playerSpace::playerSpace(unsigned int seedInput, int playerViewRadius, const dou
 			}
 			it=middle; // or it++;
 		}
-		temp++;
+		(*temp)++;
 	}
 	if(debug){
     	std::cout << "CREATED PLAYERSPACE " << this << std::endl; 
