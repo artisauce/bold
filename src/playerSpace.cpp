@@ -19,6 +19,7 @@ playerSpace::playerSpace(unsigned int seedInput, int playerViewRadius, const dou
 	playerRegionX=0;
 	playerTileY=0;
 	playerTileX=0;
+		cordMap = new std::list<std::list<coordinate>*>();
     	current = new map(seed,0,0,push,mapSide,tileSide,battlefieldSide,diagonal,debug); 
 	map* tempMap;
 	if(debug)
@@ -30,20 +31,21 @@ playerSpace::playerSpace(unsigned int seedInput, int playerViewRadius, const dou
 	//std::list<std::list<coordinate>> cordMap
 	std::cout << "CHECK0" << std::endl;
 	coordinate tempCord = {0,0,current,NULL,NULL};
-	std::list<coordinate> tempList;
+	std::list<coordinate>* tempList;
 	std::cout << "CHECK1" << std::endl;
 	for(int i = -mapViewRadius;i<=0;i++) {
 		std::cout << "CHECKA" << std::endl;
-		cordMap.push_front(tempList); // This many rows for beginning.
+		cordMap->push_front(tempList); // This many rows for beginning.
 	}
 	std::cout << "CHECKAA" << std::endl;
-	std::list<std::list<coordinate>>::iterator temp = cordMap.end();
+	std::list<std::list<coordinate>*>::iterator temp = cordMap->end();
 	std::cout << "CHECKB" << std::endl;
 	for(int i = 0;i<mapViewRadius;i++) {
 		std::cout << "CHECKC" << std::endl;
-		cordMap.push_front(tempList); // This many rows for beginning.
+		cordMap->push_front(tempList); // This many rows for beginning.
 	}
-	std::cout << "CHECKD " << &temp << " " << &tempCord <<std::endl;
+	long unsigned int sizer = (*(cordMap->end()))->size();
+	std::cout << "CHECKD " << &temp << " " << &tempCord << " " << sizer << std::endl;
 	temp->push_front(tempCord); // Attach the first cord to middle.
 	std::cout << "CHECKE" << std::endl;
 	// Finally set up to start expanding.
@@ -93,13 +95,13 @@ playerSpace::playerSpace(unsigned int seedInput, int playerViewRadius, const dou
 			temp++;
 		}
 		else{
-			temp=cordMap.begin();
+			temp=cordMap->begin();
 		}
 		it = temp->begin();
 		isTop = 0;
 		
 	}
-	temp=cordMap.begin();
+	temp=cordMap->begin();
 	for (int y=-mapViewRadius;y<=mapViewRadius; y++)
 	{
 		it = temp->begin();
@@ -137,20 +139,20 @@ void playerSpace::insertCoordinateRelative(std::list<std::list<coordinate>>::ite
 	int tarY = data.y;
 	bool goDir = true; //For technical insertion.
 	// WARNING: WE'RE NOT KEEPING TRACK OF EX AND WY THROUGH THIS.
-	if(tarY<cordMap.begin()->begin()->y){ // test if y is out of range
+	if(tarY<cordMap->begin()->begin()->y){ // test if y is out of range
 		std::list<coordinate> tempList;
 		tempList.push_front(data);
-		cordMap.push_front(tempList);
-		yy = (cordMap.begin());
-		xx= cordMap.begin()->begin();
+		cordMap->push_front(tempList);
+		yy = (cordMap->begin());
+		xx= cordMap->begin()->begin();
 		return;
 	}
-	else if(tarY>cordMap.end()->begin()->y){
+	else if(tarY>cordMap->end()->begin()->y){
 		std::list<coordinate> tempList;
 		tempList.push_back(data);
-		cordMap.push_back(tempList);
-		yy = (cordMap.end());
-		xx= cordMap.end()->end();
+		cordMap->push_back(tempList);
+		yy = (cordMap->end());
+		xx= cordMap->end()->end();
 		return;
 	}
 	bool tester;
@@ -203,7 +205,7 @@ void playerSpace::insertCoordinateRelative(std::list<std::list<coordinate>>::ite
 			if(wy!=tarY){ // If it wasn't found, we make a new one.
 				std::list<coordinate> tempList;
 				tempList.push_back(data);
-				yy = cordMap.insert(yy,tempList);
+				yy = cordMap->insert(yy,tempList);
 				xx= (*yy).begin();
 				return;
 			}
@@ -216,10 +218,10 @@ void playerSpace::insertCoordinateRelative(std::list<std::list<coordinate>>::ite
 }
 
 bool playerSpace::find(int y, int x, std::list<std::list<coordinate>>::iterator& yy, std::list<coordinate>::iterator& xx){
-	if(y < cordMap.begin()->begin()->y){
+	if(y < cordMap->begin()->begin()->y){
 		return false;
 	}
-	else if(y > cordMap.end()->begin()->y){
+	else if(y > cordMap->end()->begin()->y){
 		return false;
 	}
 	bool searchX=false;
@@ -615,9 +617,9 @@ playerSpace::~playerSpace(){
 	if(debug){
 		std::cout << "DELETING PLAYERSPACE " << this << std::endl;
 	}
-	std::list<std::list<coordinate>>::iterator yy = cordMap.begin();
+	std::list<std::list<coordinate>>::iterator yy = cordMap->begin();
 	std::list<coordinate>::iterator xx;
-	std::list<std::list<coordinate>>::iterator yyEnd = cordMap.end();
+	std::list<std::list<coordinate>>::iterator yyEnd = cordMap->end();
 	std::list<coordinate>::iterator xxEnd;
 	bool startY = true;
 	bool startX;
@@ -637,7 +639,7 @@ playerSpace::~playerSpace(){
 			delete xx->pointer;
 		}
 	}
-	cordMap = std::list<std::list<coordinate>>();
+	cordMap->clear();
 	if(debug){
 		std::cout << "DONE DELETING PLAYERSPACE " << this << std::endl;
 	}

@@ -37,7 +37,7 @@ public:
 	// -- Player stats
 
 	// -- Maps
-	std::list<std::list<coordinate>> cordMap; // For locating maps manually--and hard.
+	std::list<std::list<coordinate>*>* cordMap; // For locating maps manually--and hard.
 	map* current; // Keeps track of current map the player is on.
 	// -- Maps
 
