@@ -82,6 +82,7 @@ playerSpace::playerSpace(unsigned int seedInput, int playerViewRadius, const dou
 		isTop = 0;
 		
 	}
+	//something wrong with algorithm.
 	temp=cordMap.begin();
 	for (y=-mapViewRadius;y<=mapViewRadius; y++)
 	{
@@ -106,6 +107,7 @@ playerSpace::playerSpace(unsigned int seedInput, int playerViewRadius, const dou
 			}
 
 		}
+		temp++;
 		it++;
 		justHappened++;
 	}
@@ -114,9 +116,9 @@ playerSpace::playerSpace(unsigned int seedInput, int playerViewRadius, const dou
     }
 }
 
-std::list<coordinate>::iterator playerSpace::insertCoordinateRelative(std::list<std::list<coordinate>>::iterator yy, std::list<coordinate>::iterator xx, coordinate data, std::list<std::list<coordinate>>::iterator* yHolder){
+playerSpace::insertCoordinateRelative(std::list<std::list<coordinate>>::iterator& yy, std::list<coordinate>::iterator& xx, coordinate data){
 // if not found y, use mylist.insert (iterator,thingWeWantToPutIn);
-	int wy = *(yy.begin()).y;
+	int wy = *(xx).y;
 	int tarX = data.x;
 	int tarY = data.y;
 	bool goDir = true; //For technical insertion.
@@ -125,28 +127,30 @@ std::list<coordinate>::iterator playerSpace::insertCoordinateRelative(std::list<
 		std::list<coordinate> tempList;
 		tempList.push_front(data);
 		cordList.push_front(tempList);
-		yHolder = &(cordList.begin());
-		return cordList.begin()->begin();
+		yy = (cordList.begin());
+		xx= cordList.begin()->begin();
+		return;
 	}
 	else if(tarY>cordList.end()->begin()->y){
 		std::list<coordinate> tempList;
 		tempList.push_back(data);
 		cordList.push_back(tempList);
-		yHolder = &(cordList.end());
-		return cordList.end()->end();
+		yy = (cordList.end());
+		xx= cordList.end()->end();
+		return;
 	}
 	bool tester;
 	while(1){ // Welp.
 		if(wy==tarY){
 			if(tarX < *(yy.begin()).x){ // test if x is out of range
 				yy.push_front(data);
-				yHolder = &yy;
-				return yy.begin();
+				xx= yy.begin();
+				return;
 			}
 			else if (tarX > *(yy.end()).x){
 				yy.push_back(data);
-				yHolder = &yy;
-				return yy.end();
+				xx= yy.end();
+				return;
 			}
 			tester = ((*xx).x < tarX);
 			goDir = true;
@@ -162,8 +166,7 @@ std::list<coordinate>::iterator playerSpace::insertCoordinateRelative(std::list<
 				tester = ((*xx).x < tarX);
 			}
 			xx = yy.insert(xx,data);
-			yHolder = &yy;
-			return xx;
+			return;
 		}
 		else{
 			wy=*((*yy).begin()).y;
@@ -186,9 +189,9 @@ std::list<coordinate>::iterator playerSpace::insertCoordinateRelative(std::list<
 			if(wy!=tarY){ // If it wasn't found, we make a new one.
 				std::list<coordinate> tempList;
 				tempList.push_back(data);
-				cordList.insert(yy,tempList);
-				yHolder = &yy;
-				return (*yy).begin();
+				yy = cordList.insert(yy,tempList);
+				xx= (*yy).begin();
+				return;
 			}
 			xx = (*yy).end();
 			if(tarX - *((*yy).begin()).x < *((*yy).end()).x - tarX){ //quick comparison for comparison's sake
@@ -198,7 +201,36 @@ std::list<coordinate>::iterator playerSpace::insertCoordinateRelative(std::list<
 	}
 }
 
-playerSpace::find(int Y, int X, )
+bool playerSpace::find(int y, int x, std::list<std::list<coordinate>>::iterator& yy, std::list<coordinate>::iterator& xx){
+	if(y < cordMap.begin()->begin()->y){
+		return NULL;
+	}
+	else if(y > cordMap.end()->begin()->y){
+		return NULL;
+	}
+	int diff = y - yy->begin()->y;
+	while(diff){
+		if(diff>0){
+			yy++;
+			diff = y - yy->begin()->y;
+			if(diff<0){
+				return NULL;
+			}
+		}
+		else{
+			yy--;
+			diff = y - yy->begin()->y;
+			if(diff>0){
+				return NULL;
+			}
+		}
+	}
+	xx = yy->end();
+	if(x - *((*yy).begin()).x < *(xx).x - tarX){ //quick comparison for comparison's sake
+		xx = (*yy).begin();
+	}
+
+}
 
 playerSpace::teleport(){
 
