@@ -87,10 +87,10 @@ playerSpace::playerSpace(unsigned int seedInput, int playerViewRadius, const dou
 	for (y=-mapViewRadius;y<=mapViewRadius; y++)
 	{
 		it = temp.begin();
-		middle = temp; // This really just a temp value.
+		middle = temp; // This really just a temp value. -- is one ahead
 		if(y!=mapViewRadius){
 			temp++;
-			justHappened = temp.begin(); // Temp value of stuff below.
+			justHappened = temp.begin(); // Temp value of stuff below. - same index as it
 			temp--;
 		}
 
@@ -105,11 +105,9 @@ playerSpace::playerSpace(unsigned int seedInput, int playerViewRadius, const dou
 				(*it)->pointer.down = (*justHappened)->pointer;
 				(*justHappened)->pointer.up = (*it)->pointer;
 			}
-
+			it=middle; // or it++;
 		}
 		temp++;
-		it++;
-		justHappened++;
 	}
 	if(debug){
     	std::cout << "CREATED PLAYERSPACE " << this << std::endl; 
@@ -203,33 +201,62 @@ playerSpace::insertCoordinateRelative(std::list<std::list<coordinate>>::iterator
 
 bool playerSpace::find(int y, int x, std::list<std::list<coordinate>>::iterator& yy, std::list<coordinate>::iterator& xx){
 	if(y < cordMap.begin()->begin()->y){
-		return NULL;
+		return false;
 	}
 	else if(y > cordMap.end()->begin()->y){
-		return NULL;
+		return false;
 	}
+	bool searchX=false;
 	int diff = y - yy->begin()->y;
+	if(diff){
+		searchX=true;
+	}
 	while(diff){
 		if(diff>0){
 			yy++;
 			diff = y - yy->begin()->y;
 			if(diff<0){
-				return NULL;
+				return false;
 			}
 		}
 		else{
 			yy--;
 			diff = y - yy->begin()->y;
 			if(diff>0){
-				return NULL;
+				return false;
 			}
 		}
 	}
-	xx = yy->end();
-	if(x - *((*yy).begin()).x < *(xx).x - tarX){ //quick comparison for comparison's sake
-		xx = (*yy).begin();
+	if(x>yy->end()->x){
+		return false;
 	}
-
+	if(x<yy->begin()->x){
+		return false;
+	}
+	if(searchX){
+		xx = yy->end();
+		if(x - *((*yy).begin()).x < *(xx).x - tarX){ //quick comparison for comparison's sake
+			xx = (*yy).begin();
+		}
+	}
+	diff = x - xx->x;
+	while(diff){
+		if(diff>0){
+			xx++;
+			diff = x - xx->x;
+			if(diff<0){
+				return false;
+			}
+		}
+		else{
+			xx--;
+			diff = x - xx->x;
+			if(diff>0){
+				return false;
+			}
+		}
+	}
+	return true;
 }
 
 playerSpace::teleport(){
