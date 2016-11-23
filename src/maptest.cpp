@@ -218,10 +218,10 @@ int main( int argc, char* args[] )
     std::vector<int> viewer;
 	// More constants.
     unsigned int sider;
-	 playSpace.playerRegionX = 25;
-	playSpace.playerRegionY = 25;
-	 playSpace.playerTileX = 11;
-	playSpace.playerTileY = 11;
+	 //playSpace.playerRegionX = 25;
+	//playSpace.playerRegionY = 25;
+	 //playSpace.playerTileX = 11;
+	//playSpace.playerTileY = 11;
 	//int viewRadius = 9;
 	float heightOffset = 0.5; // Ideal?
 	int mapView = 1;
