@@ -63,9 +63,9 @@ playerSpace::playerSpace(unsigned int seedInput, int playerViewRadius, const dou
 		for(int x = -mapViewRadius;x<=mapViewRadius;x++){
 			std::cout << "TRAVEL1 " << y << " " << x <<std::endl;
 			if(x==y && x==0) {
-				current->xConnector = std::prev(temp->end());
+				current->xConnector = std::next(temp->end());
 				current->yConnector = temp;
-				std::prev(temp->end())->up = &(*it);
+				std::prev(std::next(temp)->end())->up = &(*it);
 				it++;
 				continue; // Skip current.
 			}
@@ -73,11 +73,14 @@ playerSpace::playerSpace(unsigned int seedInput, int playerViewRadius, const dou
 			if(debug) 
 				std::cout << "PLAYERSPACE " << this << ": #" << mapCount << " MAP CREATED: " << tempMap << std::endl; 
 			if(isTop){
+				std::cout << "TRAVEL2a" << std::endl;
 				tempCord = {y,x,tempMap,NULL,NULL}; // Basic, just put in deh grill
 				temp->push_back(tempCord);
-				std::prev(temp->end())->pointer->xConnector = std::prev(temp->end());
+				std::cout << "TRAVEL2b" << std::endl;
+				std::prev(temp->end())->pointer->xConnector = temp->end();
+				std::cout << "TRAVEL2c" << std::endl;
 				std::prev(temp->end())->pointer->yConnector = temp;
-				//std::cout << "TRAVEL2" << std::endl;
+				std::cout << "TRAVEL2d" << std::endl;
 			}
 			else {
 				std::cout << "TRAVEL3" << std::endl;
@@ -86,27 +89,27 @@ playerSpace::playerSpace(unsigned int seedInput, int playerViewRadius, const dou
 					//std::cout << "TRAVEL4" << std::endl;
 					if(x<0){
 						//std::cout << "TRAVEL5 " << &middle << " " << temp->size() << std::endl;
-						justHappened = temp->insert(middle,tempCord); // insert, justHappened has pointer.
+						justHappened = std::next(temp)->insert(middle,tempCord); // insert, justHappened has pointer.
 						justHappened->pointer->xConnector = justHappened;
 						justHappened->pointer->yConnector = temp;
-						std::cout << "TRAVEL5B " << justHappened->pointer << std::endl;
+						std::cout << "TRAVEL5B " << justHappened->pointer << " === " << it->y << std::endl;
 						it->down = &(*justHappened); // Set the one above to point down to justHappened.
 						//justHappened is already pointing up -- look at tempCord
 						//std::cout << "TRAVEL5C" << std::endl;
 					}
 					else{
-						//std::cout << "TRAVEL6" << std::endl;
-						temp->push_back(tempCord);
-						std::prev(temp->end())->pointer->xConnector = std::prev(temp->end());
-						std::prev(temp->end())->pointer->yConnector = temp;
+						std::cout << "TRAVEL6 " << std::next(temp->end())->pointer << " === " << it->y << std::endl;
+						std::next(temp)->push_back(tempCord);
+						std::prev(std::next(temp)->end())->pointer->xConnector = std::next(temp->end());
+						std::prev(std::next(temp)->end())->pointer->yConnector = temp;
 						it->down = &(*(--temp->end()));
 					}
 				}
 				else{
-					//std::cout << "TRAVEL7" << std::endl;
-					temp->push_back(tempCord);
-					std::prev(temp->end())->pointer->xConnector = std::prev(temp->end());
-					std::prev(temp->end())->pointer->yConnector = temp;
+					std::cout << "TRAVEL57 " << std::next(temp->end())->pointer << " === " << it->y << std::endl;
+					std::next(temp)->push_back(tempCord);
+					std::prev(std::next(temp)->end())->pointer->xConnector = std::next(temp->end());
+					std::prev(std::next(temp)->end())->pointer->yConnector = temp;
 					it->down = &(*(--temp->end()));
 				}
 				it++;
@@ -126,12 +129,10 @@ playerSpace::playerSpace(unsigned int seedInput, int playerViewRadius, const dou
 		if(!isTop){
 			temp++;
 		}
-		else{
-			temp=cordMap.begin();
-			isTop = 0;
-		}
+
 		//std::cout << "TRAVEL11" << std::endl;
 		it = temp->begin();
+		isTop = 0;
 		
 		
 	}
@@ -638,8 +639,11 @@ void playerSpace::travel(int yT, int xT, int mode){
 			for (int i = 0; i < mapViewRadius; i++){
 				madeMap = madeMap->right; // GO LEFT TO DEACTIVATE
 			}
+			std::cout << "WENTCa" << std::endl;
 			madeMap->deactivate();
+			std::cout << "WENTCb " << &(madeMap->xConnector) << std::endl;
 			spareCord = *(madeMap->xConnector);
+			std::cout << "WENTCc" << std::endl;
 			currCord = spareCord;
 			std::cout << "WENT1" << std::endl;
 			for (int i = 0; i < mapViewRadius; i++)
@@ -648,7 +652,7 @@ void playerSpace::travel(int yT, int xT, int mode){
 				spareCord = *(spareCord.up);
 				std::cout << "b " << spareCord.pointer << std::endl;
 				spareCord.pointer->deactivate();
-				std::cout << "c" << std::endl;
+				std::cout << "c " << currCord.down << std::endl;
 				currCord = *(currCord.down);
 				std::cout << "d" << std::endl;
 				currCord.pointer->deactivate();
