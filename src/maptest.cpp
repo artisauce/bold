@@ -242,6 +242,7 @@ int main( int argc, char* args[] )
 	//playerSpace::view(float heightOffset, int playerHeight, int mapView, bool circle, bool borders, bool playerSee, bool wallMode, std::vector<int>& viewMap, std::vector<int>* optimizeArray, std::vector<int>& memoryMap,int specialTiles, bool InvisibleAboveCustom, bool checkAll, bool debug){
 	sider = playSpace.view(heightOffset,playerZ,mapView,circleView,false,true,true,viewer,&optimizeArray,memoryMap,specialTiles,
 	seeAboveInvisible,checkAll,mapDebug); // Sider is length.
+	std::cout << "Got through" << std::endl;
  //    std::cout << " VECTOR MAP " << std::endl;
  //    printMapVector(viewer,sider,tileSet);
  //    std::cout << " FULL MAP " << std::endl;
@@ -446,6 +447,8 @@ int main( int argc, char* args[] )
 						if(updateScreen){
 							// Move Y
 							playSpace.travel(yMode, xMode, mapView);
+							yMode = 0;
+							xMode = 0;
 							// Done move.
 							if(!playerFly){
 								if(mapView){
