@@ -63,9 +63,10 @@ playerSpace::playerSpace(unsigned int seedInput, int playerViewRadius, const dou
 		for(int x = -mapViewRadius;x<=mapViewRadius;x++){
 			std::cout << "TRAVEL1 " << y << " " << x <<std::endl;
 			if(x==y && x==0) {
-				current->xConnector = std::next(temp->end());
+				current->xConnector = std::prev(std::next(temp)->end());
 				current->yConnector = temp;
-				std::prev(std::next(temp)->end())->up = &(*it);
+				std::prev(std::next(temp)->end())->up = &(*(it));
+				it->down = &(*(std::prev(std::next(temp)->end())));
 				it++;
 				continue; // Skip current.
 			}
@@ -83,7 +84,7 @@ playerSpace::playerSpace(unsigned int seedInput, int playerViewRadius, const dou
 				std::cout << "TRAVEL2d" << std::endl;
 			}
 			else {
-				std::cout << "TRAVEL3" << std::endl;
+				std::cout << "TRAVEL3 " << &(*it) << std::endl;
 				tempCord = {y,x,tempMap,&(*it),NULL};
 				if(!y){
 					//std::cout << "TRAVEL4" << std::endl;
@@ -98,19 +99,19 @@ playerSpace::playerSpace(unsigned int seedInput, int playerViewRadius, const dou
 						//std::cout << "TRAVEL5C" << std::endl;
 					}
 					else{
-						std::cout << "TRAVEL6 " << std::next(temp->end())->pointer << " === " << it->y << std::endl;
+						std::cout << "TRAVEL6 " << std::prev(std::next(temp)->end())->pointer << " === " << it->y << std::endl;
 						std::next(temp)->push_back(tempCord);
 						std::prev(std::next(temp)->end())->pointer->xConnector = std::next(temp->end());
 						std::prev(std::next(temp)->end())->pointer->yConnector = temp;
-						it->down = &(*(--temp->end()));
+						it->down = &(*(std::prev(std::next(temp)->end())));
 					}
 				}
 				else{
-					std::cout << "TRAVEL57 " << std::next(temp->end())->pointer << " === " << it->y << std::endl;
+					std::cout << "TRAVEL57 " << std::prev(std::next(temp)->end())->pointer << " === " << it->y << std::endl;
 					std::next(temp)->push_back(tempCord);
 					std::prev(std::next(temp)->end())->pointer->xConnector = std::next(temp->end());
 					std::prev(std::next(temp)->end())->pointer->yConnector = temp;
-					it->down = &(*(--temp->end()));
+					it->down = &(*(std::prev(std::next(temp)->end())));;
 				}
 				it++;
 			}
@@ -139,25 +140,25 @@ playerSpace::playerSpace(unsigned int seedInput, int playerViewRadius, const dou
 	
 	temp=cordMap.begin();
 	it=temp->begin();
-	std::cout << "CHECKZa " << it->y << " " << it->x << " " << it->pointer << " " << temp->size() << std::endl;
+	std::cout << "CHECKZa " << it->y << " " << it->x << " " << &(*it) << " " << temp->size() << " " << it->up << " " << it->down <<  std::endl;
 	it++;
-	std::cout << "CHECKZa " << it->y << " " << it->x << " " << it->pointer << " " << temp->size() << std::endl;
+	std::cout << "CHECKZa " << it->y << " " << it->x << " " << &(*it) << " " << temp->size() <<" " << it->up << " " << it->down << std::endl;
 	it++;
-	std::cout << "CHECKZa " << it->y << " " << it->x << " " << it->pointer << " " << temp->size() << std::endl;
+	std::cout << "CHECKZa " << it->y << " " << it->x << " " << &(*it) << " " << temp->size() << " " << it->up << " " << it->down << std::endl;
 	temp++;
 	it=temp->begin();
-	std::cout << "CHECKZa " << it->y << " " << it->x << " " << it->pointer << " " << temp->size() << std::endl;
+	std::cout << "CHECKZa " << it->y << " " << it->x << " " << &(*it) << " " << temp->size() <<" " << it->up << " " << it->down << std::endl;
 	it++;
-	std::cout << "CHECKZa " << it->y << " " << it->x << " " << it->pointer << " " << temp->size() << std::endl;
+	std::cout << "CHECKZa " << it->y << " " << it->x << " " << &(*it) << " " << temp->size() <<" " << it->up << " " << it->down << std::endl;
 	it++;
-	std::cout << "CHECKZa " << it->y << " " << it->x << " " << it->pointer << " " << temp->size() << std::endl;
+	std::cout << "CHECKZa " << it->y << " " << it->x << " " << &(*it) << " " << temp->size() <<" " << it->up << " " << it->down << std::endl;
 	temp++;
 	it=temp->begin();
-	std::cout << "CHECKZa " << it->y << " " << it->x << " " << it->pointer << " " << temp->size() << std::endl;
+	std::cout << "CHECKZa " << it->y << " " << it->x << " " << &(*it) << " " << temp->size() << " " << it->up << " " << it->down << std::endl;
 	it++;
-	std::cout << "CHECKZa " << it->y << " " << it->x << " " << it->pointer << " " << temp->size() << std::endl;
+	std::cout << "CHECKZa " << it->y << " " << it->x << " " << &(*it) << " " << temp->size() <<" " << it->up << " " << it->down << std::endl;
 	it++;
-	std::cout << "CHECKZa " << it->y << " " << it->x << " " << it->pointer << " " << temp->size() << std::endl;
+	std::cout << "CHECKZa " << it->y << " " << it->x << " " << &(*it) << " " << temp->size() << " " << it->up << " " << it->down << std::endl;
 	temp++;
 	
 
@@ -637,7 +638,7 @@ void playerSpace::travel(int yT, int xT, int mode){
 		else if (calcX){
 			std::cout << "WENTC" << std::endl;
 			for (int i = 0; i < mapViewRadius; i++){
-				madeMap = madeMap->right; // GO LEFT TO DEACTIVATE
+				madeMap = madeMap->right; // GO RIGHT TO DEACTIVATE
 			}
 			std::cout << "WENTCa" << std::endl;
 			madeMap->deactivate();
