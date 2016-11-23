@@ -840,8 +840,9 @@ unsigned int playerSpace::view(float heightOffset, int playerHeight, int mapView
 				//	continue;
 				//}
 				//std::cout << theMap.bigMap[worldYOffset * worldSide + worldXOffset].heightMap[(wy*tileSide)+ex] << std::endl;
-				viewMap.push_back(usedMap->heightMap[(wy*tileSide)+ex]);
-				memoryMap.push_back(usedMap->regionMemoryMap[(wy*tileSide)+ex]);
+				//std::cout<<wy<<" "<<ex<<" "<<tileSideB<<std::endl;
+				viewMap.push_back(usedMap->heightMap[(wy*tileSideB)+ex]);
+				memoryMap.push_back(usedMap->regionMemoryMap[(wy*tileSideB)+ex]);
 				continue;
 			}
 			else{
@@ -867,6 +868,7 @@ unsigned int playerSpace::view(float heightOffset, int playerHeight, int mapView
 					ex = 0;
 					regionXOffset++;
 				}
+				std::cout<<regionXOffset<<" "<<regionYOffset<<" "<<tileSide<<std::endl;
 				regionYOffset+=playerRegionY;
 				regionXOffset+=playerRegionX; // get the regions
 				if(regionYOffset<0){
