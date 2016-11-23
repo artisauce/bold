@@ -26,6 +26,14 @@ tile::tile(unsigned int seedInput, const map* parentMInput, const int yInput,
 		seedMap[i] = rand();
 	}
 	genTile(rand(),push,y,x,parentM->heightMap,parentM->mapSide,tileMap,tileSide,diagonal,debug);
+	//for (int i = 0; i < tileSide*tileSide; ++i)
+	//{
+	//	if(i%tileSide == 0){
+	//		std::cout << std::endl;
+	//	}
+	//	std::cout << tileMap[i];
+	//}
+	//std::cout << std::endl;
 	//tileMap[20] = 5;
 	//printMap(tileMap,tileSide);
 	if(debug){
