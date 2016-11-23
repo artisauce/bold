@@ -78,7 +78,7 @@ playerSpace::playerSpace(unsigned int seedInput, int playerViewRadius, const dou
 				tempCord = {y,x,tempMap,NULL,NULL}; // Basic, just put in deh grill
 				temp->push_back(tempCord);
 				std::cout << "TRAVEL2b" << std::endl;
-				std::prev(temp->end())->pointer->xConnector = temp->end();
+				std::prev(temp->end())->pointer->xConnector = std::prev(temp->end());
 				std::cout << "TRAVEL2c" << std::endl;
 				std::prev(temp->end())->pointer->yConnector = temp;
 				std::cout << "TRAVEL2d" << std::endl;
@@ -101,16 +101,16 @@ playerSpace::playerSpace(unsigned int seedInput, int playerViewRadius, const dou
 					else{
 						std::cout << "TRAVEL6 " << std::prev(std::next(temp)->end())->pointer << " === " << it->y << std::endl;
 						std::next(temp)->push_back(tempCord);
-						std::prev(std::next(temp)->end())->pointer->xConnector = std::next(temp->end());
-						std::prev(std::next(temp)->end())->pointer->yConnector = temp;
+						std::prev(std::next(temp)->end())->pointer->xConnector = std::prev(std::next(temp)->end());
+						std::prev(std::next(temp)->end())->pointer->yConnector = std::next(temp);
 						it->down = &(*(std::prev(std::next(temp)->end())));
 					}
 				}
 				else{
 					std::cout << "TRAVEL57 " << std::prev(std::next(temp)->end())->pointer << " === " << it->y << std::endl;
 					std::next(temp)->push_back(tempCord);
-					std::prev(std::next(temp)->end())->pointer->xConnector = std::next(temp->end());
-					std::prev(std::next(temp)->end())->pointer->yConnector = temp;
+					std::prev(std::next(temp)->end())->pointer->xConnector = std::prev(std::next(temp)->end());
+					std::prev(std::next(temp)->end())->pointer->yConnector = std::next(temp);
 					it->down = &(*(std::prev(std::next(temp)->end())));;
 				}
 				it++;
@@ -140,25 +140,25 @@ playerSpace::playerSpace(unsigned int seedInput, int playerViewRadius, const dou
 	
 	temp=cordMap.begin();
 	it=temp->begin();
-	std::cout << "CHECKZa " << it->y << " " << it->x << " " << &(*it) << " " << temp->size() << " " << it->up << " " << it->down <<  std::endl;
+	std::cout << "CHECKZa " << it->y << " " << it->x << " " << &(*it) << " " << &(*(it->pointer->xConnector)) << " " << it->up << " " << it->down <<  std::endl;
 	it++;
-	std::cout << "CHECKZa " << it->y << " " << it->x << " " << &(*it) << " " << temp->size() <<" " << it->up << " " << it->down << std::endl;
+	std::cout << "CHECKZa " << it->y << " " << it->x << " " << &(*it) << " " << &(*(it->pointer->xConnector))  <<" " << it->up << " " << it->down << std::endl;
 	it++;
-	std::cout << "CHECKZa " << it->y << " " << it->x << " " << &(*it) << " " << temp->size() << " " << it->up << " " << it->down << std::endl;
+	std::cout << "CHECKZa " << it->y << " " << it->x << " " << &(*it) << " " << &(*(it->pointer->xConnector))  << " " << it->up << " " << it->down << std::endl;
 	temp++;
 	it=temp->begin();
-	std::cout << "CHECKZa " << it->y << " " << it->x << " " << &(*it) << " " << temp->size() <<" " << it->up << " " << it->down << std::endl;
+	std::cout << "CHECKZa " << it->y << " " << it->x << " " << &(*it) << " " << &(*(it->pointer->xConnector))  <<" " << it->up << " " << it->down << std::endl;
 	it++;
-	std::cout << "CHECKZa " << it->y << " " << it->x << " " << &(*it) << " " << temp->size() <<" " << it->up << " " << it->down << std::endl;
+	std::cout << "CHECKZa " << it->y << " " << it->x << " " << &(*it) << " " << &(*(it->pointer->xConnector))  <<" " << it->up << " " << it->down << std::endl;
 	it++;
-	std::cout << "CHECKZa " << it->y << " " << it->x << " " << &(*it) << " " << temp->size() <<" " << it->up << " " << it->down << std::endl;
+	std::cout << "CHECKZa " << it->y << " " << it->x << " " << &(*it) << " " << &(*(it->pointer->xConnector)) <<" " << it->up << " " << it->down << std::endl;
 	temp++;
 	it=temp->begin();
-	std::cout << "CHECKZa " << it->y << " " << it->x << " " << &(*it) << " " << temp->size() << " " << it->up << " " << it->down << std::endl;
+	std::cout << "CHECKZa " << it->y << " " << it->x << " " << &(*it) << " " << &(*(it->pointer->xConnector))  << " " << it->up << " " << it->down << std::endl;
 	it++;
-	std::cout << "CHECKZa " << it->y << " " << it->x << " " << &(*it) << " " << temp->size() <<" " << it->up << " " << it->down << std::endl;
+	std::cout << "CHECKZa " << it->y << " " << it->x << " " << &(*it) << " " << &(*(it->pointer->xConnector))  <<" " << it->up << " " << it->down << std::endl;
 	it++;
-	std::cout << "CHECKZa " << it->y << " " << it->x << " " << &(*it) << " " << temp->size() << " " << it->up << " " << it->down << std::endl;
+	std::cout << "CHECKZa " << it->y << " " << it->x << " " << &(*it) << " " << &(*(it->pointer->xConnector))  << " " << it->up << " " << it->down << std::endl;
 	temp++;
 	
 
