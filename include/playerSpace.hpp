@@ -21,7 +21,7 @@ public:
 
 	// -- cordLists for randLine
 	std::vector<int> ySpareList;
-    	std::vector<int> xSpareList;
+    std::vector<int> xSpareList;
 	// -- cordLists for randLine
 
 	// -- Player stats
@@ -37,7 +37,7 @@ public:
 	// -- Player stats
 
 	// -- Maps
-	std::list<std::list<coordinate>*>* cordMap; // For locating maps manually--and hard.
+	std::list<std::list<coordinate> > cordMap; // For locating maps manually--and hard.
 	map* current; // Keeps track of current map the player is on.
 	// -- Maps
 
