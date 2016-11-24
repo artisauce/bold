@@ -208,7 +208,7 @@ int main( int argc, char* args[] )
     tileSet.push_back("~"); // as -5. Ground
     tileSet.push_back("T"); // as -6. Tree
 	int specialTiles = 4; // -1 (empty/hidden space) -2 (alternate hidden space), -3 (circleInvsi) ,-4 (skipline)
-	int viewRadius = 15;
+	int viewRadius = 30;
     playerSpace playSpace(rand(), viewRadius, pushCoefficient, mapSide, tileSide, battlefieldSide,  diagonal, debug);
 	//playerSpace(unsigned int seedInput, int playerViewRadius, const double pushInput, size_t mapSideInput, 
 	//size_t tileSideInput, size_t battlefieldSideInput, const bool diagonalInput, const bool debugInput)
@@ -218,8 +218,8 @@ int main( int argc, char* args[] )
     std::vector<int> viewer;
 	// More constants.
     unsigned int sider;
-	 //playSpace.playerRegionX = 25;
-	//playSpace.playerRegionY = 25;
+	 playSpace.playerRegionX = 63;
+	playSpace.playerRegionY = 63;
 	 //playSpace.playerTileX = 11;
 	//playSpace.playerTileY = 11;
 	//int viewRadius = 9;
@@ -479,20 +479,20 @@ int main( int argc, char* args[] )
 							std::cout << "PlayerZ: " << playerZ << std::endl;
 							std::cout << "tileY: " << playSpace.playerTileY << " tileX: " << playSpace.playerTileX << std::endl;
 							std::cout << "regionY: " << playSpace.playerRegionY << " regionX: " << playSpace.playerRegionX << std::endl;
-							for (int i = 0; i < playSpace.mapSide*playSpace.mapSide; ++i){
-								for (int e = 0; e < playSpace.tileSide*playSpace.tileSide; ++e)
-								{
-									bronze.push_back(playSpace.current->regionMap[i].tileMap[e]);
-								}
-							}
-							if(gold.size() != 0){
-								for (int i = 0; i < (playSpace.mapSide*playSpace.mapSide)*(playSpace.tileSide*playSpace.tileSide); i++){
-									if(bronze[i] != gold[i]){
-										std::cout <<"====== "<<  i << " ========" << std::endl;
-									}
-								}
-							}
-							//std::cout << gold.size() << " " << bronze.size() << std::endl;
+							//for (int i = 0; i < playSpace.mapSide*playSpace.mapSide; ++i){
+							//	for (int e = 0; e < playSpace.tileSide*playSpace.tileSide; ++e)
+							//	{
+							//		bronze.push_back(playSpace.current->regionMap[i].tileMap[e]);
+							//	}
+							//}
+							//if(gold.size() != 0){
+							//	for (int i = 0; i < (playSpace.mapSide*playSpace.mapSide)*(playSpace.tileSide*playSpace.tileSide); i++){
+							//		if(bronze[i] != gold[i]){
+							//			std::cout <<"====== "<<  i << " ========" << std::endl;
+							//		}
+							//	}
+							//}
+							////std::cout << gold.size() << " " << bronze.size() << std::endl;
 							gold.clear();
 							gold = bronze;
 							//std::cout << gold.size() << " " << bronze.size() << std::endl;
