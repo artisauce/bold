@@ -78,7 +78,7 @@ playerSpace::playerSpace(unsigned int seedInput, int playerViewRadius, const dou
 				tempCord = {y,x,tempMap,NULL,NULL}; // Basic, just put in deh grill
 				temp->push_back(tempCord);
 				std::cout << "TRAVEL2b" << std::endl;
-				std::prev(temp->end())->pointer->xConnector = temp->end();
+				std::prev(temp->end())->pointer->xConnector = std::prev(temp->end());
 				std::cout << "TRAVEL2c" << std::endl;
 				std::prev(temp->end())->pointer->yConnector = temp;
 				std::cout << "TRAVEL2d" << std::endl;
@@ -101,16 +101,16 @@ playerSpace::playerSpace(unsigned int seedInput, int playerViewRadius, const dou
 					else{
 						std::cout << "TRAVEL6 " << std::prev(std::next(temp)->end())->pointer << " === " << it->y << std::endl;
 						std::next(temp)->push_back(tempCord);
-						std::prev(std::next(temp)->end())->pointer->xConnector = std::next(temp->end());
-						std::prev(std::next(temp)->end())->pointer->yConnector = temp;
+						std::prev(std::next(temp)->end())->pointer->xConnector = std::prev(std::next(temp)->end());
+						std::prev(std::next(temp)->end())->pointer->yConnector = std::next(temp);
 						it->down = &(*(std::prev(std::next(temp)->end())));
 					}
 				}
 				else{
 					std::cout << "TRAVEL57 " << std::prev(std::next(temp)->end())->pointer << " === " << it->y << std::endl;
 					std::next(temp)->push_back(tempCord);
-					std::prev(std::next(temp)->end())->pointer->xConnector = std::next(temp->end());
-					std::prev(std::next(temp)->end())->pointer->yConnector = temp;
+					std::prev(std::next(temp)->end())->pointer->xConnector = std::prev(std::next(temp)->end());
+					std::prev(std::next(temp)->end())->pointer->yConnector = std::next(temp);
 					it->down = &(*(std::prev(std::next(temp)->end())));;
 				}
 				it++;
@@ -140,25 +140,25 @@ playerSpace::playerSpace(unsigned int seedInput, int playerViewRadius, const dou
 	
 	temp=cordMap.begin();
 	it=temp->begin();
-	std::cout << "CHECKZa " << it->y << " " << it->x << " " << &(*it) << " " << temp->size() << " " << it->up << " " << it->down <<  std::endl;
+	std::cout << "CHECKZa " << it->y << " " << it->x << " " << &(*it) << " " << &(*(it->pointer->xConnector)) << " " << it->up << " " << it->down <<  std::endl;
 	it++;
-	std::cout << "CHECKZa " << it->y << " " << it->x << " " << &(*it) << " " << temp->size() <<" " << it->up << " " << it->down << std::endl;
+	std::cout << "CHECKZa " << it->y << " " << it->x << " " << &(*it) << " " << &(*(it->pointer->xConnector))  <<" " << it->up << " " << it->down << std::endl;
 	it++;
-	std::cout << "CHECKZa " << it->y << " " << it->x << " " << &(*it) << " " << temp->size() << " " << it->up << " " << it->down << std::endl;
+	std::cout << "CHECKZa " << it->y << " " << it->x << " " << &(*it) << " " << &(*(it->pointer->xConnector))  << " " << it->up << " " << it->down << std::endl;
 	temp++;
 	it=temp->begin();
-	std::cout << "CHECKZa " << it->y << " " << it->x << " " << &(*it) << " " << temp->size() <<" " << it->up << " " << it->down << std::endl;
+	std::cout << "CHECKZa " << it->y << " " << it->x << " " << &(*it) << " " << &(*(it->pointer->xConnector))  <<" " << it->up << " " << it->down << std::endl;
 	it++;
-	std::cout << "CHECKZa " << it->y << " " << it->x << " " << &(*it) << " " << temp->size() <<" " << it->up << " " << it->down << std::endl;
+	std::cout << "CHECKZa " << it->y << " " << it->x << " " << &(*it) << " " << &(*(it->pointer->xConnector))  <<" " << it->up << " " << it->down << std::endl;
 	it++;
-	std::cout << "CHECKZa " << it->y << " " << it->x << " " << &(*it) << " " << temp->size() <<" " << it->up << " " << it->down << std::endl;
+	std::cout << "CHECKZa " << it->y << " " << it->x << " " << &(*it) << " " << &(*(it->pointer->xConnector)) <<" " << it->up << " " << it->down << std::endl;
 	temp++;
 	it=temp->begin();
-	std::cout << "CHECKZa " << it->y << " " << it->x << " " << &(*it) << " " << temp->size() << " " << it->up << " " << it->down << std::endl;
+	std::cout << "CHECKZa " << it->y << " " << it->x << " " << &(*it) << " " << &(*(it->pointer->xConnector))  << " " << it->up << " " << it->down << std::endl;
 	it++;
-	std::cout << "CHECKZa " << it->y << " " << it->x << " " << &(*it) << " " << temp->size() <<" " << it->up << " " << it->down << std::endl;
+	std::cout << "CHECKZa " << it->y << " " << it->x << " " << &(*it) << " " << &(*(it->pointer->xConnector))  <<" " << it->up << " " << it->down << std::endl;
 	it++;
-	std::cout << "CHECKZa " << it->y << " " << it->x << " " << &(*it) << " " << temp->size() << " " << it->up << " " << it->down << std::endl;
+	std::cout << "CHECKZa " << it->y << " " << it->x << " " << &(*it) << " " << &(*(it->pointer->xConnector))  << " " << it->up << " " << it->down << std::endl;
 	temp++;
 	
 
@@ -189,9 +189,9 @@ playerSpace::playerSpace(unsigned int seedInput, int playerViewRadius, const dou
 				std::cout << "TRAVEL14c" << std::endl;
 			}
 			if(y!=mapViewRadius){
-				std::cout << "TRAVEL15" << std::endl;
+				std::cout << "TRAVEL15 " << justHappened->pointer <<std::endl;
 				it->pointer->down = justHappened->pointer;
-				std::cout << "TRAVEL15B " << justHappened->y << std::endl;
+				std::cout << "TRAVEL15B " << it->pointer->down << std::endl;
 				justHappened->pointer->up = it->pointer;
 			}
 			std::cout << "TRAVEL16" << std::endl;
@@ -205,6 +205,28 @@ playerSpace::playerSpace(unsigned int seedInput, int playerViewRadius, const dou
 	}
 	if(debug)
     	std::cout << "CREATED PLAYERSPACE " << this << std::endl; 
+    temp=cordMap.begin();
+	it=temp->begin();
+	std::cout << "CHECKZa " << it->pointer << " " << it->pointer->up << " " << it->pointer->down << " " << it->pointer->left << " " << it->pointer->right << std::endl;
+	it++;
+	std::cout << "CHECKZa " << it->pointer << " " << it->pointer->up << " " << it->pointer->down  << " " << it->pointer->left<< " " << it->pointer->right   << std::endl;
+	it++;
+	std::cout << "CHECKZa " << it->pointer << " " << it->pointer->up<< " " << it->pointer->down << " " <<it->pointer->left<< " " <<it->pointer->right   <<  std::endl;
+	temp++;
+	it=temp->begin();
+	std::cout << "CHECKZa " << it->pointer << " " << it->pointer->up<< " " << it->pointer->down  << " " <<it->pointer->left<< " " << it->pointer->right   <<std::endl;
+	it++;
+	std::cout << "CHECKZa " << it->pointer << " " << it->pointer->up<< " " << it->pointer->down << " " << it->pointer->left << " " << it->pointer->right   <<std::endl;
+	it++;
+	std::cout << "CHECKZa " << it->pointer << " " << it->pointer->up<< " " << it->pointer->down  << " " << it->pointer->left << " " << it->pointer->right  <<std::endl;
+	temp++;
+	it=temp->begin();
+	std::cout << "CHECKZa " << it->pointer << " " << it->pointer->up << " " << it->pointer->down  << " " << it->pointer->left << " " << it->pointer->right  <<  std::endl;
+	it++;
+	std::cout << "CHECKZa " << it->pointer << " " << it->pointer->up<< " " << it->pointer->down  << " " << it->pointer->left << " " << it->pointer->right  << std::endl;
+	it++;
+	std::cout << "CHECKZa " << it->pointer << " " << it->pointer->up<< " " << it->pointer->down << " " << it->pointer->left << " " << it->pointer->right  <<std::endl;
+	temp++;
     
 }
 
@@ -221,14 +243,16 @@ void playerSpace::insertCoordinateRelative(std::list<std::list<coordinate>>::ite
 		cordMap.push_front(tempList);
 		yy = (cordMap.begin());
 		xx= cordMap.begin()->begin();
+		//xx->xConnector = &(*xx);
+		//xx->yConnector = &(*yy);
 		return;
 	}
 	else if(tarY>std::prev(cordMap.end())->begin()->y){
 		std::list<coordinate> tempList;
 		tempList.push_back(data);
 		cordMap.push_back(tempList);
-		yy = prev(cordMap.end());
-		xx= prev(cordMap.end())->end();
+		yy = std::prev(cordMap.end());
+		xx= std::prev(std::prev(cordMap.end())->end());
 		return;
 	}
 	bool tester;
@@ -239,9 +263,9 @@ void playerSpace::insertCoordinateRelative(std::list<std::list<coordinate>>::ite
 				xx= yy->begin();
 				return;
 			}
-			else if (tarX > prev(yy->end())->x){
+			else if (tarX > std::prev(yy->end())->x){
 				yy->push_back(data);
-				xx= prev(yy->end());
+				xx= std::prev(yy->end());
 				return;
 			}
 			tester = ((*xx).x < tarX);
@@ -282,10 +306,10 @@ void playerSpace::insertCoordinateRelative(std::list<std::list<coordinate>>::ite
 				std::list<coordinate> tempList;
 				tempList.push_back(data);
 				yy = cordMap.insert(yy,tempList);
-				xx= (*yy).begin();
+				xx= yy->begin();
 				return;
 			}
-			xx = prev((*yy).end());
+			xx = std::prev((*yy).end());
 			if(tarX - yy->begin()->x < prev(yy->end())->x - tarX){ //quick comparison for comparison's sake
 				xx = yy->begin();
 			}
@@ -297,7 +321,7 @@ bool playerSpace::find(int y, int x, std::list<std::list<coordinate>>::iterator&
 	if(y < cordMap.begin()->begin()->y){
 		return false;
 	}
-	else if(y > prev(cordMap.end())->begin()->y){
+	else if(y > std::prev(cordMap.end())->begin()->y){
 		return false;
 	}
 	bool searchX=false;
@@ -321,14 +345,14 @@ bool playerSpace::find(int y, int x, std::list<std::list<coordinate>>::iterator&
 			}
 		}
 	}
-	if(x>prev(yy->end())->x){
+	if(x>std::prev(yy->end())->x){
 		return false;
 	}
 	if(x<yy->begin()->x){
 		return false;
 	}
 	if(searchX){
-		xx = prev(yy->end());
+		xx = std::prev(yy->end());
 		if(x - yy->begin()->x < xx->x - x){ //quick comparison for comparison's sake
 			xx = yy->begin();
 		}
@@ -405,7 +429,9 @@ void playerSpace::travel(int yT, int xT, int mode){
 		std::cout << "half" << std::endl;
 		coordinate* foundCord;
 		coordinate* cordArray[(mapViewRadius*2)+1];
+		//std::list<coordinate>::iterator* iterArray[(mapViewRadius*2)+1]; // needed?
 		coordinate* theTestCord;
+		coordinate* copyCord;
 		std::cout << "tie" << std::endl;
 		int y;
 		int x;
@@ -413,7 +439,7 @@ void playerSpace::travel(int yT, int xT, int mode){
 		int cordNumber = -1;
 		map* madeMap; // We also makes maps here. Insert doesn't do it for reasons.
 		std::cout << "go2" << std::endl;
-		if(calcY>0){
+		if(calcY<0){
 			std::cout << "go3" << std::endl;
 			for (int i = 0; i < mapViewRadius; i++){
 				currCord = *(currCord.down); // GO DOWN TO DEACTIVATE
@@ -435,25 +461,27 @@ void playerSpace::travel(int yT, int xT, int mode){
 				currCord = *(currCord.up); // GO UP TO FIND/SEARCH/ACTIVATE
 			}
 			cordArray[mapViewRadius] = &currCord;
-			spareX = currCord.pointer->xConnector;
+			spareX = currCord.pointer->xConnector;	
 			yIt = currCord.pointer->yConnector;
 			xIt = spareX;
-			for (int i = 0; i < mapViewRadius; i++)
+			for (int i = 1; i <= mapViewRadius; i++)
 			{
 				xIt--;
 				spareX++;
-				cordArray[mapViewRadius-i] = &(*xIt);
-				cordArray[mapViewRadius+i] = &(*spareX);
+				cordArray[mapViewRadius-i] = &(*(xIt));
+				cordArray[mapViewRadius+i] = &(*(spareX));
 			}
-			y = current->y + mapViewRadius + 1;
+			y = current->y - mapViewRadius - 1;
 			startCord = current->x - mapViewRadius;
 			x = startCord - 1; // keep this in place for now
 			std::cout << "go5" << std::endl;
-			for (int i = 0; i < length; i++)
+			for (int i = 0; i <= length; i++)
 			{
+				std::cout << "go5a" << std::endl;
 				x++;
 				theTestCord = cordArray[i]->up;
 				if(theTestCord){
+					std::cout << "gob" << std::endl;
 					theTestCord->pointer->activate();
 					if(cordNumber != -1){
 						cordNumber = i; // so we only do this once
@@ -462,6 +490,7 @@ void playerSpace::travel(int yT, int xT, int mode){
 					}
 				}
 				else if(find(y,x,yIt,xIt)){
+					std::cout << "go5c" << std::endl;
 					foundCord = &(*xIt);
 					cordArray[i]->up = foundCord; //coordinates connect
 					foundCord->down = cordArray[i];
@@ -473,21 +502,32 @@ void playerSpace::travel(int yT, int xT, int mode){
 					}
 				}
 				else{
+					std::cout << "go5d" << std::endl;
 					madeMap = new map(seed,y,x,push,mapSide,tileSide,battlefieldSide,diagonal,debug);
 					currCord = {y,x,madeMap,NULL,cordArray[i]}; // We don't use this anyways anymore.
+					std::cout << "checka " << &(*xIt) << " " << y << " YYY" << std::endl;
 					insertCoordinateRelative(yIt,xIt,currCord);
+					xIt->pointer->xConnector = xIt;
+					xIt->pointer->yConnector = yIt;
+					std::cout << "checka " << &(*xIt) << std::endl;
 					foundCord = &(*xIt);
+					std::cout << "go5arr " << foundCord->y << std::endl;
 					cordArray[i]->up = foundCord; //coordinates connect
+					std::cout << "go5arra " << foundCord->pointer << std::endl;
 					foundCord->pointer->down = cordArray[i]->pointer; // update up/down map
+					std::cout << "go5arrb" << std::endl;
 					cordArray[i]->pointer->up = foundCord->pointer;
+					std::cout << "go5e" << std::endl;
 					if(x!=startCord){ // left/right. left is gauranteed to be something, so...
 						cordArray[i-1]->pointer->right = cordArray[i]->pointer;
 						cordArray[i]->pointer->left = cordArray[i-1]->pointer;
 					}
+					std::cout << "go5r" << std::endl;
 				}
 				if(x!=startCord){ // left/right. left is gauranteed to be something, so...
-					cordArray[i-1]->pointer->right = cordArray[i]->pointer;
-					cordArray[i]->pointer->left = cordArray[i-1]->pointer;
+					std::cout << "goe" << std::endl;
+					cordArray[i-1]->pointer->up->right = cordArray[i]->pointer->up;
+					cordArray[i]->pointer->up->left = cordArray[i-1]->pointer->up;
 				}
 			}
 			current = current->up; // we transfer over.
@@ -497,6 +537,7 @@ void playerSpace::travel(int yT, int xT, int mode){
 			for (int i = 0; i < mapViewRadius; i++){
 				currCord = *(currCord.up); // GO UP TO DEACTIVATE
 			}
+			std::cout << "WENTAa" << std::endl;
 			currCord.pointer->deactivate();
 			spareX = currCord.pointer->xConnector;
 			xIt = spareX;
@@ -507,6 +548,7 @@ void playerSpace::travel(int yT, int xT, int mode){
 				spareX++;
 				spareX->pointer->deactivate();
 			}
+			std::cout << "WENTAb" << std::endl;
 			// now we set up list
 			currCord = *(current->xConnector);
 			for (int i = 0; i < mapViewRadius; i++){
@@ -516,22 +558,24 @@ void playerSpace::travel(int yT, int xT, int mode){
 			spareX = currCord.pointer->xConnector;
 			yIt = currCord.pointer->yConnector;
 			xIt = spareX;
-			for (int i = 0; i < mapViewRadius; i++)
+			std::cout << "WENTAc" << std::endl;
+			for (int i = 1; i <= mapViewRadius; i++)
 			{
 				xIt--;
 				spareX++;
 				cordArray[mapViewRadius-i] = &(*xIt);
 				cordArray[mapViewRadius+i] = &(*spareX);
 			}
-			y = current->y - mapViewRadius - 1;
+			y = current->y + mapViewRadius + 1;
 			startCord = current->x - mapViewRadius;
 			x = startCord - 1; // keep this in place for now
-
-			for (int i = 0; i < length; i++)
+			std::cout << "WENTAd" << std::endl;
+			for (int i = 0;  i <= length; i++)
 			{
 				x++;
 				theTestCord = cordArray[i]->down;
 				if(theTestCord){
+					std::cout << "WENTAda" << std::endl;
 					theTestCord->pointer->activate();
 					if(cordNumber != -1){
 						cordNumber = i; // so we only do this once
@@ -540,6 +584,7 @@ void playerSpace::travel(int yT, int xT, int mode){
 					}
 				}
 				else if(find(y,x,yIt,xIt)){
+					std::cout << "WENTAdb" << std::endl;
 					foundCord = &(*xIt);
 					cordArray[i]->down = foundCord; //coordinates connect
 					foundCord->up = cordArray[i];
@@ -547,17 +592,38 @@ void playerSpace::travel(int yT, int xT, int mode){
 					cordArray[i]->pointer->down = foundCord->pointer;
 				}
 				else{
+					//std::cout << "WENTAdca" << std::endl;
 					madeMap = new map(seed,y,x,push,mapSide,tileSide,battlefieldSide,diagonal,debug);
+					//std::cout << "WENTAdcb" << std::endl;
+					//std::cout << "WENTAdd11 " << cordArray[1]->pointer->down << " " << i << std::endl;
+					//std::cout << "WENTAdd12 " << cordArray[0]->pointer->down << " " << i << std::endl;
+						//currCord = {y,x,madeMap,cordArray[i],NULL}; // We don't use this anyways anymore.
+						// WARNING: DECLARATION OF CORD CHANGES CONTAINED MAP DATA !!!
 					currCord = {y,x,madeMap,cordArray[i],NULL}; // We don't use this anyways anymore.
+					//std::cout << "WENTAdcc" << std::endl;
+					//std::cout << "WENTAddcer-====1 " << cordArray[1]->pointer->down << " " << i << std::endl;
+					//std::cout << "WENTAddcer-====2 " << cordArray[0]->pointer->down << " " << i << std::endl;
 					insertCoordinateRelative(yIt,xIt,currCord);
+					xIt->pointer->xConnector = xIt;
+					//std::cout << "WENTAdd3 " << cordArray[1]->pointer->down << " " << i << std::endl;
+					xIt->pointer->yConnector = yIt;
+					//std::cout << "WENTAdcd" << std::endl;
 					foundCord = &(*xIt);
+					//std::cout << "WENTAdce" << std::endl;
+					//std::cout << "WENTAdd2 " << cordArray[1]->pointer->down << " " << "1" << std::endl;
 					cordArray[i]->down = foundCord; //coordinates connect
+					//std::cout << "WENTAdcf " << yIt->begin()->y << std::endl;
 					foundCord->pointer->up = cordArray[i]->pointer; // update up/down map
+					//std::cout << "WENTAdcg " << foundCord->pointer << std::endl;
 					cordArray[i]->pointer->down = foundCord->pointer;
+					//std::cout << "WENTAdd4 " << cordArray[1]->pointer->down << " " << "1" << std::endl;
+					//std::cout << "ALIEA " << cordArray[i]->pointer->down << " " << i << std::endl;
 				}
 				if(x!=startCord){ // left/right. left is gauranteed to be something, so...
-					cordArray[i-1]->pointer->right = cordArray[i]->pointer;
-					cordArray[i]->pointer->left = cordArray[i-1]->pointer;
+					std::cout << "WENTAdda " << cordArray[1]->pointer->down << " " << "1" << std::endl;
+					cordArray[i-1]->pointer->down->right = cordArray[i]->pointer->down;
+					cordArray[i]->pointer->down->left = cordArray[i-1]->pointer->down;
+					std::cout << "WENTAddb " << cordArray[1]->pointer->down << " " << "1" << std::endl;
 				}
 			}
 			current = current->down; // we transfer over.
@@ -576,25 +642,29 @@ void playerSpace::travel(int yT, int xT, int mode){
 			for (int i = 0; i < mapViewRadius; i++){
 				madeMap = madeMap->left; // GO LEFT TO DEACTIVATE
 			}
+			std::cout << "WENTBa" << std::endl;
 			madeMap->deactivate();
 			spareCord = *(madeMap->xConnector);
 			currCord = spareCord;
+			std::cout << "WENTBas" << std::endl;
 			for (int i = 0; i < mapViewRadius; i++)
 			{
-				spareCord = *spareCord.up;
+				spareCord = *(spareCord.up);
 				spareCord.pointer->deactivate();
-				currCord = *currCord.down;
+				currCord = *(currCord.down);
 				currCord.pointer->deactivate();
 			}
 			// now we set up list
 			madeMap = current;
+			std::cout << "WENTBc" << std::endl;
 			for (int i = 0; i < mapViewRadius; i++){
 				madeMap = madeMap->right;  // GO RIGHT TO FIND/SEARCH/ACTIVATE
 			}
 			mapArray[mapViewRadius] = madeMap;
 			spareCord = *(madeMap->xConnector);
 			currCord = spareCord;
-			for (int i = 0; i < mapViewRadius; i++)
+			std::cout << "WENTBd" << std::endl;
+			for (int i = 1; i <= mapViewRadius; i++)
 			{
 				spareCord = *spareCord.up;
 				currCord = *currCord.down;
@@ -604,8 +674,9 @@ void playerSpace::travel(int yT, int xT, int mode){
 			x = current->x + mapViewRadius + 1;
 			startCord = current->y - mapViewRadius;
 			y = startCord - 1; // keep this in place for now
-			for (int i = 0; i < length; i++)
+			for (int i = 0; i <= length; i++)
 			{
+				std::cout << "WENTBe" << std::endl;
 				y++;
 				testMap = mapArray[i]->right;
 				yIt=mapArray[i]->yConnector; // Because now we're RIGHT beside it.
@@ -622,15 +693,21 @@ void playerSpace::travel(int yT, int xT, int mode){
 					madeMap = new map(seed,y,x,push,mapSide,tileSide,battlefieldSide,diagonal,debug);
 					currCord = {y,x,madeMap,NULL,NULL}; // We don't use this anyways anymore.
 					insertCoordinateRelative(yIt,xIt,currCord);
+					//std::cout << "GROGLEEEY " <<std::prev(yIt->end())->xConnector->x << std::endl;
+					xIt->pointer->xConnector = xIt;
+					xIt->pointer->yConnector = yIt;
 					testMap = xIt->pointer;
 					mapArray[i]->right = testMap; //coordinates connect
 					testMap->left = mapArray[i];
 				}
 				if(y!=startCord){ // left/right. left is gauranteed to be something, so...
-					mapArray[i-1]->down = mapArray[i];
-					mapArray[i]->up = mapArray[i-1]; 
-					mapArray[i-1]->xConnector->down = &(*(mapArray[i]->xConnector));
-					mapArray[i]->xConnector->up = &(*(mapArray[i-1]->xConnector));
+					mapArray[i-1]->right->down = mapArray[i]->right;
+					mapArray[i]->right->up = mapArray[i-1]->right; 
+					std::cout << "WENTBer" << std::endl;
+					mapArray[i-1]->right->xConnector->down = &(*(mapArray[i]->right->xConnector));
+					std::cout << "WENTBerr" << std::endl;
+					mapArray[i]->right->xConnector->up = &(*(mapArray[i-1]->right->xConnector));
+					std::cout << "ERDUM " << mapArray[i]->left << std::endl;
 				}
 			}
 			current = current->right; // we transfer over.
@@ -638,18 +715,20 @@ void playerSpace::travel(int yT, int xT, int mode){
 		else if (calcX){
 			std::cout << "WENTC" << std::endl;
 			for (int i = 0; i < mapViewRadius; i++){
+				std::cout << "WENTCaaa " << madeMap->right << std::endl;
 				madeMap = madeMap->right; // GO RIGHT TO DEACTIVATE
 			}
 			std::cout << "WENTCa" << std::endl;
 			madeMap->deactivate();
 			std::cout << "WENTCb " << &(madeMap->xConnector) << std::endl;
+			std::cout << "WENTCba " << madeMap->xConnector->pointer << std::endl;
 			spareCord = *(madeMap->xConnector);
 			std::cout << "WENTCc" << std::endl;
 			currCord = spareCord;
 			std::cout << "WENT1" << std::endl;
 			for (int i = 0; i < mapViewRadius; i++)
 			{
-				std::cout << "a" << std::endl;
+				std::cout << "a " << spareCord.up << std::endl;
 				spareCord = *(spareCord.up);
 				std::cout << "b " << spareCord.pointer << std::endl;
 				spareCord.pointer->deactivate();
@@ -668,7 +747,7 @@ void playerSpace::travel(int yT, int xT, int mode){
 			spareCord = *(madeMap->xConnector);
 			currCord = spareCord;
 			std::cout << "WENT3" << std::endl;
-			for (int i = 0; i < mapViewRadius; i++)
+			for (int i = 1; i <= mapViewRadius; i++)
 			{
 				spareCord = *spareCord.up;
 				currCord = *currCord.down;
@@ -679,33 +758,41 @@ void playerSpace::travel(int yT, int xT, int mode){
 			startCord = current->y - mapViewRadius;
 			y = startCord - 1; // keep this in place for now
 			std::cout << "WENT4" << std::endl;
-			for (int i = 0; i < length; i++)
+			for (int i = 0;  i <= length; i++)
 			{
 				y++;
+				std::cout << "WENT4er " << mapArray[i] << std::endl;
 				testMap = mapArray[i]->left;
+				std::cout << "WENT4g" << std::endl;
 				yIt=mapArray[i]->yConnector; // Because now we're RIGHT beside it.
 				xIt=mapArray[i]->xConnector;
 				if(testMap){
+					std::cout << "WENT4A" << std::endl;
 					testMap->activate();
 				}
 				else if(find(y,x,yIt,xIt)){
+					std::cout << "WENT4B" << std::endl;
 					testMap = xIt->pointer;
 					mapArray[i]->left = testMap; //coordinates connect
 					testMap->right = mapArray[i];
 				}
 				else{
+					std::cout << "WENT4C" << std::endl;
 					madeMap = new map(seed,y,x,push,mapSide,tileSide,battlefieldSide,diagonal,debug);
 					currCord = {y,x,madeMap,NULL,NULL}; // We don't use this anyways anymore.
 					insertCoordinateRelative(yIt,xIt,currCord);
+					xIt->pointer->xConnector = xIt;
+					xIt->pointer->yConnector = yIt;
 					testMap = xIt->pointer;
 					mapArray[i]->left = testMap; //coordinates connect
 					testMap->right = mapArray[i];
 				}
 				if(y!=startCord){ // left/right. left is gauranteed to be something, so...
-					mapArray[i-1]->down = mapArray[i];
-					mapArray[i]->up = mapArray[i-1]; 
-					mapArray[i-1]->xConnector->down = &(*(mapArray[i]->xConnector));
-					mapArray[i]->xConnector->up = &(*(mapArray[i-1]->xConnector));
+					std::cout << "WENT4D" << std::endl;
+					mapArray[i-1]->left->down = mapArray[i]->left;
+					mapArray[i]->left->up = mapArray[i-1]->left; 
+					mapArray[i-1]->left->xConnector->down = &(*(mapArray[i]->xConnector));
+					mapArray[i]->left->xConnector->up = &(*(mapArray[i-1]->xConnector));
 				}
 			}
 			current = current->left; // we transfer over.
@@ -801,6 +888,7 @@ unsigned int playerSpace::view(float heightOffset, int playerHeight, int mapView
 	float difference;
 	map* usedMap;
 	int halfTileWidth = (viewTileWidth/2);
+	//std::cout << "Wwoa" << std::endl;
 	for (int y = -halfTileWidth; y <= halfTileWidth; y++)
 	{
 		
@@ -849,7 +937,9 @@ unsigned int playerSpace::view(float heightOffset, int playerHeight, int mapView
 					worldXOffset = (ex)/mapSide;
 				}
 				else{
+					//std::cout << "ALERT= " << ex << " " << mapSide << std::endl;
 					worldXOffset = ex/mapSide;
+					//std::cout << "ALERTD= " << worldXOffset << std::endl;
 				}
 				ex -=(worldXOffset*mapSide);
 				if(ex == mapSide){
@@ -862,10 +952,12 @@ unsigned int playerSpace::view(float heightOffset, int playerHeight, int mapView
 				//std::cout << usedMap->right << std::endl;
 				while(worldYOffset){
 					if(worldYOffset>0){
+						//std::cout << "DIDd " << worldYOffset << " " << usedMap<< " " <<usedMap->down << " " << usedMap->up << " " << usedMap->left << " " << usedMap->right << std::endl;
 						usedMap = usedMap->down;
 						worldYOffset--;
 					}
 					else if(worldYOffset<0){
+						//std::cout << "DIDu" << std::endl;
 						usedMap = usedMap->up;
 						worldYOffset++;
 					}
@@ -873,7 +965,7 @@ unsigned int playerSpace::view(float heightOffset, int playerHeight, int mapView
 				while(worldXOffset){
 					if(worldXOffset>0){
 						usedMap = usedMap->right;
-						worldYOffset--;
+						worldXOffset--;
 					}
 					else if(worldXOffset<0){
 						usedMap = usedMap->left;
@@ -947,7 +1039,7 @@ unsigned int playerSpace::view(float heightOffset, int playerHeight, int mapView
 						worldXOffset++;
 					}
 					while(worldYOffset){
-						std::cout << "======WARN=====" << std::endl;
+						//std::cout << "======WARN=====" << std::endl;
 						if(worldYOffset>0){
 							usedMap = usedMap->down;
 							worldYOffset--;
@@ -958,10 +1050,10 @@ unsigned int playerSpace::view(float heightOffset, int playerHeight, int mapView
 						}
 					}
 					while(worldXOffset){
-						std::cout << "======WARN=====" << std::endl;
+						//std::cout << "======WARN=====" << std::endl;
 						if(worldXOffset>0){
 							usedMap = usedMap->right;
-							worldYOffset--;
+							worldXOffset--;
 						}
 						else if(worldXOffset<0){
 							usedMap = usedMap->left;
@@ -984,6 +1076,7 @@ unsigned int playerSpace::view(float heightOffset, int playerHeight, int mapView
 			//}
 		}
 	}
+	//std::cout << "Wwo" << std::endl;
 	//for (int j = 0; j < viewTileWidth*viewTileWidth; j++)
 	//{
 	//	if (j%viewTileWidth == 0) std::cout<<std::endl;
@@ -1109,7 +1202,7 @@ unsigned int playerSpace::view(float heightOffset, int playerHeight, int mapView
 							while(worldXOffset){
 								if(worldXOffset>0){
 									usedMap = usedMap->right;
-									worldYOffset--;
+									worldXOffset--;
 								}
 								else if(worldXOffset<0){
 									usedMap = usedMap->left;
@@ -1189,7 +1282,7 @@ unsigned int playerSpace::view(float heightOffset, int playerHeight, int mapView
 							while(worldXOffset){
 								if(worldXOffset>0){
 									usedMap = usedMap->right;
-									worldYOffset--;
+									worldXOffset--;
 								}
 								else if(worldXOffset<0){
 									usedMap = usedMap->left;

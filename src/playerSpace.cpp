@@ -428,7 +428,8 @@ void playerSpace::travel(int yT, int xT, int mode){
 		coordinate currCord = *xIt;
 		std::cout << "half" << std::endl;
 		coordinate* foundCord;
-		coordinate** cordArray = new coordinate*[(mapViewRadius*2)+1];
+		coordinate* cordArray[(mapViewRadius*2)+1];
+		//std::list<coordinate>::iterator* iterArray[(mapViewRadius*2)+1]; // needed?
 		coordinate* theTestCord;
 		coordinate* copyCord;
 		std::cout << "tie" << std::endl;
@@ -460,15 +461,15 @@ void playerSpace::travel(int yT, int xT, int mode){
 				currCord = *(currCord.up); // GO UP TO FIND/SEARCH/ACTIVATE
 			}
 			cordArray[mapViewRadius] = &currCord;
-			spareX = currCord.pointer->xConnector;
+			spareX = currCord.pointer->xConnector;	
 			yIt = currCord.pointer->yConnector;
 			xIt = spareX;
 			for (int i = 1; i <= mapViewRadius; i++)
 			{
 				xIt--;
 				spareX++;
-				cordArray[mapViewRadius-i] = &(*(xIt->pointer->xConnector));
-				cordArray[mapViewRadius+i] = &(*(xIt->pointer->xConnector));
+				cordArray[mapViewRadius-i] = &(*(xIt));
+				cordArray[mapViewRadius+i] = &(*(spareX));
 			}
 			y = current->y - mapViewRadius - 1;
 			startCord = current->x - mapViewRadius;
@@ -591,32 +592,32 @@ void playerSpace::travel(int yT, int xT, int mode){
 					cordArray[i]->pointer->down = foundCord->pointer;
 				}
 				else{
-					std::cout << "WENTAdca" << std::endl;
+					//std::cout << "WENTAdca" << std::endl;
 					madeMap = new map(seed,y,x,push,mapSide,tileSide,battlefieldSide,diagonal,debug);
-					std::cout << "WENTAdcb" << std::endl;
-					std::cout << "WENTAdd11 " << cordArray[1]->pointer->down << " " << i << std::endl;
-					std::cout << "WENTAdd12 " << cordArray[0]->pointer->down << " " << i << std::endl;
+					//std::cout << "WENTAdcb" << std::endl;
+					//std::cout << "WENTAdd11 " << cordArray[1]->pointer->down << " " << i << std::endl;
+					//std::cout << "WENTAdd12 " << cordArray[0]->pointer->down << " " << i << std::endl;
 						//currCord = {y,x,madeMap,cordArray[i],NULL}; // We don't use this anyways anymore.
 						// WARNING: DECLARATION OF CORD CHANGES CONTAINED MAP DATA !!!
 					currCord = {y,x,madeMap,cordArray[i],NULL}; // We don't use this anyways anymore.
-					std::cout << "WENTAdcc" << std::endl;
-					std::cout << "WENTAddcer-====1 " << cordArray[1]->pointer->down << " " << i << std::endl;
-					std::cout << "WENTAddcer-====2 " << cordArray[0]->pointer->down << " " << i << std::endl;
+					//std::cout << "WENTAdcc" << std::endl;
+					//std::cout << "WENTAddcer-====1 " << cordArray[1]->pointer->down << " " << i << std::endl;
+					//std::cout << "WENTAddcer-====2 " << cordArray[0]->pointer->down << " " << i << std::endl;
 					insertCoordinateRelative(yIt,xIt,currCord);
 					xIt->pointer->xConnector = xIt;
-					std::cout << "WENTAdd3 " << cordArray[1]->pointer->down << " " << i << std::endl;
+					//std::cout << "WENTAdd3 " << cordArray[1]->pointer->down << " " << i << std::endl;
 					xIt->pointer->yConnector = yIt;
-					std::cout << "WENTAdcd" << std::endl;
+					//std::cout << "WENTAdcd" << std::endl;
 					foundCord = &(*xIt);
-					std::cout << "WENTAdce" << std::endl;
-					std::cout << "WENTAdd2 " << cordArray[1]->pointer->down << " " << "1" << std::endl;
+					//std::cout << "WENTAdce" << std::endl;
+					//std::cout << "WENTAdd2 " << cordArray[1]->pointer->down << " " << "1" << std::endl;
 					cordArray[i]->down = foundCord; //coordinates connect
-					std::cout << "WENTAdcf " << yIt->begin()->y << std::endl;
+					//std::cout << "WENTAdcf " << yIt->begin()->y << std::endl;
 					foundCord->pointer->up = cordArray[i]->pointer; // update up/down map
-					std::cout << "WENTAdcg " << foundCord->pointer << std::endl;
+					//std::cout << "WENTAdcg " << foundCord->pointer << std::endl;
 					cordArray[i]->pointer->down = foundCord->pointer;
-					std::cout << "WENTAdd4 " << cordArray[1]->pointer->down << " " << "1" << std::endl;
-					std::cout << "ALIEA " << cordArray[i]->pointer->down << " " << i << std::endl;
+					//std::cout << "WENTAdd4 " << cordArray[1]->pointer->down << " " << "1" << std::endl;
+					//std::cout << "ALIEA " << cordArray[i]->pointer->down << " " << i << std::endl;
 				}
 				if(x!=startCord){ // left/right. left is gauranteed to be something, so...
 					std::cout << "WENTAdda " << cordArray[1]->pointer->down << " " << "1" << std::endl;
