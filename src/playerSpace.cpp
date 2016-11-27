@@ -1230,10 +1230,10 @@ unsigned int playerSpace::view(float heightOffset, int playerHeight, int mapView
 							//	continue; // Skip OOB
 							//}
 							////std::cout << theMap.bigMap[worldYOffset * worldSide + worldXOffset].heightMap[(wy*tileSide)+ex] << std::endl;
-							usedMap->regionMemoryMap[(wy*tileSide)+ex] = 1;
+							usedMap->regionMemoryMap[(wy*mapSide)+ex] = 1;
 							////std::cout << "GI HERE " << theMap.bigMap[worldYOffset * worldSide + worldXOffset].regionMemoryMap[(wy*tileSide)+ex]<< std::endl;
 							if(trigger){
-								memoryMap[indexB] = usedMap->heightMap[(wy*tileSide)+ex]+1;
+								memoryMap[indexB] = usedMap->heightMap[(wy*mapSide)+ex]+1;
 								continue;
 							}
 							memoryMap[indexB] = 0;

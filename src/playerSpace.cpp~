@@ -595,7 +595,7 @@ void playerSpace::travel(int yT, int xT, int mode){
 				//std::cout << "go5a" << std::endl;
 				x++;
 				theTestCord = (iterArray[i])->down;
-				std::cout << iterArray[i]->y << std::endl;
+				//std::cout << iterArray[i]->y << std::endl;
 				if(theTestCord){
 					//std::cout << "FACTIVATE" << std::endl;
 					theTestCord->pointer->activate();
@@ -1230,10 +1230,10 @@ unsigned int playerSpace::view(float heightOffset, int playerHeight, int mapView
 							//	continue; // Skip OOB
 							//}
 							////std::cout << theMap.bigMap[worldYOffset * worldSide + worldXOffset].heightMap[(wy*tileSide)+ex] << std::endl;
-							usedMap->regionMemoryMap[(wy*tileSide)+ex] = 1;
+							usedMap->regionMemoryMap[(wy*mapSide)+ex] = 1;
 							////std::cout << "GI HERE " << theMap.bigMap[worldYOffset * worldSide + worldXOffset].regionMemoryMap[(wy*tileSide)+ex]<< std::endl;
 							if(trigger){
-								memoryMap[indexB] = usedMap->heightMap[(wy*tileSide)+ex]+1;
+								memoryMap[indexB] = usedMap->heightMap[(wy*mapSide)+ex]+1;
 								continue;
 							}
 							memoryMap[indexB] = 0;
