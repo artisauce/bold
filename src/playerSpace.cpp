@@ -488,12 +488,12 @@ void playerSpace::travel(int yT, int xT, int mode){
 			//std::cout << "go5" << std::endl;
 			for (int i = 0; i <= length; i++)
 			{
-				std::cout << "go5a " << i << " " << length << std::endl;
+				//std::cout << "go5a " << i << " " << length << std::endl;
 				x++;
 				theTestCord = (iterArray[i])->up;
 				//std::cout << "testaab: " << &(iterArray[0]) << " " << &xIt <<std::endl;
 				if(theTestCord){
-					std::cout << "FACTIVATE" << std::endl;
+					//std::cout << "FACTIVATE" << std::endl;
 					theTestCord->pointer->activate();
 					if(cordNumber != -1){
 						cordNumber = i; // so we only do this once
@@ -502,7 +502,7 @@ void playerSpace::travel(int yT, int xT, int mode){
 					}
 				}
 				else if(find(y,x,yIt,xIt)){
-					std::cout << "FINDA" << std::endl;
+					//std::cout << "FINDA" << std::endl;
 					(iterArray[i])->up = &(*xIt); //coordinates connect
 					xIt->down = &(*iterArray[i]); //coordinates connect
 					xIt->pointer->down = (iterArray[i])->pointer; // update up/down map
@@ -510,7 +510,7 @@ void playerSpace::travel(int yT, int xT, int mode){
 					xIt->pointer->activate();
 				}
 				else{
-					std::cout << "INSERTA" << std::endl;
+					//std::cout << "INSERTA" << std::endl;
 					madeMap = new map(seed,y,x,push,mapSide,tileSide,battlefieldSide,diagonal,debug);
 					//std::cout << "garch1 " <<  (iterArray[0])->pointer << " " << 0 <<  " " << (iterArray[0])->pointer->up << std::endl;
 					currCord = {y,x,madeMap,NULL,&(*iterArray[i])}; // Sorry
@@ -537,16 +537,16 @@ void playerSpace::travel(int yT, int xT, int mode){
 					//std::cout << "garch4 " << (iterArray[0])->pointer << " " << 0 <<  " " << xIt->pointer << std::endl;
 				}
 				if(x!=startCord && !theTestCord){ // left/right. left is gauranteed to be something, so...
-					std::cout << "garch5 " << (iterArray[0])->pointer << " " << 0 <<  " " << (iterArray[0])->pointer->up << std::endl;
+					//std::cout << "garch5 " << (iterArray[0])->pointer << " " << 0 <<  " " << (iterArray[0])->pointer->up << std::endl;
 					(iterArray[i-1])->pointer->up->right = (iterArray[i])->pointer->up;
 					(iterArray[i])->pointer->up->left = (iterArray[i-1])->pointer->up;
 				}
 			}
-			std::cout << "goa1" << std::endl;
+			//std::cout << "goa1" << std::endl;
 			current = current->up; // we transfer over.
 		}
 		else if (calcY){
-			std::cout << "go2" << std::endl;
+			//std::cout << "go2" << std::endl;
 			for (int i = 0; i < mapViewRadius; i++){
 				//std::cout << "YBC: " << (currCord).y << std::endl;
 				currCord = *(currCord.up); // GO UP TO DEACTIVATE
@@ -643,7 +643,7 @@ void playerSpace::travel(int yT, int xT, int mode){
 		madeMap = current; // We'll use this as temp this time.
 		map* testMap;
 		if(calcX>0){
-			std::cout << "go3" << std::endl;
+			//std::cout << "go3" << std::endl;
 			//std::cout << "bugFinder y: " << madeMap->y << " x: " << madeMap->x << std::endl;
 			for (int i = 0; i < mapViewRadius; i++){
 				madeMap = madeMap->left; // GO LEFT TO DEACTIVATE
@@ -724,7 +724,7 @@ void playerSpace::travel(int yT, int xT, int mode){
 			current = current->right; // we transfer over.
 		}
 		else if (calcX){
-			std::cout << "go4" << std::endl;
+			//std::cout << "go4" << std::endl;
 			for (int i = 0; i < mapViewRadius; i++){
 				//std::cout << "WENTCaaa " << madeMap->right << std::endl;
 				madeMap = madeMap->right; // GO RIGHT TO DEACTIVATE
