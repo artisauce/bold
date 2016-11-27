@@ -208,7 +208,7 @@ int main( int argc, char* args[] )
     tileSet.push_back("~"); // as -5. Ground
     tileSet.push_back("T"); // as -6. Tree
 	int specialTiles = 4; // -1 (empty/hidden space) -2 (alternate hidden space), -3 (circleInvsi) ,-4 (skipline)
-	int viewRadius = 63;
+	int viewRadius = 32;
     playerSpace playSpace(rand(), viewRadius, pushCoefficient, mapSide, tileSide, battlefieldSide,  diagonal, debug);
 	//playerSpace(unsigned int seedInput, int playerViewRadius, const double pushInput, size_t mapSideInput, 
 	//size_t tileSideInput, size_t battlefieldSideInput, const bool diagonalInput, const bool debugInput)
@@ -218,8 +218,8 @@ int main( int argc, char* args[] )
     std::vector<int> viewer;
 	// More constants.
     unsigned int sider;
-	 playSpace.playerRegionX = 63;
-	playSpace.playerRegionY = 0;
+	 playSpace.playerRegionX = 32;
+	playSpace.playerRegionY = 32;
 	 //playSpace.playerTileX = 11;
 	//playSpace.playerTileY = 11;
 	//int viewRadius = 9;
@@ -272,6 +272,7 @@ int main( int argc, char* args[] )
 	}
 	else
 	{	
+			printf( "Initialized!\n" );
 			displayStuffOptimized(sider,viewer,8,optimizeArray,memoryMap,specialTiles); // For initial present
 			//Main loop flag
 			bool quit = false;
