@@ -195,9 +195,9 @@ bool init()
 int main( int argc, char* args[] )
 {
 	std::ios::sync_with_stdio(false); // This allows fast output for the move demo.
-    srand(2);
+    srand(1505335276);
 	// Constants.
-    bool debug = false;
+    bool debug = true;
     bool diagonal = true;
     double pushCoefficient = 0.1;
     size_t mapSide = 64;
@@ -208,8 +208,8 @@ int main( int argc, char* args[] )
     tileSet.push_back("~"); // as -5. Ground
     tileSet.push_back("T"); // as -6. Tree
 	int specialTiles = 4; // -1 (empty/hidden space) -2 (alternate hidden space), -3 (circleInvsi) ,-4 (skipline)
-	int viewRadius = mapSide*3;
-    playerSpace playSpace(rand(), viewRadius, pushCoefficient, mapSide, tileSide, battlefieldSide,  diagonal, debug);
+	int viewRadius = 32;
+    playerSpace playSpace(1505335276, viewRadius, pushCoefficient, mapSide, tileSide, battlefieldSide,  diagonal, debug);
 	//playerSpace(unsigned int seedInput, int playerViewRadius, const double pushInput, size_t mapSideInput, 
 	//size_t tileSideInput, size_t battlefieldSideInput, const bool diagonalInput, const bool debugInput)
     if(debug){

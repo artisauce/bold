@@ -428,13 +428,11 @@ void playerSpace::travel(int yT, int xT, int mode){
 		coordinate currCord = *xIt;
 		//std::cout << "half" << std::endl;
 		coordinate* theTestCord;
-		coordinate* foundCord;
 		//coordinate* cordArray[(mapViewRadius*2)+1];
 		// we'll need to convert the thing below into a vector to work !!!
 		std::vector<std::list<coordinate>::iterator> iterArray; // needed?
 		iterArray.resize((mapViewRadius*2)+1);
 		//std::list<coordinate>::iterator testIterate;
-		coordinate* copyCord;
 		//std::cout << "tie" << std::endl;
 		int y;
 		int x;
@@ -940,25 +938,16 @@ unsigned int playerSpace::view(float heightOffset, int playerHeight, int mapView
 			worldYOffset = 0;
 			worldXOffset = 0;
 			if(mapView){
-				if(wy<0){
-					worldYOffset = (wy)/mapSide; // We determine how many worldspaces to left
-				}
-				else{
-					worldYOffset = wy/mapSide; // We determine how many worldspaces to right
-				}
+				worldYOffset = wy/mapSide; // We determine how many worldspaces to left
 				wy-=(worldYOffset*mapSide); // Bring it back to index for appropiate region
 				if(wy == mapSide){
 					wy = 0;
 					worldYOffset++;
 				}
-				if(ex<0){
-					worldXOffset = (ex)/mapSide;
-				}
-				else{
-					////std::cout << "ALERT= " << ex << " " << mapSide << std::endl;
-					worldXOffset = ex/mapSide;
-					////std::cout << "ALERTD= " << worldXOffset << std::endl;
-				}
+				
+				////std::cout << "ALERT= " << ex << " " << mapSide << std::endl;
+				worldXOffset = ex/mapSide;
+				////std::cout << "ALERTD= " << worldXOffset << std::endl;
 				ex -=(worldXOffset*mapSide);
 				if(ex == mapSide){
 					ex = 0;
@@ -1005,14 +994,8 @@ unsigned int playerSpace::view(float heightOffset, int playerHeight, int mapView
 				continue;
 			}
 			else{
-				if(wy<0){
-					regionYOffset = wy/tileSide;
-					////std::cout << "GO1 " << regionYOffset<< std::endl;
-				}
-				else{
-					regionYOffset = wy/tileSide;
-					////std::cout << "GO2 " <<  regionYOffset<< std::endl;
-				}
+				
+				regionYOffset = wy/tileSide;
 				////std::cout << "AGO1 " << wy << std::endl;
 				wy-=(regionYOffset*tileSide);
 				////std::cout << "AGO1 " << wy << std::endl;
@@ -1020,12 +1003,7 @@ unsigned int playerSpace::view(float heightOffset, int playerHeight, int mapView
 					wy = 0;
 					regionYOffset++;
 				}
-				if(ex<0){
-					regionXOffset = (ex)/tileSide;
-				}
-				else{
-					regionXOffset = ex/tileSide;
-				}
+				regionXOffset = ex/tileSide;
 				ex -=(regionXOffset*tileSide);
 				if(ex == tileSide){
 					ex = 0;
@@ -1034,59 +1012,49 @@ unsigned int playerSpace::view(float heightOffset, int playerHeight, int mapView
 				////std::cout<<regionXOffset<<" "<<regionYOffset<<" "<<tileSide<<std::endl;
 				regionYOffset+=playerRegionY;
 				regionXOffset+=playerRegionX; // get the regions
-				if(regionYOffset<0){
-						worldYOffset = (regionYOffset)/mapSide; // We determine how many worldspaces to left
+				worldYOffset = regionYOffset/mapSide; // We determine how many worldspaces to right
+				regionYOffset-=(worldYOffset*mapSide); // Bring it back to index for appropiate region
+				if(regionYOffset == mapSide){
+					regionYOffset = 0;
+					worldYOffset++;
+				}
+				worldXOffset = (regionXOffset)/mapSide;
+				regionXOffset -=(worldXOffset*mapSide);
+				if(regionXOffset == mapSide){
+					regionXOffset = 0;
+					worldXOffset++;
+				}
+				while(worldYOffset){
+				////std::cout << "======WARN=====" << std::endl;
+				if(worldYOffset>0){
+					usedMap = usedMap->down;
+					worldYOffset--;
+				}
+				else if(worldYOffset<0){
+					usedMap = usedMap->up;
+					worldYOffset++;
+				}
+				}
+				while(worldXOffset){
+					////std::cout << "======WARN=====" << std::endl;
+					if(worldXOffset>0){
+						usedMap = usedMap->right;
+						worldXOffset--;
 					}
-					else{
-						worldYOffset = regionYOffset/mapSide; // We determine how many worldspaces to right
-					}
-					regionYOffset-=(worldYOffset*mapSide); // Bring it back to index for appropiate region
-					if(regionYOffset == mapSide){
-						regionYOffset = 0;
-						worldYOffset++;
-					}
-					if(regionXOffset<0){
-						worldXOffset = (regionXOffset)/mapSide;
-					}/////
-					else{
-						worldXOffset = regionXOffset/mapSide;
-					}
-					regionXOffset -=(worldXOffset*mapSide);
-					if(regionXOffset == mapSide){
-						regionXOffset = 0;
+					else if(worldXOffset<0){
+						usedMap = usedMap->left;
 						worldXOffset++;
 					}
-					while(worldYOffset){
-						////std::cout << "======WARN=====" << std::endl;
-						if(worldYOffset>0){
-							usedMap = usedMap->down;
-							worldYOffset--;
-						}
-						else if(worldYOffset<0){
-							usedMap = usedMap->up;
-							worldYOffset++;
-						}
-					}
-					while(worldXOffset){
-						////std::cout << "======WARN=====" << std::endl;
-						if(worldXOffset>0){
-							usedMap = usedMap->right;
-							worldXOffset--;
-						}
-						else if(worldXOffset<0){
-							usedMap = usedMap->left;
-							worldXOffset++;
-						}
-					}
-					//if(worldXOffset<0 || worldYOffset<0 || worldXOffset >= worldSide || worldYOffset >=worldSide){
-					//	memoryMap.push_back(0);
-					//	viewMap.push_back(0);
-					//	continue;
-					//}
-					////std::cout << "REGION: " << regionYOffset << " " << regionXOffset << std::endl;
-					////std::cout << "TILE: " << wy << " " << ex << std::endl;
-					viewMap.push_back(usedMap->regionMap[(regionYOffset*mapSide) + regionXOffset].tileMap[(wy*tileSide)+ex]);
-					memoryMap.push_back(usedMap->regionMap[(regionYOffset*mapSide) + regionXOffset].tileMemoryMap[(wy*tileSide)+ex]);
+				}
+				//if(worldXOffset<0 || worldYOffset<0 || worldXOffset >= worldSide || worldYOffset >=worldSide){
+				//	memoryMap.push_back(0);
+				//	viewMap.push_back(0);
+				//	continue;
+				//}
+				////std::cout << "REGION: " << regionYOffset << " " << regionXOffset << std::endl;
+				////std::cout << "TILE: " << wy << " " << ex << std::endl;
+				viewMap.push_back(usedMap->regionMap[(regionYOffset*mapSide) + regionXOffset].tileMap[(wy*tileSide)+ex]);
+				memoryMap.push_back(usedMap->regionMap[(regionYOffset*mapSide) + regionXOffset].tileMemoryMap[(wy*tileSide)+ex]);
 			}
 			//if(theMap.regionMap[(regionYOffset*mapSide) + regionXOffset].tileMap[(wy*tileSide)+ex] > 9){
 				////std::cout << theMap.regionMap[(regionYOffset*mapSide) + regionXOffset].tileMap[(wy*tileSide)+ex] << std::endl;
@@ -1185,23 +1153,13 @@ unsigned int playerSpace::view(float heightOffset, int playerHeight, int mapView
 					worldXOffset = 0;
 					usedMap = current;
 					if(mapView){
-							if(wy<0){
-								worldYOffset = (wy)/mapSide; // We determine how many worldspaces to left
-							}
-							else{
-								worldYOffset = wy/mapSide; // We determine how many worldspaces to right
-							}
+							worldYOffset = wy/mapSide; // We determine how many worldspaces to right
 							wy-=(worldYOffset*mapSide); // Bring it back to index for appropiate region
 							if(wy == mapSide){
 								wy = 0;
 								worldYOffset++;
 							}
-							if(ex<0){
-								worldXOffset = (ex)/mapSide;
-							}/////
-							else{
-								worldXOffset = ex/mapSide;
-							}
+							worldXOffset = ex/mapSide;
 							ex -=(worldXOffset*mapSide);
 							if(ex == mapSide){
 								ex = 0;
@@ -1241,23 +1199,13 @@ unsigned int playerSpace::view(float heightOffset, int playerHeight, int mapView
 							continue;
 					}
 					else{
-							if(wy<0){
-								regionYOffset = (wy)/tileSide;
-							}
-							else{
-								regionYOffset = wy/tileSide;
-							}
+							regionYOffset = wy/tileSide;
 							wy-=(regionYOffset*tileSide);
 							if(wy == tileSide){
 								wy = 0;
 								regionYOffset++;
 							}
-							if(ex<0){
-								regionXOffset = (ex)/tileSide;
-							}
-							else{
-								regionXOffset = ex/tileSide;
-							}
+							regionXOffset = ex/tileSide;
 							ex -=(regionXOffset*tileSide);
 							if(ex == tileSide){
 								ex = 0;
@@ -1265,23 +1213,13 @@ unsigned int playerSpace::view(float heightOffset, int playerHeight, int mapView
 							}
 							regionYOffset+=playerRegionY;
 							regionXOffset+=playerRegionX; // get the regions
-							if(regionYOffset<0){
-								worldYOffset = (regionYOffset)/mapSide; // We determine how many worldspaces to left
-							}
-							else{
-								worldYOffset = regionYOffset/mapSide; // We determine how many worldspaces to right
-							}
+							worldYOffset = regionYOffset/mapSide; // We determine how many worldspaces to
 							regionYOffset-=(worldYOffset*mapSide); // Bring it back to index for appropiate region
 							if(regionYOffset == mapSide){
 								regionYOffset = 0;
 								worldYOffset++;
 							}
-							if(regionXOffset<0){
-								worldXOffset = (regionXOffset)/mapSide;
-							}/////
-							else{
-								worldXOffset = regionXOffset/mapSide;
-							}
+							worldXOffset = regionXOffset/mapSide;
 							regionXOffset -=(worldXOffset*mapSide);
 							if(regionXOffset == mapSide){
 								regionXOffset = 0;
