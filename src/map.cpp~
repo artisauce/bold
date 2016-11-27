@@ -123,7 +123,7 @@ map::~map(){
 		regionMap = std::vector<tile>(); // just in case
 		delete[] regionMemoryMap;
 	}
-	std::cout << "DONE DELETING MAP " << this << " Y: " << y << " X: " << x << std::endl;
+	std::cout << "DONE DELETING MAP " << this << std::endl;
 	if(debug){
 			std::cout << "DONE DELETING MAP " << this << std::endl;
 	}

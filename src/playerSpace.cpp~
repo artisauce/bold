@@ -841,7 +841,7 @@ playerSpace::~playerSpace(){
 			startX = false;
 			delete xx->pointer;
 		}
-		yy->clear();
+		yy.clear();
 	}
 	cordMap.clear();
 	if(debug){
