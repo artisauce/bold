@@ -595,7 +595,7 @@ void playerSpace::travel(int yT, int xT, int mode){
 				//std::cout << "go5a" << std::endl;
 				x++;
 				theTestCord = (iterArray[i])->down;
-				std::cout << iterArray[i]->y << std::endl;
+				//std::cout << iterArray[i]->y << std::endl;
 				if(theTestCord){
 					//std::cout << "FACTIVATE" << std::endl;
 					theTestCord->pointer->activate();

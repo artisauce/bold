@@ -782,7 +782,7 @@ void playerSpace::travel(int yT, int xT, int mode){
 				yIt=mapArray[i]->yConnector; // Because now we're RIGHT beside it.
 				xIt=mapArray[i]->xConnector;
 				if(testMap){
-					std::cout << "WENT4A" << std::endl;
+					//std::cout << "WENT4A" << std::endl;
 					testMap->activate();
 				}
 				else if(find(y,x,yIt,xIt)){
