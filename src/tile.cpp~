@@ -14,7 +14,7 @@ tile::tile(unsigned int seedInput, const map* parentMInput, const int yInput,
 	debug(parentM->debug)
 {
 	if(debug){
-		std::cout << "CREATING TILEMAP " << this << " FOR " << parentM << std::endl;
+		std::cout << "CREATING TILEMAP " << this << " FOR " << parentM << " FOR " << parentM->parentW << std::endl;
 	}
 	srand(seed);
 	tileMap = new int[tileSide*tileSide];
@@ -26,18 +26,10 @@ tile::tile(unsigned int seedInput, const map* parentMInput, const int yInput,
 		seedMap[i] = rand();
 	}
 	genTile(rand(),push,y,x,parentM->heightMap,parentM->mapSide,tileMap,tileSide,diagonal,debug);
-	//for (int i = 0; i < tileSide*tileSide; ++i)
-	//{
-	//	if(i%tileSide == 0){
-	//		std::cout << std::endl;
-	//	}
-	//	std::cout << tileMap[i];
-	//}
-	//std::cout << std::endl;
 	//tileMap[20] = 5;
 	//printMap(tileMap,tileSide);
 	if(debug){
-		std::cout << "CREATED TILEMAP " << this << " FOR " << parentM << std::endl;
+		std::cout << "CREATED TILEMAP " << this << " FOR " << parentM << " FOR " << parentM->parentW << std::endl;
 	}
 }
 
@@ -54,7 +46,7 @@ tile::tile(tile const& src): // For copying -- MANDATORY FOR VECTORS, SEE: Rule 
 	debug(src.debug)
 {
 	if(debug){
-		std::cout << "CREATING TILEMAP CPY " << this << " FOR " << parentM  << std::endl;
+		std::cout << "CREATING TILEMAP CPY " << this << " FOR " << parentM << " FOR " << parentM->parentW << std::endl;
 	}
 	tileMap = new int[tileSide*tileSide];
 	seedMap = new int[tileSide*tileSide];
@@ -69,20 +61,20 @@ tile::tile(tile const& src): // For copying -- MANDATORY FOR VECTORS, SEE: Rule 
 	ySpareList = src.ySpareList;
 	xSpareList = src.xSpareList;
 	if(debug){
-		std::cout << "CREATED TILEMAP CPY " << this << " FOR " << parentM << std::endl;
+		std::cout << "CREATED TILEMAP CPY " << this << " FOR " << parentM << " FOR " << parentM->parentW << std::endl;
 	}
 }
 
 
 tile::~tile(){
 	if(debug){
-		std::cout << "DELETING TILEMAP " << this << " FOR " << parentM << std::endl;
+		std::cout << "DELETING TILEMAP " << this << " FOR " << parentM << " FOR " << parentM->parentW << std::endl;
 	}
 	//printMap(tileMap,tileSide);
 	delete[] tileMap;
 	delete[] seedMap;
 	delete[] tileMemoryMap;
 	if(debug){
-		std::cout << "DONE DELETING TILEMAP " << this << " FOR " << parentM <<  std::endl;
+		std::cout << "DONE DELETING TILEMAP " << this << " FOR " << parentM << " FOR " << parentM->parentW << std::endl;
 	}
 }

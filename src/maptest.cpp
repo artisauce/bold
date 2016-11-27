@@ -1,4 +1,4 @@
-#include "worldMap.hpp"
+#include "playerSpace.hpp"
 #include "SDL.h"
 #include "SDL_image.h"
 
@@ -195,36 +195,36 @@ bool init()
 int main( int argc, char* args[] )
 {
 	std::ios::sync_with_stdio(false); // This allows fast output for the move demo.
-    srand(1);
+    srand(2);
 	// Constants.
     bool debug = false;
     bool diagonal = true;
     double pushCoefficient = 0.1;
-    size_t worldMapSide = 2;
-    size_t mapSide = 100;
-    size_t tileSide = 32;
-    size_t battlefieldSide = 64;
+    size_t mapSide = 64;
+    size_t tileSide = 16;
+    size_t battlefieldSide = 32;
     std::vector<std::string> tileSet;
     tileSet.push_back("@"); // as -4. Player
     tileSet.push_back("~"); // as -5. Ground
     tileSet.push_back("T"); // as -6. Tree
 	int specialTiles = 4; // -1 (empty/hidden space) -2 (alternate hidden space), -3 (circleInvsi) ,-4 (skipline)
-    worldMap newMap(rand(), pushCoefficient, worldMapSide, mapSide, tileSide, battlefieldSide,  diagonal, debug);
+	int viewRadius = 32;
+    playerSpace playSpace(rand(), viewRadius, pushCoefficient, mapSide, tileSide, battlefieldSide,  diagonal, debug);
+	//playerSpace(unsigned int seedInput, int playerViewRadius, const double pushInput, size_t mapSideInput, 
+	//size_t tileSideInput, size_t battlefieldSideInput, const bool diagonalInput, const bool debugInput)
     if(debug){
         std::cout << "--- EVERYTHING HAS BEEN MADE --- " << std::endl;
     }
     std::vector<int> viewer;
 	// More constants.
     unsigned int sider;
-	 int playerXRegion = 25;
-	int playerYRegion = 25;
-	 int playerXTile = 11;
-	int playerYTile = 11;
-	int playerXWorld = 0;
-	int playerYWorld = 0;
-	int viewRadius = 9;
+	 playSpace.playerRegionX = 32;
+	playSpace.playerRegionY = 32;
+	 //playSpace.playerTileX = 11;
+	//playSpace.playerTileY = 11;
+	//int viewRadius = 9;
 	float heightOffset = 0.5; // Ideal?
-	bool mapView = true;
+	int mapView = 1;
 	bool seeAboveInvisible = false;
 	bool circleView = false;
 	bool mapDebug = false;
@@ -232,16 +232,19 @@ int main( int argc, char* args[] )
 	bool checkAll = false; // See notes in viewline.
 	bool memoryMode = false; // See what you saw before.
 	int calcHeight; // For calculating height.
-	int playerZ = newMap.bigMap[playerYWorld*worldMapSide + playerXWorld].regionMap[playerYRegion*mapSide + playerXRegion].tileMap[playerYTile*tileSide + playerXTile];
+	int playerZ = playSpace.current->regionMap[playSpace.playerRegionY*mapSide + playSpace.playerRegionX].tileMap[playSpace.playerTileY*tileSide + playSpace.playerTileX];
 	std::vector<int> optimizeArray;
 	std::vector<int> memoryMap;
+	std::vector<int> bronze;
+	std::vector<int> gold;
 	std::cout << "Got here" << std::endl;
     viewer.clear(); // Clear print console map.
 	optimizeArray.clear(); // Clears optimization
 	memoryMap.clear();
-	sider = view(newMap, playerYWorld,playerXWorld,playerYRegion, playerXRegion, playerYTile, playerXTile, 
-	viewRadius,heightOffset,playerZ,mapView,circleView,false,true,true,viewer,&optimizeArray,memoryMap,specialTiles,
+	//playerSpace::view(float heightOffset, int playerHeight, int mapView, bool circle, bool borders, bool playerSee, bool wallMode, std::vector<int>& viewMap, std::vector<int>* optimizeArray, std::vector<int>& memoryMap,int specialTiles, bool InvisibleAboveCustom, bool checkAll, bool debug){
+	sider = playSpace.view(heightOffset,playerZ,mapView,circleView,false,true,true,viewer,&optimizeArray,memoryMap,specialTiles,
 	seeAboveInvisible,checkAll,mapDebug); // Sider is length.
+	std::cout << "Got through" << std::endl;
  //    std::cout << " VECTOR MAP " << std::endl;
  //    printMapVector(viewer,sider,tileSet);
  //    std::cout << " FULL MAP " << std::endl;
@@ -261,12 +264,15 @@ int main( int argc, char* args[] )
 	// battlefield newBattleFour(&(newMap.bigMap[0].regionMap[((mapSide/2)*mapSide)]),tileSide/2,tileSide/2);
 	// printMap(newBattleFour.battleMap,battlefieldSide,tileSet);
 	// //Start up SDL and create window
+	int yMode = 0;
+	int xMode = 0;
 	if( !init() )
 	{
 		printf( "Failed to initialize!\n" );
 	}
 	else
 	{	
+			printf( "Initialized!\n" );
 			displayStuffOptimized(sider,viewer,8,optimizeArray,memoryMap,specialTiles); // For initial present
 			//Main loop flag
 			bool quit = false;
@@ -295,120 +301,68 @@ int main( int argc, char* args[] )
 						{
 							case SDLK_UP:
 							std::cout << "UP" << std::endl;
-							if(mapView){ // go fast
-								playerYRegion--;
-								break;
-							}
-							playerYTile--;
+							yMode=-1;
 							break;
 
 							case SDLK_DOWN:
 							std::cout << "DOWN" << std::endl;
-							if(mapView){ // go fast
-								playerYRegion++;
-								break;
-							}
-							playerYTile++;
+							yMode=1;
 							break;
 
 							case SDLK_LEFT:
 							std::cout << "LEFT" << std::endl;
-							if(mapView){ // go fast
-								playerXRegion--;
-								break;
-							}
-							playerXTile--;
+							xMode=-1;
 							break;
 
 							case SDLK_RIGHT:
 							std::cout << "RIGHT" << std::endl;
-							if(mapView){ // go fast
-								playerXRegion++;
-								break;
-							}
-							playerXTile++;	
+							xMode=1;
 							break;
 
 							// KEYPAD MOVEMENT
 							case SDLK_KP_9:
 							std::cout << "UP-RIGHT" << std::endl;
-							if(mapView){ // go fast
-								playerYRegion--;
-								playerXRegion++;
-								break;
-							}
-							playerYTile--;
-							playerXTile++;
+							xMode=1;
+							yMode=-1;
 							break;
 
 							case SDLK_KP_8:
 							std::cout << "UP" << std::endl;
-							if(mapView){ // go fast
-								playerYRegion--;
-								break;
-							}
-							playerYTile--;
+							yMode=-1;
 							break;
 
 							case SDLK_KP_7:
-							std::cout << "UP" << std::endl;
-							if(mapView){ // go fast
-								playerYRegion--;
-								playerXRegion--;
-								break;
-							}
-							playerYTile--;
-							playerXTile--;
+							std::cout << "UP-LEFT" << std::endl;
+							yMode=-1;
+							xMode=-1;
 							break;
 
 
 							case SDLK_KP_6:
 							std::cout << "RIGHT" << std::endl;
-							if(mapView){ // go fast
-								playerXRegion++;
-								break;
-							}
-							playerXTile++;	
+							xMode=1;
 							break;
 
 							case SDLK_KP_4:
 							std::cout << "LEFT" << std::endl;
-							if(mapView){ // go fast
-								playerXRegion--;
-								break;
-							}
-							playerXTile--;
+							xMode=-1;
 							break;
 
 							case SDLK_KP_3:
-							std::cout << "DOWN" << std::endl;
-							if(mapView){ // go fast
-								playerYRegion++;
-								playerXRegion++;
-								break;							
-							}
-							playerYTile++;
-							playerXTile++;
+							std::cout << "DOWN-RIGHT" << std::endl;
+							xMode=1;
+							yMode=1;
 							break;
 
 							case SDLK_KP_2:
 							std::cout << "DOWN" << std::endl;
-							if(mapView){ // go fast
-								playerYRegion++;
-								break;
-							}
-							playerYTile++;	
+							yMode=1;
 							break;
 
 							case SDLK_KP_1:
-							std::cout << "DOWN" << std::endl;
-							if(mapView){ // go fast
-								playerYRegion++;
-								playerXRegion--;
-								break;
-							}
-							playerYTile++;
-							playerXTile--;
+							std::cout << "DOWN-LEFT" << std::endl;
+							yMode=1;
+							xMode=-1;
 							break;
 
 							case SDLK_m: // Toggle map
@@ -495,80 +449,62 @@ int main( int argc, char* args[] )
 						}
 						if(updateScreen){
 							// Move Y
-							if(playerYTile < 0){
-								playerYRegion--;
-								playerYTile = (tileSide - 1);
-							}
-							else if (playerYTile == tileSide){
-								playerYRegion++;
-								playerYTile = 0;
-							}
-							if(playerYRegion < 0){
-								playerYWorld--;
-								playerYRegion = mapSide-1;
-							}
-							else if(playerYRegion == mapSide){
-								playerYWorld++;
-								playerYRegion = 0;
-							}
-							// Move X
-							if(playerXTile < 0){
-								playerXRegion--;
-								playerXTile = (tileSide - 1);
-							}
-							else if (playerXTile == tileSide){
-								playerXRegion++;
-								playerXTile = 0;
-							}
-							if(playerXRegion < 0){
-								playerXWorld--;
-								playerXRegion = mapSide-1;
-							}
-							else if(playerXRegion == mapSide){
-								playerXWorld++;
-								playerXRegion = 0;
-							}
+							playSpace.travel(yMode, xMode, mapView);
+							yMode = 0;
+							xMode = 0;
 							// Done move.
-							if(playerYWorld>=worldMapSide || playerXWorld>=worldMapSide || playerYWorld<0 || playerXWorld<0){
-								if(!playerFly){ // we cannot read height out of bounds.
-									playerZ = 0;
-								}
-							}
-							else if(!playerFly){
+							if(!playerFly){
 								if(mapView){
-									playerZ = newMap.bigMap[(playerYWorld*worldMapSide) + playerXWorld].heightMap[playerYRegion*mapSide + playerXRegion];
+									playerZ = playSpace.current->heightMap[playSpace.playerRegionY*mapSide + playSpace.playerRegionX];
 								}
 								else{
-									playerZ = newMap.bigMap[(playerYWorld*worldMapSide) + playerXWorld].regionMap[playerYRegion*mapSide + playerXRegion].tileMap[playerYTile*tileSide + playerXTile];
+									playerZ = playSpace.current->regionMap[playSpace.playerRegionY*mapSide + playSpace.playerRegionX].tileMap[playSpace.playerTileY*tileSide + playSpace.playerTileX];
 								}
 								
 							}
 							else{
 								if(mapView){
-									calcHeight = newMap.bigMap[(playerYWorld*worldMapSide) + playerXWorld].heightMap[playerYRegion*mapSide + playerXRegion];
+									calcHeight = playSpace.current->heightMap[playSpace.playerRegionY*mapSide + playSpace.playerRegionX];
 									if(calcHeight > playerZ){
 										playerZ = calcHeight;
 									}
 									
 								}
 								else{
-									calcHeight = newMap.bigMap[(playerYWorld*worldMapSide) + playerXWorld].regionMap[playerYRegion*mapSide + playerXRegion].tileMap[playerYTile*tileSide + playerXTile];
+									calcHeight = playSpace.current->regionMap[playSpace.playerRegionY*mapSide + playSpace.playerRegionX].tileMap[playSpace.playerTileY*tileSide + playSpace.playerTileX];
 									if(calcHeight > playerZ){
 										playerZ = calcHeight;
 									}
 								}
 							}
 							std::cout << "PlayerZ: " << playerZ << std::endl;
-							std::cout << "tileY: " << playerYTile << " tileX: " << playerXTile << std::endl;
-							std::cout << "regionY: " << playerYRegion << " regionX: " << playerXRegion << std::endl;
-							std::cout << "worldY: " << playerYWorld << " worldX: " << playerXWorld << std::endl;
-							
+							std::cout << "tileY: " << playSpace.playerTileY << " tileX: " << playSpace.playerTileX << std::endl;
+							std::cout << "regionY: " << playSpace.playerRegionY << " regionX: " << playSpace.playerRegionX << std::endl;
+							std::cout << "worldY: " << playSpace.current->y << " worldX: " << playSpace.current->x << std::endl;
+							std::cout << "Currseed: " << playSpace.current->seed << std::endl;
+							//for (int i = 0; i < playSpace.mapSide*playSpace.mapSide; ++i){
+							//	for (int e = 0; e < playSpace.tileSide*playSpace.tileSide; ++e)
+							//	{
+							//		bronze.push_back(playSpace.current->regionMap[i].tileMap[e]);
+							//	}
+							//}
+							//if(gold.size() != 0){
+							//	for (int i = 0; i < (playSpace.mapSide*playSpace.mapSide)*(playSpace.tileSide*playSpace.tileSide); i++){
+							//		if(bronze[i] != gold[i]){
+							//			std::cout <<"====== "<<  i << " ========" << std::endl;
+							//		}
+							//	}
+							//}
+							////std::cout << gold.size() << " " << bronze.size() << std::endl;
+							gold.clear();
+							gold = bronze;
+							//std::cout << gold.size() << " " << bronze.size() << std::endl;
+							bronze.clear();
+							//std::cout << gold.size() << " " << bronze.size() << std::endl;
 							viewer.clear(); // Clear print console map.
 							optimizeArray.clear(); // Clears optimization
 							memoryMap.clear();
-							sider = view(newMap, playerYWorld,playerXWorld,playerYRegion, playerXRegion, playerYTile, playerXTile, 
-							viewRadius,heightOffset,playerZ,mapView,circleView,false,true,true,viewer,&optimizeArray,memoryMap,
-							specialTiles,seeAboveInvisible,checkAll,mapDebug); // Sider is length.
+							sider = playSpace.view(heightOffset,playerZ,mapView,circleView,false,true,true, viewer,&optimizeArray,memoryMap,specialTiles,seeAboveInvisible,checkAll,mapDebug); // Sider is length.
 							//printMapVector(viewer,sider,tileSet); // This for console.
 							if(!memoryMode){
 								memoryMap.clear();

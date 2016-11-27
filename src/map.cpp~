@@ -148,7 +148,6 @@ void map::deactivate(){
 
 void map::activate(){
 	// -- For activation
-	std::cout << "ACTIVATION Y: " << y << " X: " << x << std::endl;
 	if(activated == 1){
 		std::cout << "ERROR ALREADY ACTIVATED Y: " << y << " X: " << x << std::endl;
 		return;
@@ -176,6 +175,7 @@ void map::activate(){
 			std::cout << "MAP " << this << ": #" << i << " TILE CREATED: " << &(regionMap[i]) << std::endl; 
 		}
 	}
+	std::cout << "ACTIVATION Y: " << y << " X: " << x << std::endl;
 	if(debug){
 		std::cout << "ACTIVATED MAP " << this << std::endl; 
 	}
