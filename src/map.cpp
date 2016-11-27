@@ -140,6 +140,7 @@ void map::deactivate(){
 	delete[] heightMap;
 	delete[] seedMap;
 	regionMap = std::vector<tile>();
+	std::cout << "DEACTIVATION Y: " << y << " X: " << x << std::endl;
 	if(debug){
 			std::cout << "DONE DEACTIVATING MAP " << this << std::endl;
 	}
@@ -147,6 +148,7 @@ void map::deactivate(){
 
 void map::activate(){
 	// -- For activation
+	std::cout << "ACTIVATION Y: " << y << " X: " << x << std::endl;
 	if(activated == 1){
 		std::cout << "ERROR ALREADY ACTIVATED Y: " << y << " X: " << x << std::endl;
 		return;

@@ -219,7 +219,7 @@ int main( int argc, char* args[] )
 	// More constants.
     unsigned int sider;
 	 playSpace.playerRegionX = 63;
-	playSpace.playerRegionY = 63;
+	playSpace.playerRegionY = 0;
 	 //playSpace.playerTileX = 11;
 	//playSpace.playerTileY = 11;
 	//int viewRadius = 9;
@@ -479,6 +479,7 @@ int main( int argc, char* args[] )
 							std::cout << "PlayerZ: " << playerZ << std::endl;
 							std::cout << "tileY: " << playSpace.playerTileY << " tileX: " << playSpace.playerTileX << std::endl;
 							std::cout << "regionY: " << playSpace.playerRegionY << " regionX: " << playSpace.playerRegionX << std::endl;
+							std::cout << "worldY: " << playSpace.current->y << " worldX: " << playSpace.current->x << std::endl;
 							//for (int i = 0; i < playSpace.mapSide*playSpace.mapSide; ++i){
 							//	for (int e = 0; e < playSpace.tileSide*playSpace.tileSide; ++e)
 							//	{
