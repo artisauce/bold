@@ -154,6 +154,7 @@ void map::activate(){
 		std::cout << "ERROR ALREADY ACTIVATED Y: " << y << " X: " << x << std::endl;
 		return;
 	}
+
 	activated = 1;
 	srand(seed);
 	heightMap = new int[mapSide*mapSide];
