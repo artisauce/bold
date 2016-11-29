@@ -841,7 +841,7 @@ playerSpace::~playerSpace(){
 			startX = false;
 			delete xx->pointer;
 		}
-		yy.clear();
+		yy->clear();
 	}
 	cordMap.clear();
 	if(debug){
@@ -939,6 +939,7 @@ unsigned int playerSpace::view(float heightOffset, int playerHeight, int mapView
 			worldYOffset = 0;
 			worldXOffset = 0;
 			if(mapView){
+				std::cout << "ester: " << wy << " " << mapSide <<std::endl;
 				worldYOffset = wy/mapSide; // We determine how many worldspaces to left
 				wy-=(worldYOffset*mapSide); // Bring it back to index for appropiate region
 				if(wy == mapSide){

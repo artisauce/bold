@@ -939,6 +939,7 @@ unsigned int playerSpace::view(float heightOffset, int playerHeight, int mapView
 			worldYOffset = 0;
 			worldXOffset = 0;
 			if(mapView){
+				std::cout << "ester: " << wy << " " << mapSide <<std::endl;
 				worldYOffset = wy/mapSide; // We determine how many worldspaces to left
 				wy-=(worldYOffset*mapSide); // Bring it back to index for appropiate region
 				if(wy == mapSide){
@@ -958,6 +959,7 @@ unsigned int playerSpace::view(float heightOffset, int playerHeight, int mapView
 				////std::cout << usedMap->up << std::endl;
 				////std::cout << usedMap->left << std::endl;
 				////std::cout << usedMap->right << std::endl;
+				std::cout << "worldY " << worldYOffset <<std::endl;
 				while(worldYOffset){
 					if(worldYOffset>0){
 						////std::cout << "DIDd " << worldYOffset << " " << usedMap<< " " <<usedMap->down << " " << usedMap->up << " " << usedMap->left << " " << usedMap->right << std::endl;

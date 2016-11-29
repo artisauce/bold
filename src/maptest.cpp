@@ -497,10 +497,10 @@ int main( int argc, char* args[] )
 							//	}
 							//}
 							////std::cout << gold.size() << " " << bronze.size() << std::endl;
-							gold.clear();
-							gold = bronze;
+							//gold.clear();
+							//gold = bronze;
 							//std::cout << gold.size() << " " << bronze.size() << std::endl;
-							bronze.clear();
+							//bronze.clear();
 							//std::cout << gold.size() << " " << bronze.size() << std::endl;
 							viewer.clear(); // Clear print console map.
 							optimizeArray.clear(); // Clears optimization
