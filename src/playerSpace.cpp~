@@ -428,13 +428,11 @@ void playerSpace::travel(int yT, int xT, int mode){
 		coordinate currCord = *xIt;
 		//std::cout << "half" << std::endl;
 		coordinate* theTestCord;
-		coordinate* foundCord;
 		//coordinate* cordArray[(mapViewRadius*2)+1];
 		// we'll need to convert the thing below into a vector to work !!!
 		std::vector<std::list<coordinate>::iterator> iterArray; // needed?
 		iterArray.resize((mapViewRadius*2)+1);
 		//std::list<coordinate>::iterator testIterate;
-		coordinate* copyCord;
 		//std::cout << "tie" << std::endl;
 		int y;
 		int x;
@@ -490,12 +488,12 @@ void playerSpace::travel(int yT, int xT, int mode){
 			//std::cout << "go5" << std::endl;
 			for (int i = 0; i <= length; i++)
 			{
-				std::cout << "go5a " << i << " " << length << std::endl;
+				//std::cout << "go5a " << i << " " << length << std::endl;
 				x++;
 				theTestCord = (iterArray[i])->up;
 				//std::cout << "testaab: " << &(iterArray[0]) << " " << &xIt <<std::endl;
 				if(theTestCord){
-					std::cout << "FACTIVATE" << std::endl;
+					//std::cout << "FACTIVATE" << std::endl;
 					theTestCord->pointer->activate();
 					if(cordNumber != -1){
 						cordNumber = i; // so we only do this once
@@ -504,7 +502,7 @@ void playerSpace::travel(int yT, int xT, int mode){
 					}
 				}
 				else if(find(y,x,yIt,xIt)){
-					std::cout << "FINDA" << std::endl;
+					//std::cout << "FINDA" << std::endl;
 					(iterArray[i])->up = &(*xIt); //coordinates connect
 					xIt->down = &(*iterArray[i]); //coordinates connect
 					xIt->pointer->down = (iterArray[i])->pointer; // update up/down map
@@ -512,7 +510,7 @@ void playerSpace::travel(int yT, int xT, int mode){
 					xIt->pointer->activate();
 				}
 				else{
-					std::cout << "INSERTA" << std::endl;
+					//std::cout << "INSERTA" << std::endl;
 					madeMap = new map(seed,y,x,push,mapSide,tileSide,battlefieldSide,diagonal,debug);
 					//std::cout << "garch1 " <<  (iterArray[0])->pointer << " " << 0 <<  " " << (iterArray[0])->pointer->up << std::endl;
 					currCord = {y,x,madeMap,NULL,&(*iterArray[i])}; // Sorry
@@ -539,16 +537,16 @@ void playerSpace::travel(int yT, int xT, int mode){
 					//std::cout << "garch4 " << (iterArray[0])->pointer << " " << 0 <<  " " << xIt->pointer << std::endl;
 				}
 				if(x!=startCord && !theTestCord){ // left/right. left is gauranteed to be something, so...
-					std::cout << "garch5 " << (iterArray[0])->pointer << " " << 0 <<  " " << (iterArray[0])->pointer->up << std::endl;
+					//std::cout << "garch5 " << (iterArray[0])->pointer << " " << 0 <<  " " << (iterArray[0])->pointer->up << std::endl;
 					(iterArray[i-1])->pointer->up->right = (iterArray[i])->pointer->up;
 					(iterArray[i])->pointer->up->left = (iterArray[i-1])->pointer->up;
 				}
 			}
-			std::cout << "goa1" << std::endl;
+			//std::cout << "goa1" << std::endl;
 			current = current->up; // we transfer over.
 		}
 		else if (calcY){
-			std::cout << "go2" << std::endl;
+			//std::cout << "go2" << std::endl;
 			for (int i = 0; i < mapViewRadius; i++){
 				//std::cout << "YBC: " << (currCord).y << std::endl;
 				currCord = *(currCord.up); // GO UP TO DEACTIVATE
@@ -645,7 +643,7 @@ void playerSpace::travel(int yT, int xT, int mode){
 		madeMap = current; // We'll use this as temp this time.
 		map* testMap;
 		if(calcX>0){
-			std::cout << "go3" << std::endl;
+			//std::cout << "go3" << std::endl;
 			//std::cout << "bugFinder y: " << madeMap->y << " x: " << madeMap->x << std::endl;
 			for (int i = 0; i < mapViewRadius; i++){
 				madeMap = madeMap->left; // GO LEFT TO DEACTIVATE
@@ -726,7 +724,7 @@ void playerSpace::travel(int yT, int xT, int mode){
 			current = current->right; // we transfer over.
 		}
 		else if (calcX){
-			std::cout << "go4" << std::endl;
+			//std::cout << "go4" << std::endl;
 			for (int i = 0; i < mapViewRadius; i++){
 				//std::cout << "WENTCaaa " << madeMap->right << std::endl;
 				madeMap = madeMap->right; // GO RIGHT TO DEACTIVATE
@@ -843,6 +841,7 @@ playerSpace::~playerSpace(){
 			startX = false;
 			delete xx->pointer;
 		}
+		yy.clear();
 	}
 	cordMap.clear();
 	if(debug){
@@ -940,25 +939,16 @@ unsigned int playerSpace::view(float heightOffset, int playerHeight, int mapView
 			worldYOffset = 0;
 			worldXOffset = 0;
 			if(mapView){
-				if(wy<0){
-					worldYOffset = (wy)/mapSide; // We determine how many worldspaces to left
-				}
-				else{
-					worldYOffset = wy/mapSide; // We determine how many worldspaces to right
-				}
+				worldYOffset = wy/mapSide; // We determine how many worldspaces to left
 				wy-=(worldYOffset*mapSide); // Bring it back to index for appropiate region
 				if(wy == mapSide){
 					wy = 0;
 					worldYOffset++;
 				}
-				if(ex<0){
-					worldXOffset = (ex)/mapSide;
-				}
-				else{
-					std::cout << "ALERT= " << ex << " " << mapSide << std::endl;
-					worldXOffset = ex/mapSide;
-					std::cout << "ALERTD= " << worldXOffset << std::endl;
-				}
+				
+				////std::cout << "ALERT= " << ex << " " << mapSide << std::endl;
+				worldXOffset = ex/mapSide;
+				////std::cout << "ALERTD= " << worldXOffset << std::endl;
 				ex -=(worldXOffset*mapSide);
 				if(ex == mapSide){
 					ex = 0;
@@ -1005,14 +995,8 @@ unsigned int playerSpace::view(float heightOffset, int playerHeight, int mapView
 				continue;
 			}
 			else{
-				if(wy<0){
-					regionYOffset = wy/tileSide;
-					////std::cout << "GO1 " << regionYOffset<< std::endl;
-				}
-				else{
-					regionYOffset = wy/tileSide;
-					////std::cout << "GO2 " <<  regionYOffset<< std::endl;
-				}
+				
+				regionYOffset = wy/tileSide;
 				////std::cout << "AGO1 " << wy << std::endl;
 				wy-=(regionYOffset*tileSide);
 				////std::cout << "AGO1 " << wy << std::endl;
@@ -1020,12 +1004,7 @@ unsigned int playerSpace::view(float heightOffset, int playerHeight, int mapView
 					wy = 0;
 					regionYOffset++;
 				}
-				if(ex<0){
-					regionXOffset = (ex)/tileSide;
-				}
-				else{
-					regionXOffset = ex/tileSide;
-				}
+				regionXOffset = ex/tileSide;
 				ex -=(regionXOffset*tileSide);
 				if(ex == tileSide){
 					ex = 0;
@@ -1034,59 +1013,49 @@ unsigned int playerSpace::view(float heightOffset, int playerHeight, int mapView
 				////std::cout<<regionXOffset<<" "<<regionYOffset<<" "<<tileSide<<std::endl;
 				regionYOffset+=playerRegionY;
 				regionXOffset+=playerRegionX; // get the regions
-				if(regionYOffset<0){
-						worldYOffset = (regionYOffset)/mapSide; // We determine how many worldspaces to left
+				worldYOffset = regionYOffset/mapSide; // We determine how many worldspaces to right
+				regionYOffset-=(worldYOffset*mapSide); // Bring it back to index for appropiate region
+				if(regionYOffset == mapSide){
+					regionYOffset = 0;
+					worldYOffset++;
+				}
+				worldXOffset = (regionXOffset)/mapSide;
+				regionXOffset -=(worldXOffset*mapSide);
+				if(regionXOffset == mapSide){
+					regionXOffset = 0;
+					worldXOffset++;
+				}
+				while(worldYOffset){
+				////std::cout << "======WARN=====" << std::endl;
+				if(worldYOffset>0){
+					usedMap = usedMap->down;
+					worldYOffset--;
+				}
+				else if(worldYOffset<0){
+					usedMap = usedMap->up;
+					worldYOffset++;
+				}
+				}
+				while(worldXOffset){
+					////std::cout << "======WARN=====" << std::endl;
+					if(worldXOffset>0){
+						usedMap = usedMap->right;
+						worldXOffset--;
 					}
-					else{
-						worldYOffset = regionYOffset/mapSide; // We determine how many worldspaces to right
-					}
-					regionYOffset-=(worldYOffset*mapSide); // Bring it back to index for appropiate region
-					if(regionYOffset == mapSide){
-						regionYOffset = 0;
-						worldYOffset++;
-					}
-					if(regionXOffset<0){
-						worldXOffset = (regionXOffset)/mapSide;
-					}/////
-					else{
-						worldXOffset = regionXOffset/mapSide;
-					}
-					regionXOffset -=(worldXOffset*mapSide);
-					if(regionXOffset == mapSide){
-						regionXOffset = 0;
+					else if(worldXOffset<0){
+						usedMap = usedMap->left;
 						worldXOffset++;
 					}
-					while(worldYOffset){
-						////std::cout << "======WARN=====" << std::endl;
-						if(worldYOffset>0){
-							usedMap = usedMap->down;
-							worldYOffset--;
-						}
-						else if(worldYOffset<0){
-							usedMap = usedMap->up;
-							worldYOffset++;
-						}
-					}
-					while(worldXOffset){
-						////std::cout << "======WARN=====" << std::endl;
-						if(worldXOffset>0){
-							usedMap = usedMap->right;
-							worldXOffset--;
-						}
-						else if(worldXOffset<0){
-							usedMap = usedMap->left;
-							worldXOffset++;
-						}
-					}
-					//if(worldXOffset<0 || worldYOffset<0 || worldXOffset >= worldSide || worldYOffset >=worldSide){
-					//	memoryMap.push_back(0);
-					//	viewMap.push_back(0);
-					//	continue;
-					//}
-					////std::cout << "REGION: " << regionYOffset << " " << regionXOffset << std::endl;
-					////std::cout << "TILE: " << wy << " " << ex << std::endl;
-					viewMap.push_back(usedMap->regionMap[(regionYOffset*mapSide) + regionXOffset].tileMap[(wy*tileSide)+ex]);
-					memoryMap.push_back(usedMap->regionMap[(regionYOffset*mapSide) + regionXOffset].tileMemoryMap[(wy*tileSide)+ex]);
+				}
+				//if(worldXOffset<0 || worldYOffset<0 || worldXOffset >= worldSide || worldYOffset >=worldSide){
+				//	memoryMap.push_back(0);
+				//	viewMap.push_back(0);
+				//	continue;
+				//}
+				////std::cout << "REGION: " << regionYOffset << " " << regionXOffset << std::endl;
+				////std::cout << "TILE: " << wy << " " << ex << std::endl;
+				viewMap.push_back(usedMap->regionMap[(regionYOffset*mapSide) + regionXOffset].tileMap[(wy*tileSide)+ex]);
+				memoryMap.push_back(usedMap->regionMap[(regionYOffset*mapSide) + regionXOffset].tileMemoryMap[(wy*tileSide)+ex]);
 			}
 			//if(theMap.regionMap[(regionYOffset*mapSide) + regionXOffset].tileMap[(wy*tileSide)+ex] > 9){
 				////std::cout << theMap.regionMap[(regionYOffset*mapSide) + regionXOffset].tileMap[(wy*tileSide)+ex] << std::endl;
@@ -1185,23 +1154,13 @@ unsigned int playerSpace::view(float heightOffset, int playerHeight, int mapView
 					worldXOffset = 0;
 					usedMap = current;
 					if(mapView){
-							if(wy<0){
-								worldYOffset = (wy)/mapSide; // We determine how many worldspaces to left
-							}
-							else{
-								worldYOffset = wy/mapSide; // We determine how many worldspaces to right
-							}
+							worldYOffset = wy/mapSide; // We determine how many worldspaces to right
 							wy-=(worldYOffset*mapSide); // Bring it back to index for appropiate region
 							if(wy == mapSide){
 								wy = 0;
 								worldYOffset++;
 							}
-							if(ex<0){
-								worldXOffset = (ex)/mapSide;
-							}/////
-							else{
-								worldXOffset = ex/mapSide;
-							}
+							worldXOffset = ex/mapSide;
 							ex -=(worldXOffset*mapSide);
 							if(ex == mapSide){
 								ex = 0;
@@ -1241,23 +1200,13 @@ unsigned int playerSpace::view(float heightOffset, int playerHeight, int mapView
 							continue;
 					}
 					else{
-							if(wy<0){
-								regionYOffset = (wy)/tileSide;
-							}
-							else{
-								regionYOffset = wy/tileSide;
-							}
+							regionYOffset = wy/tileSide;
 							wy-=(regionYOffset*tileSide);
 							if(wy == tileSide){
 								wy = 0;
 								regionYOffset++;
 							}
-							if(ex<0){
-								regionXOffset = (ex)/tileSide;
-							}
-							else{
-								regionXOffset = ex/tileSide;
-							}
+							regionXOffset = ex/tileSide;
 							ex -=(regionXOffset*tileSide);
 							if(ex == tileSide){
 								ex = 0;
@@ -1265,23 +1214,13 @@ unsigned int playerSpace::view(float heightOffset, int playerHeight, int mapView
 							}
 							regionYOffset+=playerRegionY;
 							regionXOffset+=playerRegionX; // get the regions
-							if(regionYOffset<0){
-								worldYOffset = (regionYOffset)/mapSide; // We determine how many worldspaces to left
-							}
-							else{
-								worldYOffset = regionYOffset/mapSide; // We determine how many worldspaces to right
-							}
+							worldYOffset = regionYOffset/mapSide; // We determine how many worldspaces to
 							regionYOffset-=(worldYOffset*mapSide); // Bring it back to index for appropiate region
 							if(regionYOffset == mapSide){
 								regionYOffset = 0;
 								worldYOffset++;
 							}
-							if(regionXOffset<0){
-								worldXOffset = (regionXOffset)/mapSide;
-							}/////
-							else{
-								worldXOffset = regionXOffset/mapSide;
-							}
+							worldXOffset = regionXOffset/mapSide;
 							regionXOffset -=(worldXOffset*mapSide);
 							if(regionXOffset == mapSide){
 								regionXOffset = 0;

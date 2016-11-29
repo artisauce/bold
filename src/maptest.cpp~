@@ -195,7 +195,7 @@ bool init()
 int main( int argc, char* args[] )
 {
 	std::ios::sync_with_stdio(false); // This allows fast output for the move demo.
-    srand(2);
+    srand(1505335276);
 	// Constants.
     bool debug = false;
     bool diagonal = true;
@@ -208,8 +208,10 @@ int main( int argc, char* args[] )
     tileSet.push_back("~"); // as -5. Ground
     tileSet.push_back("T"); // as -6. Tree
 	int specialTiles = 4; // -1 (empty/hidden space) -2 (alternate hidden space), -3 (circleInvsi) ,-4 (skipline)
-	int viewRadius = mapSide*3;
-    playerSpace playSpace(rand(), viewRadius, pushCoefficient, mapSide, tileSide, battlefieldSide,  diagonal, debug);
+	int viewRadius = 32;
+	
+    playerSpace playSpace(1505335276, viewRadius, pushCoefficient, mapSide, tileSide, battlefieldSide,  diagonal, debug);
+	
 	//playerSpace(unsigned int seedInput, int playerViewRadius, const double pushInput, size_t mapSideInput, 
 	//size_t tileSideInput, size_t battlefieldSideInput, const bool diagonalInput, const bool debugInput)
     if(debug){
@@ -235,8 +237,6 @@ int main( int argc, char* args[] )
 	int playerZ = playSpace.current->regionMap[playSpace.playerRegionY*mapSide + playSpace.playerRegionX].tileMap[playSpace.playerTileY*tileSide + playSpace.playerTileX];
 	std::vector<int> optimizeArray;
 	std::vector<int> memoryMap;
-	std::vector<int> bronze;
-	std::vector<int> gold;
 	std::cout << "Got here" << std::endl;
     viewer.clear(); // Clear print console map.
 	optimizeArray.clear(); // Clears optimization
@@ -244,6 +244,7 @@ int main( int argc, char* args[] )
 	//playerSpace::view(float heightOffset, int playerHeight, int mapView, bool circle, bool borders, bool playerSee, bool wallMode, std::vector<int>& viewMap, std::vector<int>* optimizeArray, std::vector<int>& memoryMap,int specialTiles, bool InvisibleAboveCustom, bool checkAll, bool debug){
 	sider = playSpace.view(heightOffset,playerZ,mapView,circleView,false,true,true,viewer,&optimizeArray,memoryMap,specialTiles,
 	seeAboveInvisible,checkAll,mapDebug); // Sider is length.
+	
 	std::cout << "Got through" << std::endl;
  //    std::cout << " VECTOR MAP " << std::endl;
  //    printMapVector(viewer,sider,tileSet);
@@ -532,7 +533,6 @@ int main( int argc, char* args[] )
 	//Quit SDL subsystems
 	IMG_Quit();
 	SDL_Quit();
-
 	return 0;
 }
 

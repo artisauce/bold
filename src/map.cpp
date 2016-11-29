@@ -93,7 +93,7 @@ map::map(map const& src): // For copying -- MANDATORY FOR VECTORS, SEE: Rule of 
 			heightMap[i] = src.heightMap[i];
 			seedMap[i] = src.seedMap[i];
 			regionMemoryMap[i] = src.regionMemoryMap[i];
-			regionMap.push_back(tile((src.regionMap)[i]));
+			regionMap.emplace_back((src.regionMap)[i]);
 		}
 		ySpareList = src.ySpareList;
 		xSpareList = src.xSpareList;
@@ -123,6 +123,7 @@ map::~map(){
 		regionMap = std::vector<tile>(); // just in case
 		delete[] regionMemoryMap;
 	}
+	std::cout << "DONE DELETING MAP " << this << " Y: " << y << " X: " << x << std::endl;
 	if(debug){
 			std::cout << "DONE DELETING MAP " << this << std::endl;
 	}
@@ -170,7 +171,10 @@ void map::activate(){
     //printMap(heightMap,mapSide);
     for (int i = 0; i < mapSide*mapSide; ++i)
 	{
-		regionMap.push_back(tile(seedMap[i],this,((int)(i/mapSide)),i%mapSide));
+		//std::cout << "EMPLACE" << std::endl;
+		// http://stackoverflow.com/questions/4303513/push-back-vs-emplace-back
+		regionMap.emplace_back(seedMap[i],this,((int)(i/mapSide)),i%mapSide); // This makes things faster.
+		//std::cout << "EMPLACEND" << std::endl;
 		//printMap(regionMap[i].tileMap,tileSide);
 		if(debug){
 			std::cout << "MAP " << this << ": #" << i << " TILE CREATED: " << &(regionMap[i]) << std::endl; 
