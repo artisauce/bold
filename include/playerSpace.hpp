@@ -8,11 +8,11 @@ public:
 	// -- ESSENTIAL
 	const unsigned int seed;
 	// -- ESSENTIAL
-
+ 
 	// -- Settings
-	const size_t mapSide;
-	const size_t tileSide;
-	const size_t battlefieldSide;
+	const int mapSide;
+	const int tileSide;
+	const int battlefieldSide;
 	const double push;
 	const bool diagonal;
 	const bool debug;

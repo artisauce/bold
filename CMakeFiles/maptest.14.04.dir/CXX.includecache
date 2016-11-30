@@ -6,13 +6,33 @@
 
 #IncludeRegexTransform: 
 
-/home/gefer8/bold/src/maptest.cpp
+/home/dmagaril/bold/src/battleField.cpp
+map.hpp
+/home/dmagaril/bold/src/map.hpp
+
+/home/dmagaril/bold/src/map.cpp
 playerSpace.hpp
-/home/gefer8/bold/src/playerSpace.hpp
+/home/dmagaril/bold/src/playerSpace.hpp
+
+/home/dmagaril/bold/src/maptest.cpp
+playerSpace.hpp
+/home/dmagaril/bold/src/playerSpace.hpp
 SDL.h
-/home/gefer8/bold/src/SDL.h
+/home/dmagaril/bold/src/SDL.h
 SDL_image.h
-/home/gefer8/bold/src/SDL_image.h
+/home/dmagaril/bold/src/SDL_image.h
+
+/home/dmagaril/bold/src/playerSpace.cpp
+playerSpace.hpp
+/home/dmagaril/bold/src/playerSpace.hpp
+
+/home/dmagaril/bold/src/tile.cpp
+map.hpp
+/home/dmagaril/bold/src/map.hpp
+
+/home/dmagaril/bold/src/toolkit.cpp
+toolkit.hpp
+/home/dmagaril/bold/src/toolkit.hpp
 
 include/battleField.hpp
 toolkit.hpp
