@@ -21,6 +21,8 @@ playerSpace::playerSpace(unsigned int seedInput, int playerViewRadius, const dou
 	playerTileX=0;
 		cordMap = {};
     	current = new map(seed,0,0,push,mapSide,tileSide,battlefieldSide,diagonal,debug); 
+    	current->deactivate();
+    	current->activate();
 	map* tempMap;
 	if(debug)
 	std::cout << "PLAYERSPACE " << this << ": #" << 0 << " MAP CREATED: " << current << std::endl; 
@@ -409,7 +411,7 @@ void playerSpace::travel(int yT, int xT, int mode){
 		playerTileY-=(regionYOffset*tileSide);
 		playerRegionY+=regionYOffset;
 	}
-	else{
+	else if(playerTileY>=tileSide){
 		playerRegionY+=playerTileY/tileSide;
 		playerTileY=playerTileY%tileSide;
 	}
@@ -418,19 +420,35 @@ void playerSpace::travel(int yT, int xT, int mode){
 		playerTileX-=(regionXOffset*tileSide);
 		playerRegionX+=regionXOffset;
 	}
-	else{
+	else if(playerTileX>=tileSide){
 		playerRegionX+=playerTileX/tileSide;
 		playerTileX=playerTileX%tileSide;
-	}//////////////////////////////////// HERER
+	}
 	std::cout << "ALER1: " << playerRegionY << std::endl;
-	worldYDest+=playerRegionY/mapSide;
-	worldXDest+=playerRegionX/mapSide;
+	if(playerRegionY<0){
+		worldYDest+=((playerRegionY+1)/mapSide) - 1;
+		playerRegionY-=((worldYDest-playerWorldY)*mapSide);
+	}
+	else if(playerRegionY>=mapSide){
+		worldYDest+=playerRegionY/mapSide;
+		playerRegionY=playerRegionY%mapSide;
+	}
+	//worldYDest+=playerRegionY/mapSide;
+	if(playerRegionX<0){
+		worldXDest+=((playerRegionX+1)/mapSide) - 1;
+		playerRegionX-=((worldXDest-playerWorldX)*mapSide);
+	}
+	else if(playerRegionX>=mapSide){
+		worldXDest+=playerRegionX/mapSide;
+		playerRegionX=playerRegionX%mapSide;
+	}
+	//worldXDest+=playerRegionX/mapSide;
 	std::cout << "ALER2: " << worldYDest << std::endl;
-	playerTileX=playerTileX%tileSide;
-	playerTileY=playerTileY%tileSide;
+	//playerTileX=playerTileX%tileSide;
+	//playerTileY=playerTileY%tileSide;
 	std::cout << "ALER3: " << playerTileY << std::endl;
-	playerRegionY=playerRegionY%mapSide;
-	playerRegionX=playerRegionX%mapSide;
+	
+	//playerRegionX=playerRegionX%mapSide;
 	int calcY = worldYDest-current->y;
 	int calcX = worldXDest-current->x;
 	playerWorldY=worldYDest;
@@ -673,6 +691,7 @@ void playerSpace::travel(int yT, int xT, int mode){
 				//std::cout << "bugFinder y: " << madeMap->y << " x: " << madeMap->x << std::endl;
 			}
 			//std::cout << "WENTBa" << std::endl;
+			madeMap->activate();
 			madeMap->deactivate();
 			spareCord = *(madeMap->xConnector);
 			//std::cout << "cord y: " << spareCord.y << " x: " << spareCord.x << std::endl;

@@ -83,6 +83,7 @@ map::map(map const& src): // For copying -- MANDATORY FOR VECTORS, SEE: Rule of 
 	if(debug){
 		std::cout << "CREATING MAP CPY " << this <<  std::endl;
 	}
+	std::cout << "We copied?" << std::endl;
 	if(activated){
 		heightMap = new int[mapSide*mapSide];
 		seedMap = new int[mapSide*mapSide];
@@ -113,6 +114,7 @@ map::~map(){
 	if(debug){
 		std::cout << "DELETING MAP " << this << std::endl;
 	}
+	std::cout << "---DELETING Y: " << y << " X: " << x << std::endl;
 	if(activated){
 		delete[] heightMap;
 		delete[] seedMap;
@@ -138,7 +140,9 @@ void map::deactivate(){
 		return;
 	}
 	activated = 0;
+	std::cout << "START DEACTIVATION Y: " << y << " X: " << x << " POINT: " << heightMap[10] << std::endl;
 	delete[] heightMap;
+	std::cout << "YELL" << std::endl;
 	delete[] seedMap;
 	regionMap = std::vector<tile>();
 	std::cout << "DEACTIVATION Y: " << y << " X: " << x << std::endl;
