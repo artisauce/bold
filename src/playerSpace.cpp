@@ -424,7 +424,7 @@ void playerSpace::travel(int yT, int xT, int mode){
 		playerRegionX+=playerTileX/tileSide;
 		playerTileX=playerTileX%tileSide;
 	}
-	std::cout << "ALER1: " << playerRegionY << std::endl;
+	//std::cout << "ALER1: " << playerRegionY << std::endl;
 	if(playerRegionY<0){
 		worldYDest+=((playerRegionY+1)/mapSide) - 1;
 		playerRegionY-=((worldYDest-playerWorldY)*mapSide);
@@ -443,10 +443,10 @@ void playerSpace::travel(int yT, int xT, int mode){
 		playerRegionX=playerRegionX%mapSide;
 	}
 	//worldXDest+=playerRegionX/mapSide;
-	std::cout << "ALER2: " << worldYDest << std::endl;
+	//std::cout << "ALER2: " << worldYDest << std::endl;
 	//playerTileX=playerTileX%tileSide;
 	//playerTileY=playerTileY%tileSide;
-	std::cout << "ALER3: " << playerTileY << std::endl;
+	//std::cout << "ALER3: " << playerTileY << std::endl;
 	
 	//playerRegionX=playerRegionX%mapSide;
 	int calcY = worldYDest-current->y;
@@ -1226,7 +1226,7 @@ unsigned int playerSpace::view(float heightOffset, int playerHeight, int mapView
 								worldXOffset = ((ex+1)/mapSide)-1;
 							}
 							else{
-								worldXOffset = wy/mapSide;
+								worldXOffset = ex/mapSide;
 							}
 							//worldXOffset = ex/mapSide;
 							ex -=(worldXOffset*mapSide);
@@ -1254,6 +1254,7 @@ unsigned int playerSpace::view(float heightOffset, int playerHeight, int mapView
 							//	continue; // Skip OOB
 							//}
 							////std::cout << theMap.bigMap[worldYOffset * worldSide + worldXOffset].heightMap[(wy*tileSide)+ex] << std::endl;
+							//std::cout << "FIND BUGGER: Y: " << wy << " X: " << ex << std::endl;
 							usedMap->regionMemoryMap[(wy*mapSide)+ex] = 1;
 							////std::cout << "GI HERE " << theMap.bigMap[worldYOffset * worldSide + worldXOffset].regionMemoryMap[(wy*tileSide)+ex]<< std::endl;
 							if(trigger){
@@ -1317,6 +1318,7 @@ unsigned int playerSpace::view(float heightOffset, int playerHeight, int mapView
 							//if(worldXOffset<0 || worldYOffset<0 || worldXOffset >= worldSide || worldYOffset >=worldSide){
 							//	continue; // Skip OOB
 							//}
+							//std::cout << "FIND BUGGER: RY: " << regionYOffset << "RX: " << regionXOffset <<" Y: "<< wy << " X: " << ex << std::endl;
 							usedMap->regionMap[(regionYOffset*mapSide) + regionXOffset].tileMemoryMap[(wy*tileSide)+ex] = 1;
 							if(trigger){
 								memoryMap[indexB] = usedMap->regionMap[(regionYOffset*mapSide) + regionXOffset].tileMap[(wy*tileSide)+ex]+1;
