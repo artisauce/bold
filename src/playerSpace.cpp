@@ -1171,7 +1171,7 @@ unsigned int playerSpace::view(float heightOffset,  int mapView, bool circle, bo
 	//std::cout<<std::endl;
 	int boolMap[viewTileWidth*viewTileWidth];
 	std::vector<std::vector<std::vector<double>>> funcTracking;
-	funcTracking.resize(2); // First is playerIsHigher
+	funcTracking.resize(4); // First is playerIsHigher + yMode*2
 	funcTracking[0].resize(4); // Then is xShift + yShift*2
 	//funcTracking[0][0].resize(2);
 	//funcTracking[0][1].resize(2);
@@ -1182,6 +1182,8 @@ unsigned int playerSpace::view(float heightOffset,  int mapView, bool circle, bo
 	//funcTracking[1][1].resize(2);
 	//funcTracking[1][2].resize(2);
 	//funcTracking[1][3].resize(2);
+	funcTracking[2].resize(4);
+	funcTracking[3].resize(4);
 	if(wallMode && !borders){ // for the time being, it's incompatible with borders
 		for (int i = 0; i < viewTileWidth*viewTileWidth; i++)
 		{

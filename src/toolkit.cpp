@@ -320,6 +320,8 @@ void viewLine(int length, int* viewMap,std::vector<std::vector<std::vector<doubl
 		std::cout << "sFunc: " << (yTar - playerY) << std::endl;
 		std::cout << "higher: " << playerIsHigher << std::endl;
 	}
+    int altMode=1; // I almost avoided using this completely
+    // until i decided to keep in mind the height of perfect diagonals. Yeah.
 	if(yMode){
 		function=(double)xDiff/(double)yDiff;
 		
@@ -388,6 +390,9 @@ void viewLine(int length, int* viewMap,std::vector<std::vector<std::vector<doubl
 		if(yDiff<=0){
 			mode=-1;
 		}
+        if(xDiff<=0){
+            altMode=-1;
+        }
 		if(xDiff && playerIsHigher){
 			x+=indent;
 		}
@@ -462,29 +467,32 @@ void viewLine(int length, int* viewMap,std::vector<std::vector<std::vector<doubl
 		if(xDiff<=0){
 			mode=-1;
 		}
+        if(yDiff<=0){
+            altMode=-1;
+        }
 		if(yDiff && playerIsHigher){
 			y+=indent;
 		}
 	}
 	//std::find(vector.begin(), vector.end(), item) != vector.end()
-	std::vector<double>* vectorCheck = &((*funcTracker)[playerIsHigher][trackIndex]);
+	std::vector<double>* vectorCheck = &((*funcTracker)[playerIsHigher+yMode*2][trackIndex]);
 	if(std::find(vectorCheck->begin(),vectorCheck->end(),function+1.00) != vectorCheck->end()){
 		//std::cout << vectorCheck << std::endl;
-		std::cout << trackIndex << std::endl;
-		std::cout << "xShift: " << xShift << " yShift: " << yShift << std::endl;
-		std::cout << "==== " << function << std::endl;
-		std::cout << "xDiff: " << xDiff << " yDiff: " << yDiff << std::endl;
-		if(yDiff == -23 && (xDiff == -1 || xDiff == 1)){
-			std::cout << "++++UNIQUE: " << function << std::endl;
-		}
+		//std::cout << trackIndex << " | " << playerIsHigher+yMode*2 << std::endl;
+		//std::cout << "xShift: " << xShift << " yShift: " << yShift << std::endl;
+		//std::cout << "==== " << function << std::endl;
+		//std::cout << "xDiff: " << xDiff << " yDiff: " << yDiff << std::endl;
+		//if(yDiff == -23 && (xDiff == -1 || xDiff == 1)){
+		//	std::cout << "++++UNIQUE: " << function << std::endl;
+		//}
 		return;
 	}
 	else{
-		std::cout << "---ALARM--v: " << std::endl;
-		std::cout << trackIndex << std::endl;
-		std::cout << "8888 " << function << std::endl;
-		std::cout << "xDiff: " << xDiff << " yDiff: " << yDiff << std::endl;
-		std::cout << "---ALARM--^: " << std::endl;
+		//std::cout << "---ALARM--v: " << std::endl;
+		//std::cout << trackIndex << " | " << playerIsHigher+yMode*2 << std::endl;
+		//std::cout << "8888 " << function << std::endl;
+		//std::cout << "xDiff: " << xDiff << " yDiff: " << yDiff << std::endl;
+		//std::cout << "---ALARM--^: " << std::endl;
 		//std::cout << "xDiff: " << xDiff << " yDiff: " << yDiff << std::endl;
 		vectorCheck->push_back(function+1.00);
 
@@ -503,8 +511,11 @@ void viewLine(int length, int* viewMap,std::vector<std::vector<std::vector<doubl
 	playerHeight+=heightOffset; // Because we want to look over edges to an extent.
 	if(debug)
 	std::cout << "---" << std::endl;
+    int maxHeight = 0; // For perfect diagonals
+    int maxHeight2 = 0; // For perfect diagonals
 	if(yMode){
 		while(1){
+            maxHeight = -1000; // Hopefully.
 			if(!goBack){
 			y+=mode;}
 			if(x<0 || y<0 || x == length || y == length){
@@ -522,12 +533,25 @@ void viewLine(int length, int* viewMap,std::vector<std::vector<std::vector<doubl
 			if(get != x){
 				calc = ((((double)get + check) - playerXD)/(function)) + playerYD;
 				saveDouble = ((double)get) + check;
-				x = saveDouble; // Both truncates
 				if((int)(calc) != (y-mode) && playerIsHigher){
 					goBack = true;
 				}
+                x = saveDouble; // Both truncates
 				y = calc;
 				currHeight = actualMap[(y*length)+x];
+                if(maxHeight>currHeight){
+                    currHeight=maxHeight;
+                }
+                else if(playerIsHigher){ // This is case in perfect diagonal crossing !!!
+                    maxHeight = actualMap[(y*length)+x];
+                    maxHeight2 = actualMap[((y-mode)*length)+(x+altMode)];
+                    if(maxHeight2>maxHeight){
+                        maxHeight = maxHeight2;
+                    }
+                    //std::cout << "ALER: " << playerY << " " << playerX << std::endl;
+                    //std::cout << "ALRAM: " << y << " " << x << " " << function << std::endl;
+                    //std::cout << "ALRAM2: " << saveDouble << " " << calc << std::endl;
+                }
 				tempAngle = (currHeight-playerHeight)/distD(playerYD,playerXD,calc,saveDouble);
 				if(debug){
 					std::cout << "intermX: " << x << " intermY: " << y << std::endl;
@@ -588,6 +612,7 @@ void viewLine(int length, int* viewMap,std::vector<std::vector<std::vector<doubl
 		return;
 	}
 	while(1){
+        maxHeight = -1000; // Hopefully.
 		if(debug)
 		std::cout << "goBack: " << goBack << std::endl;
 		if(!goBack){
@@ -607,12 +632,25 @@ void viewLine(int length, int* viewMap,std::vector<std::vector<std::vector<doubl
 		if(get != y){
 			calc = ((((double)get + check) - playerYD)/(function)) + playerXD;
 			saveDouble = ((double)get) + check;
-			y = saveDouble; // Both truncates
 			if((int)(calc) != (x-mode) && playerIsHigher){
 				goBack = true;
 			}
+            else if(playerIsHigher){ // This is case in perfect diagonal crossing !!!
+                maxHeight = actualMap[(y*length)+x];
+                maxHeight2 = actualMap[((y+altMode)*length)+(x-mode)];
+                if(maxHeight2>maxHeight){
+                    maxHeight = maxHeight2;
+                }
+                //std::cout << "ALER: " << playerY << " " << playerX << std::endl;
+                //std::cout << "ALRAM: " << y << " " << x << " " << function << std::endl;
+                //std::cout << "ALRAM2: " << saveDouble << " " << calc << std::endl;
+            }
+            y = saveDouble; // Both truncates
 			x = calc;
 			currHeight = actualMap[(y*length)+x];
+            if(maxHeight>currHeight){
+                currHeight=maxHeight;
+            }
 			tempAngle = (currHeight-playerHeight)/distD(playerYD,playerXD,saveDouble,calc);
 			if(debug){
 				std::cout << "intermX: " << x << " intermY: " << y << std::endl;
