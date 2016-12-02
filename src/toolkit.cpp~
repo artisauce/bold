@@ -482,7 +482,6 @@ void viewLine(int length, int* viewMap,std::vector<std::vector<std::vector<doubl
 	else{
 		std::cout << "---ALARM--v: " << std::endl;
 		std::cout << trackIndex << std::endl;
-		std::cout << "8888 " << function << std::endl;
 		std::cout << "xDiff: " << xDiff << " yDiff: " << yDiff << std::endl;
 		std::cout << "---ALARM--^: " << std::endl;
 		//std::cout << "xDiff: " << xDiff << " yDiff: " << yDiff << std::endl;

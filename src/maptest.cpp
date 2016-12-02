@@ -208,7 +208,7 @@ int main( int argc, char* args[] )
     tileSet.push_back("~"); // as -5. Ground
     tileSet.push_back("T"); // as -6. Tree
 	int specialTiles = 4; // -1 (empty/hidden space) -2 (alternate hidden space), -3 (circleInvsi) ,-4 (skipline)
-	int viewRadius = 32;
+	int viewRadius = 23;
 	
     playerSpace playSpace(1505335276, viewRadius, pushCoefficient, mapSide, tileSide, battlefieldSide,  diagonal, debug);
 	
@@ -222,6 +222,7 @@ int main( int argc, char* args[] )
     unsigned int sider;
 	 playSpace.playerRegionX = 32;
 	playSpace.playerRegionY = 32;
+	playSpace.travel(0, 0, rand());
 	 //playSpace.playerTileX = 11;
 	//playSpace.playerTileY = 11;
 	//int viewRadius = 9;
@@ -230,11 +231,10 @@ int main( int argc, char* args[] )
 	bool seeAboveInvisible = false;
 	bool circleView = false;
 	bool mapDebug = false;
-	bool playerFly = false;
+	bool flyMode = false;
 	bool checkAll = false; // See notes in viewline.
 	bool memoryMode = false; // See what you saw before.
 	int calcHeight; // For calculating height.
-	int playerZ = playSpace.current->regionMap[playSpace.playerRegionY*mapSide + playSpace.playerRegionX].tileMap[playSpace.playerTileY*tileSide + playSpace.playerTileX];
 	std::vector<int> optimizeArray;
 	std::vector<int> memoryMap;
 	std::cout << "Got here" << std::endl;
@@ -242,7 +242,7 @@ int main( int argc, char* args[] )
 	optimizeArray.clear(); // Clears optimization
 	memoryMap.clear();
 	//playerSpace::view(float heightOffset, int playerHeight, int mapView, bool circle, bool borders, bool playerSee, bool wallMode, std::vector<int>& viewMap, std::vector<int>* optimizeArray, std::vector<int>& memoryMap,int specialTiles, bool InvisibleAboveCustom, bool checkAll, bool debug){
-	sider = playSpace.view(heightOffset,playerZ,mapView,circleView,false,true,true,viewer,&optimizeArray,memoryMap,specialTiles,
+	sider = playSpace.view(heightOffset,mapView,circleView,false,true,true,viewer,&optimizeArray,memoryMap,specialTiles,
 	seeAboveInvisible,checkAll,mapDebug); // Sider is length.
 	
 	std::cout << "Got through" << std::endl;
@@ -385,8 +385,8 @@ int main( int argc, char* args[] )
 							break;
 
 							case SDLK_f: // Toggle custom see above invisible
-							playerFly=!playerFly;
-							std::cout << "playerFly: " << playerFly << std::endl;
+							playSpace.flyMode=(playSpace.flyMode+1)%3;
+							std::cout << "flyMode: " << playSpace.flyMode << std::endl;
 							SDL_Delay(250);
 							break;
 
@@ -433,14 +433,14 @@ int main( int argc, char* args[] )
 							break;
 
 							case SDLK_PERIOD: // Toggle checkAll. See viewline func
-							playerZ++;
-							std::cout << "playerZ: " << playerZ << std::endl;
+							playSpace.playerZ++;
+							std::cout << "playerZ: " << playSpace.playerZ << std::endl;
 							SDL_Delay(250);
 							break;
 
 							case SDLK_COMMA: // Toggle checkAll. See viewline func
-							playerZ--;
-							std::cout << "playerZ: " << playerZ << std::endl;
+							playSpace.playerZ--;
+							std::cout << "playerZ: " << playSpace.playerZ << std::endl;
 							SDL_Delay(250);
 							break;
 
@@ -454,31 +454,7 @@ int main( int argc, char* args[] )
 							yMode = 0;
 							xMode = 0;
 							// Done move.
-							if(!playerFly){
-								if(mapView){
-									playerZ = playSpace.current->heightMap[playSpace.playerRegionY*mapSide + playSpace.playerRegionX];
-								}
-								else{
-									playerZ = playSpace.current->regionMap[playSpace.playerRegionY*mapSide + playSpace.playerRegionX].tileMap[playSpace.playerTileY*tileSide + playSpace.playerTileX];
-								}
-								
-							}
-							else{
-								if(mapView){
-									calcHeight = playSpace.current->heightMap[playSpace.playerRegionY*mapSide + playSpace.playerRegionX];
-									if(calcHeight > playerZ){
-										playerZ = calcHeight;
-									}
-									
-								}
-								else{
-									calcHeight = playSpace.current->regionMap[playSpace.playerRegionY*mapSide + playSpace.playerRegionX].tileMap[playSpace.playerTileY*tileSide + playSpace.playerTileX];
-									if(calcHeight > playerZ){
-										playerZ = calcHeight;
-									}
-								}
-							}
-							std::cout << "PlayerZ: " << playerZ << std::endl;
+							std::cout << "PlayerZ: " << playSpace.playerZ << std::endl;
 							std::cout << "tileY: " << playSpace.playerTileY << " tileX: " << playSpace.playerTileX << std::endl;
 							std::cout << "regionY: " << playSpace.playerRegionY << " regionX: " << playSpace.playerRegionX << std::endl;
 							std::cout << "worldY: " << playSpace.current->y << " worldX: " << playSpace.current->x << std::endl;
@@ -505,7 +481,7 @@ int main( int argc, char* args[] )
 							viewer.clear(); // Clear print console map.
 							optimizeArray.clear(); // Clears optimization
 							memoryMap.clear();
-							sider = playSpace.view(heightOffset,playerZ,mapView,circleView,false,true,true, viewer,&optimizeArray,memoryMap,specialTiles,seeAboveInvisible,checkAll,mapDebug); // Sider is length.
+							sider = playSpace.view(heightOffset,mapView,circleView,false,true,true, viewer,&optimizeArray,memoryMap,specialTiles,seeAboveInvisible,checkAll,mapDebug); // Sider is length.
 							//printMapVector(viewer,sider,tileSet); // This for console.
 							if(!memoryMode){
 								memoryMap.clear();

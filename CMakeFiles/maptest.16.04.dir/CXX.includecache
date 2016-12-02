@@ -1,0 +1,44 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/gefer8/bold/src/toolkit.cpp
+toolkit.hpp
+/home/gefer8/bold/src/toolkit.hpp
+
+include/toolkit.hpp
+assert.h
+-
+stdint.h
+-
+stdio.h
+-
+string
+-
+stdlib.h
+-
+string.h
+-
+math.h
+-
+iostream
+-
+vector
+-
+stdexcept
+-
+iomanip
+-
+list
+-
+algorithm
+-
+Windows.h
+-
+unistd.h
+-
+

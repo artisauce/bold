@@ -50,7 +50,7 @@ public:
 	void teleport();
 	void travel(int yT, int xT, int mode);
 	~playerSpace();
-	unsigned int view(float heightOffset, int mapView, bool circle,
+	unsigned int view(float heightOffset, int playerHeight, int mapView, bool circle,
 					 bool borders, bool playerSee, bool wallMode, std::vector<int>& viewMap, 
 					 std::vector<int>* optimizeArray, std::vector<int>& memoryMap,int specialTiles, bool InvisibleAboveCustom, bool checkAll, bool debug);
 };

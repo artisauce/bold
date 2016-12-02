@@ -84,7 +84,7 @@ map::map(map const& src): // For copying -- MANDATORY FOR VECTORS, SEE: Rule of 
 		std::cout << "CREATING MAP CPY " << this <<  std::endl;
 	}
 	std::cout << "We copied?" << std::endl;
-	if(activated){
+	if(activated==1){
 		heightMap = new int[mapSide*mapSide];
 		seedMap = new int[mapSide*mapSide];
 		regionMemoryMap = new int[mapSide*mapSide];
@@ -139,6 +139,10 @@ void map::deactivate(){
 		std::cout << "ERROR ALREADY DEACTIVATED Y: " << y << " X: " << x << std::endl;
 		return;
 	}
+	if(activated == 2){
+		activated = 0;
+		return;
+	}
 	activated = 0;
 	//std::cout << "START DEACTIVATION Y: " << y << " X: " << x << " POINT: " << heightMap[10] << std::endl;
 	delete[] heightMap;
@@ -158,8 +162,17 @@ void map::activate(){
 		std::cout << "ERROR ALREADY ACTIVATED Y: " << y << " X: " << x << std::endl;
 		return;
 	}
-	activated = 1;
 	srand(seed);
+	int test = rand()%20;
+	if(test != 1){ // ocean all
+		//std::cout << seed << " " << test <<std::endl;
+		activated = 2; // TODO perhaps: make memorymap handled differently for ocean maps so it takes less space.
+		if(debug){
+			std::cout << "ACTIVATED MAP " << this << std::endl; 
+		}	
+		return;
+	}
+	activated = 1;
 	heightMap = new int[mapSide*mapSide];
 	seedMap = new int[mapSide*mapSide];
 	regionMap.reserve(mapSide*mapSide);

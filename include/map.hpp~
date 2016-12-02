@@ -20,7 +20,8 @@ public:
 	map* right;
 	map* down;
 	map* up;
-	int activated;
+	bool activated;
+	bool ocean;
 	std::list<coordinate>::iterator xConnector; // For quick list accessing
 	std::list<std::list<coordinate>>::iterator yConnector;
 	// -- ESSENTIAL

@@ -83,7 +83,8 @@ map::map(map const& src): // For copying -- MANDATORY FOR VECTORS, SEE: Rule of 
 	if(debug){
 		std::cout << "CREATING MAP CPY " << this <<  std::endl;
 	}
-	if(activated){
+	std::cout << "We copied?" << std::endl;
+	if(activated==1){
 		heightMap = new int[mapSide*mapSide];
 		seedMap = new int[mapSide*mapSide];
 		regionMemoryMap = new int[mapSide*mapSide];
@@ -113,6 +114,7 @@ map::~map(){
 	if(debug){
 		std::cout << "DELETING MAP " << this << std::endl;
 	}
+	//std::cout << "---DELETING Y: " << y << " X: " << x << std::endl;
 	if(activated){
 		delete[] heightMap;
 		delete[] seedMap;
@@ -123,7 +125,7 @@ map::~map(){
 		regionMap = std::vector<tile>(); // just in case
 		delete[] regionMemoryMap;
 	}
-	std::cout << "DONE DELETING MAP " << this << std::endl;
+	std::cout << "DONE DELETING MAP " << this << " Y: " << y << " X: " << x << std::endl;
 	if(debug){
 			std::cout << "DONE DELETING MAP " << this << std::endl;
 	}
@@ -137,8 +139,14 @@ void map::deactivate(){
 		std::cout << "ERROR ALREADY DEACTIVATED Y: " << y << " X: " << x << std::endl;
 		return;
 	}
+	if(activated == 2){
+		activated = 0;
+		return;
+	}
 	activated = 0;
+	//std::cout << "START DEACTIVATION Y: " << y << " X: " << x << " POINT: " << heightMap[10] << std::endl;
 	delete[] heightMap;
+	//std::cout << "YELL" << std::endl;
 	delete[] seedMap;
 	regionMap = std::vector<tile>();
 	std::cout << "DEACTIVATION Y: " << y << " X: " << x << std::endl;
@@ -154,8 +162,17 @@ void map::activate(){
 		std::cout << "ERROR ALREADY ACTIVATED Y: " << y << " X: " << x << std::endl;
 		return;
 	}
-	activated = 1;
 	srand(seed);
+	int test = rand()%20;
+	if(test != 1){ // ocean all
+		std::cout << seed << " " << test <<std::endl;
+		activated = 2; // TODO perhaps: make memorymap handled differently for ocean maps so it takes less space.
+		if(debug){
+			std::cout << "ACTIVATED MAP " << this << std::endl; 
+		}	
+		return;
+	}
+	activated = 1;
 	heightMap = new int[mapSide*mapSide];
 	seedMap = new int[mapSide*mapSide];
 	regionMap.reserve(mapSide*mapSide);

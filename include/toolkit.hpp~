@@ -10,7 +10,6 @@
 #include <stdexcept>      // std::out_of_range
 #include <iomanip>
 #include <list>
-#include <algorithm>
 
 #ifdef _WIN32
 #include <Windows.h>
