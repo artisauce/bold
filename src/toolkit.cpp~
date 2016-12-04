@@ -261,6 +261,17 @@ void viewLine(int length, int* viewMap,std::vector<std::vector<std::vector<doubl
 	// it may be affordable. For now, will be a toggle for comparison. This would remove the
 	// problem entirely, particularly for tiles farther away, and is probably actually way
 	// worse for efficiency than the double/triple check lines.
+	//=====
+	// UPDATE DECEMBER 4, 2016: Since we're going to be checking a ton of stuff anyways for optimal results, it now
+	// check every "viewline" through every tile in the map. We optimize this by having the funcTracker, which
+	// detects if we went on that viewline in this particular circumstances before. Put a print in there to see
+	// how much it catches, if you want. We divide the funcTracker via the Swastika segmentation, and access
+	// via the particulations of how this line is used and handled.
+	// We also now check for perfect diagonals, and disallow "viewlines" from going in between and not accounting
+	// for the corners. Using the same algorithm, I happen to fix an old bug too: when player is not higher,
+	// then we check if the PREVIOUS tile had a higher hight, since we're bordering on that, and apply that
+	// into the minAngle if it's less. Trust me, this was necessary now that we're checking all viewlines and diagonals,
+	// and ensures that there's a whole lot less chaos in determining which tiles to reveal.
     if(playerY == yTar && playerX == xTar){
         return; // Same tile. out
     }
@@ -617,7 +628,7 @@ void viewLine(int length, int* viewMap,std::vector<std::vector<std::vector<doubl
 				if(!playerIsHigher){
 					maxHeight = actualMap[((y-mode)*length)+x];
 					if(maxHeight>currHeight){
-						foundDiagonal=true;
+						foundDiagonal=true; // This is hacky, but works well!
 					}
 				}
 				tempAngle = (currHeight-playerHeight)/distD(playerYD,playerXD,(double)y + yShift,calc);
@@ -766,7 +777,7 @@ void viewLine(int length, int* viewMap,std::vector<std::vector<std::vector<doubl
 			if(!playerIsHigher){
 				maxHeight = actualMap[(y*length)+(x-mode)];
 				if(maxHeight>currHeight){
-					foundDiagonal=true;
+					foundDiagonal=true; // This is hacky, but works well!
 				}
 			}
 			tempAngle = (currHeight-playerHeight)/distD(playerYD,playerXD,calc,(double)x + xShift);

@@ -115,7 +115,7 @@ map::~map(){
 		std::cout << "DELETING MAP " << this << std::endl;
 	}
 	//std::cout << "---DELETING Y: " << y << " X: " << x << std::endl;
-	if(activated){
+	if(activated==1){
 		delete[] heightMap;
 		delete[] seedMap;
 		delete[] regionMemoryMap;

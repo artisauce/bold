@@ -232,7 +232,7 @@ int main( int argc, char* args[] )
 	bool circleView = false;
 	bool mapDebug = false;
 	bool flyMode = false;
-	bool checkAll = false; // See notes in viewline.
+	bool checkAll = true; // See notes in viewline.
 	bool memoryMode = false; // See what you saw before.
 	int calcHeight; // For calculating height.
 	std::vector<int> optimizeArray;
@@ -482,6 +482,7 @@ int main( int argc, char* args[] )
 							optimizeArray.clear(); // Clears optimization
 							memoryMap.clear();
 							sider = playSpace.view(heightOffset,mapView,circleView,false,true,true, viewer,&optimizeArray,memoryMap,specialTiles,seeAboveInvisible,checkAll,mapDebug); // Sider is length.
+							/*
 							for(int r = 0; r <= (playSpace.mapSide)*playSpace.mapSide; r++){
 								if(r%playSpace.mapSide == 0){
 									std::cout << std::endl;
@@ -492,6 +493,7 @@ int main( int argc, char* args[] )
 								else
 								std::cout << playSpace.current->heightMap[r];
 							}
+							*/
 							//printMapVector(viewer,sider,tileSet); // This for console.
 							if(!memoryMode){
 								memoryMap.clear();
