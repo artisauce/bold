@@ -272,6 +272,9 @@ void viewLine(int length, int* viewMap,std::vector<std::vector<std::vector<doubl
 		//	debug = true;
 		//}
 	//find case
+	//if(yTar == 0 && xTar == 0){
+	//	debug = true;
+	//}
 	std::cout << std::fixed << std::setprecision(19);
     bool playerIsHigher = false; // If player is higher, we use lookUp Algorithm -> playerIsHigher == !lookUp
 	if(actualMap[(yTar*length)+xTar]<playerHeightI){
@@ -286,7 +289,6 @@ void viewLine(int length, int* viewMap,std::vector<std::vector<std::vector<doubl
 	if(abs(yDiff)>abs(xDiff)){
 		yMode=true;
 	}
-	
 	double function = 0; // For traversing -- mandatory!
 	int indent = 0; // To offset by 1 so we don't count beginning twice.
 	double xShift = 0; // Shifting X by some for calc
@@ -296,6 +298,8 @@ void viewLine(int length, int* viewMap,std::vector<std::vector<std::vector<doubl
 	double inaccuracyOne = 1.00 - inaccuracy;
 	int x = playerX;
 	int y = playerY;
+	int diagChecky=1;
+	int diagCheckx=1; // This is for playerIsHigher
 	int trackIndex = 1000; // to ensure seg fault
 	if(xDiff<=0 && yDiff<0)
 	trackIndex = 0;
@@ -326,6 +330,7 @@ void viewLine(int length, int* viewMap,std::vector<std::vector<std::vector<doubl
 		function=(double)xDiff/(double)yDiff;
 		
 		if(xDiff<0){ // Going up in array - visual
+			diagCheckx=0;
 			indent = -1;
 			
 			if(function>=0){ // Func is positive
@@ -363,11 +368,14 @@ void viewLine(int length, int* viewMap,std::vector<std::vector<std::vector<doubl
 				if(playerIsHigher){ // !lookup
 					check = -inaccuracy;
 					xShift = inaccuracyOne;
+					if(xDiff!=0) // this is a strange occurance, but necessary
 					yShift = inaccuracyOne;
 					if(debug)
 					std::cout << "MODE 5" << std::endl;
 				}
 				else { // lookup
+					if(xDiff==0)
+					yShift = inaccuracyOne;
 					if(debug)
 					std::cout << "MODE 6" << std::endl;
 				}
@@ -376,11 +384,13 @@ void viewLine(int length, int* viewMap,std::vector<std::vector<std::vector<doubl
 				if(playerIsHigher){ // !lookup
 					xShift = inaccuracyOne;
 					check = -inaccuracy;
-					
+					if(xDiff==0)
+					yShift = inaccuracyOne;
 					if(debug)
 					std::cout << "MODE 7" << std::endl;
 				}
 				else { // lookup
+					if(xDiff!=0)
 					yShift = inaccuracyOne;
 					if(debug)
 					std::cout << "MODE 8" << std::endl;
@@ -388,11 +398,12 @@ void viewLine(int length, int* viewMap,std::vector<std::vector<std::vector<doubl
 			}
 		}
 		if(yDiff<=0){
+			diagChecky=0;
 			mode=-1;
 		}
-        if(xDiff<=0){
-            altMode=-1;
-        }
+		if(xDiff<=0){
+		    altMode=-1;
+		}
 		if(xDiff && playerIsHigher){
 			x+=indent;
 		}
@@ -404,7 +415,7 @@ void viewLine(int length, int* viewMap,std::vector<std::vector<std::vector<doubl
 		}
 		if(yDiff<0){ // Going up in array - visual
 			indent = -1;
-			
+			diagChecky=0;
 			if(function>=0){ // Func is positive
 				if(playerIsHigher){ // !lookup
 					check = 1.00;
@@ -440,24 +451,29 @@ void viewLine(int length, int* viewMap,std::vector<std::vector<std::vector<doubl
 				if(playerIsHigher){ // !lookup
 					check = -inaccuracy;
 					yShift = inaccuracyOne;
+					if(yDiff!=0)
 					xShift = inaccuracyOne;
 					if(debug)
 					std::cout << "MODE 13" << std::endl;
 				}
 				else { // lookup
+					if(yDiff==0)
+					xShift = inaccuracyOne;
 					if(debug)
 					std::cout << "MODE 14" << std::endl;
 				}
 			}
 			else{ // Func is negative
 				if(playerIsHigher){ // !lookup
+					if(yDiff==0)
+					xShift = inaccuracyOne;
 					yShift = inaccuracyOne;
 					check = -inaccuracy;
-					
 					if(debug)
 					std::cout << "MODE 15" << std::endl;
 				}
 				else { // lookup
+					if(yDiff!=0)
 					xShift = inaccuracyOne;
 					if(debug)
 					std::cout << "MODE 16" << std::endl;
@@ -465,11 +481,12 @@ void viewLine(int length, int* viewMap,std::vector<std::vector<std::vector<doubl
 			}
 		}
 		if(xDiff<=0){
+			diagCheckx=0;
 			mode=-1;
 		}
-        if(yDiff<=0){
-            altMode=-1;
-        }
+		if(yDiff<=0){
+		    altMode=-1;
+        	}
 		if(yDiff && playerIsHigher){
 			y+=indent;
 		}
@@ -503,23 +520,46 @@ void viewLine(int length, int* viewMap,std::vector<std::vector<std::vector<doubl
 	int get; // for getting index
 	int getTwo; // for getting another index
 	double tempAngle; // For getting the
+	double tempAngle2; // This is for the diagonal.
 	bool goBack = false;
 	double currHeight;
+	bool foundDiagonal;
 	double saveDouble; // intermediate for saving double value.
 	playerXD += xShift;
 	playerYD += yShift;
 	playerHeight+=heightOffset; // Because we want to look over edges to an extent.
 	if(debug)
 	std::cout << "---" << std::endl;
-    int maxHeight = 0; // For perfect diagonals
-    int maxHeight2 = 0; // For perfect diagonals
+    	int maxHeight = 0; // For perfect diagonals
+    	int maxHeight2 = 0; // For perfect diagonals
 	if(yMode){
 		while(1){
-            maxHeight = -1000; // Hopefully.
+		foundDiagonal = false;
+		maxHeight = -1000; // Hopefully.
+		maxHeight2 = -1000; // Hopefully.
 			if(!goBack){
 			y+=mode;}
-			if(x<0 || y<0 || x == length || y == length){
-				break;
+			if(x<=0 || y <= 0 || x>=length-1 || y>=length-1){ // This is for the else-if next. We don't want to diagonally access something out of range, so we test when we're not on corners/sides.
+				if(x<0 || y<0 || x == length || y == length){
+					break;
+				}
+			}
+			else if (playerIsHigher && ( (double)((y+diagChecky) - (int)(playerYD+0.5)))*function + round(playerXD) == (double)(x+diagCheckx) && function != 0.00) {
+				foundDiagonal = true;
+				if(debug){
+				std::cout << "====" << std::endl;
+				std::cout << "playerY: " << playerY << " playerX: " << playerX << std::endl;
+				std::cout << "yTar: " << yTar << " xTar: " << xTar << std::endl;
+				std::cout << "func: " << function << std::endl;
+				std::cout << "diag5y: " << y+mode << " diag5x: "<<  x << std::endl;
+				std::cout << "diag6y: " << y << " diag6x: "<<  x+altMode << std::endl;
+				std::cout << "====" << std::endl;
+				}
+				maxHeight = actualMap[((y+mode)*length)+x];
+				maxHeight2 = actualMap[(y*length)+(x+altMode)];
+				if(maxHeight2>maxHeight){
+			   	 	maxHeight = maxHeight2;
+		   		}
 			}
 			goBack = false; // we do this at start so we can calculate the last
 			calc = ((((double)(y) + yShift) - playerYD)*(function)) + playerXD;
@@ -536,23 +576,35 @@ void viewLine(int length, int* viewMap,std::vector<std::vector<std::vector<doubl
 				if((int)(calc) != (y-mode) && playerIsHigher){
 					goBack = true;
 				}
-                x = saveDouble; // Both truncates
+				else if(!playerIsHigher && (int)calc == y && x!=(int)saveDouble){ // This is case in perfect diagonal crossing !!!
+					foundDiagonal = true;
+					if(debug){
+					std::cout << "====" << std::endl;
+					std::cout << "playerY: " << playerY << " playerX: " << playerX << std::endl;
+					std::cout << "yTar: " << yTar << " xTar: " << xTar << std::endl;
+					std::cout << "func: " << function << std::endl;
+					std::cout << "diag7y: " << y << " diag7x: "<<  x << std::endl;
+					std::cout << "diag8y: " << y-mode << " diag8x: "<<  x+altMode << std::endl;
+					std::cout << "====" << std::endl;
+					}
+					maxHeight = actualMap[((y)*length)+x];
+		        		maxHeight2 = actualMap[((y-mode)*length)+(x+altMode)];
+				    if(maxHeight2>maxHeight){
+				        maxHeight = maxHeight2;
+				    }
+				    //std::cout << "ALER: " << playerY << " " << playerX << std::endl;
+					//std::cout << "BARON: " << yTar << " " << xTar << std::endl;
+				    //std::cout << "ALRAM: " << y << " " << x << " " << function << std::endl;
+				    //std::cout << "ALRAM2: " << saveDouble << " " << calc << std::endl;
+				}
+                		x = saveDouble; // Both truncates
 				y = calc;
 				currHeight = actualMap[(y*length)+x];
-                if(maxHeight>currHeight){
-                    currHeight=maxHeight;
-                }
-                else if(playerIsHigher){ // This is case in perfect diagonal crossing !!!
-                    maxHeight = actualMap[(y*length)+x];
-                    maxHeight2 = actualMap[((y-mode)*length)+(x+altMode)];
-                    if(maxHeight2>maxHeight){
-                        maxHeight = maxHeight2;
-                    }
-                    //std::cout << "ALER: " << playerY << " " << playerX << std::endl;
-                    //std::cout << "ALRAM: " << y << " " << x << " " << function << std::endl;
-                    //std::cout << "ALRAM2: " << saveDouble << " " << calc << std::endl;
-                }
 				tempAngle = (currHeight-playerHeight)/distD(playerYD,playerXD,calc,saveDouble);
+				if(foundDiagonal){
+					//std::cout << "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW" << std::endl;
+					tempAngle2 = (maxHeight-playerHeight)/distD(playerYD,playerXD,calc,saveDouble);
+				}
 				if(debug){
 					std::cout << "intermX: " << x << " intermY: " << y << std::endl;
 					std::cout << "calc: " << calc << " saveDouble: " << get << std::endl;
@@ -562,19 +614,31 @@ void viewLine(int length, int* viewMap,std::vector<std::vector<std::vector<doubl
 			}
 			else {
 				currHeight = actualMap[(y*length)+x];
+				if(!playerIsHigher){
+					maxHeight = actualMap[((y-mode)*length)+x];
+					if(maxHeight>currHeight){
+						foundDiagonal=true;
+					}
+				}
 				tempAngle = (currHeight-playerHeight)/distD(playerYD,playerXD,(double)y + yShift,calc);
+				if(foundDiagonal){
+					tempAngle2 = (maxHeight-playerHeight)/distD(playerYD,playerXD,(double)y + yShift,calc);
+				}
 				if(debug){
 					std::cout << "intermX: " << x << " intermY: " << y << std::endl;
 					std::cout << "heightDiff: " << (currHeight-playerHeight) << " distD: " << distD(playerYD,playerXD,(double)y + yShift,calc) << std::endl;
 					std::cout << "tempAngle: " << tempAngle << std::endl;
 				}
 			}
+			if(!playerIsHigher && foundDiagonal && tempAngle2>minAngle){
+				minAngle = tempAngle2;
+			}
 			if(tempAngle>=minAngle-inaccuracy){
 				if(debug)
 				std::cout << "minAngle prev: " << minAngle << std::endl;
 		    		viewMap[(y*length)+x] = 1;
-                    if(memoryMap.size() && memoryMap[(y*length)+x] == 0)
-                    memoryMap[(y*length)+x] = 2; // two indicates to be added onto real memory too.
+				if(memoryMap.size() && memoryMap[(y*length)+x] == 0)
+				memoryMap[(y*length)+x] = 2; // two indicates to be added onto real memory too.
 				if(tempAngle>minAngle){
 		    			minAngle=tempAngle;
 				}
@@ -585,6 +649,9 @@ void viewLine(int length, int* viewMap,std::vector<std::vector<std::vector<doubl
 				if(viewMap[(y*length)+x] != 1){
 					viewMap[(y*length)+x] = -1;
 				}
+			}
+			if(playerIsHigher && foundDiagonal && tempAngle2>minAngle){
+				minAngle = tempAngle2;
 			}
 			if(debug)
 			std::cout << "xBefore: " << x << std::endl;
@@ -611,15 +678,38 @@ void viewLine(int length, int* viewMap,std::vector<std::vector<std::vector<doubl
 		std::cout << "END YMODE FOR" << std::endl;
 		return;
 	}
-	while(1){
+	while(1){ // used to be while(y != yTar || x != xTar)
+	foundDiagonal = false;
         maxHeight = -1000; // Hopefully.
+	maxHeight2 = -1000; // Hopefully.
 		if(debug)
 		std::cout << "goBack: " << goBack << std::endl;
 		if(!goBack){
 		x+=mode;}
-		if(x<0 || y<0 || x == length || y == length){
-			break;
+		//std::cout << "WHY: " << y << " EXE: " << x << std::endl;
+		if(x<=0 || y <= 0 || x>=length-1 || y>=length-1){ // This is for the else-if next. We don't want to diagonally access something out of range, so we test when we're not on corners/sides.
+			if(x<0 || y<0 || x == length || y == length){
+				break;
+			}
 		}
+		else if (playerIsHigher && ( (double)((x+diagCheckx) - (int)(playerXD+0.5)))*function + round(playerYD) == (double)(y+diagChecky) && function != 0.00) {
+			foundDiagonal = true;
+			if(debug){
+			std::cout << "====" << std::endl;
+			std::cout << "playerY: " << playerY << " playerX: " << playerX << std::endl;
+			std::cout << "yTar: " << yTar << " xTar: " << xTar << std::endl;
+			std::cout << "func: " << function << std::endl;
+			std::cout << "diag1y: " << y+altMode << " diag1x: "<<  x << std::endl;
+			std::cout << "diag2y: " << y << " diag2x: "<<  x+mode << std::endl;
+			std::cout << "====" << std::endl;
+			}
+			maxHeight = actualMap[((y+altMode)*length)+x];
+	        	maxHeight2 = actualMap[(y*length)+(x+mode)];
+			if(maxHeight2>maxHeight){
+	           	 	maxHeight = maxHeight2;
+	   		}
+		}
+			
 		goBack = false; // we do this at start so we can calculate the last
 		calc = ((((double)(x) + xShift) - playerXD)*(function)) + playerYD;
 		get = calc;
@@ -635,23 +725,35 @@ void viewLine(int length, int* viewMap,std::vector<std::vector<std::vector<doubl
 			if((int)(calc) != (x-mode) && playerIsHigher){
 				goBack = true;
 			}
-            else if(playerIsHigher){ // This is case in perfect diagonal crossing !!!
-                maxHeight = actualMap[(y*length)+x];
-                maxHeight2 = actualMap[((y+altMode)*length)+(x-mode)];
-                if(maxHeight2>maxHeight){
-                    maxHeight = maxHeight2;
-                }
-                //std::cout << "ALER: " << playerY << " " << playerX << std::endl;
-                //std::cout << "ALRAM: " << y << " " << x << " " << function << std::endl;
-                //std::cout << "ALRAM2: " << saveDouble << " " << calc << std::endl;
-            }
-            y = saveDouble; // Both truncates
+			else if(!playerIsHigher && (int)calc == x && y!=(int)saveDouble) {
+				foundDiagonal = true;
+				if(debug){
+				std::cout << "====" << std::endl;
+				std::cout << "playerY: " << playerY << " playerX: " << playerX << std::endl;
+				std::cout << "yTar: " << yTar << " xTar: " << xTar << std::endl;
+				std::cout << "func: " << function << std::endl;
+				std::cout << "diag3y: " << y << " diag3x: "<<  x << std::endl;
+				std::cout << "diag4y: " << y+altMode << " diag4x: "<<  x-mode<< std::endl;
+				std::cout << "====" << std::endl;
+				}
+				maxHeight = actualMap[((y)*length)+x];
+		        	maxHeight2 = actualMap[((y+altMode)*length)+(x-mode)];
+				if(maxHeight2>maxHeight){
+		           	 	maxHeight = maxHeight2;
+		   		}
+			}
+		        //std::cout << "ALER: " << playerY << " " << playerX << std::endl;
+			//std::cout << "BARON: " << yTar << " " << xTar << std::endl;
+		        //std::cout << "ALRAM: " << y << " " << x << " " << function << std::endl;
+		        //std::cout << "ALRAM2: " << saveDouble << " " << calc << std::endl;
+		    	y = saveDouble; // Both truncates
 			x = calc;
 			currHeight = actualMap[(y*length)+x];
-            if(maxHeight>currHeight){
-                currHeight=maxHeight;
-            }
 			tempAngle = (currHeight-playerHeight)/distD(playerYD,playerXD,saveDouble,calc);
+			if(foundDiagonal){
+				//std::cout << "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW" << std::endl;
+				tempAngle2 = (maxHeight-playerHeight)/distD(playerYD,playerXD,saveDouble,calc);
+			}
 			if(debug){
 				std::cout << "intermX: " << x << " intermY: " << y << std::endl;
 				std::cout << "calc: " << calc << " saveDouble: " << get << std::endl;
@@ -661,19 +763,31 @@ void viewLine(int length, int* viewMap,std::vector<std::vector<std::vector<doubl
 		}
 		else {
 			currHeight = actualMap[(y*length)+x];
+			if(!playerIsHigher){
+				maxHeight = actualMap[(y*length)+(x-mode)];
+				if(maxHeight>currHeight){
+					foundDiagonal=true;
+				}
+			}
 			tempAngle = (currHeight-playerHeight)/distD(playerYD,playerXD,calc,(double)x + xShift);
+			if(foundDiagonal){
+				tempAngle2 = (maxHeight-playerHeight)/distD(playerYD,playerXD,calc,(double)x + xShift);
+			}
 			if(debug){
 				std::cout << "intermX: " << x << " intermY: " << y << std::endl;
 				std::cout << "heightDiff: " << (currHeight-playerHeight) << " distD: " << distD(playerYD,playerXD,calc,(double)x + xShift) << std::endl;
 				std::cout << "tempAngle: " << tempAngle << std::endl;
 			}
 		}
+		if(!playerIsHigher && foundDiagonal && tempAngle2>minAngle){
+			minAngle = tempAngle2;
+		}
 		if(tempAngle>=minAngle-inaccuracy){
 			if(debug)
 			std::cout << "minAngle prev: " << minAngle << std::endl;
             		viewMap[(y*length)+x] = 1;
-                    if(memoryMap.size() && memoryMap[(y*length)+x] == 0)
-                    memoryMap[(y*length)+x] = 2; // two indicates to be added onto real memory too.
+		        if(memoryMap.size() && memoryMap[(y*length)+x] == 0)
+		        memoryMap[(y*length)+x] = 2; // two indicates to be added onto real memory too.
             		if(tempAngle>minAngle){
 		    		minAngle=tempAngle;
 			}
@@ -685,9 +799,12 @@ void viewLine(int length, int* viewMap,std::vector<std::vector<std::vector<doubl
 				viewMap[(y*length)+x] = -1;
 			}
 		}
+		if(playerIsHigher && foundDiagonal && tempAngle2>minAngle){
+			minAngle = tempAngle2;
+		}
 		if(debug)
 		std::cout << "yBefore: " << y << std::endl;
-		y=get;
+		y=get; // Ain't that cool.
 		if(debug){
 			std::cout << "yMode: " << yMode << " x: " << x << " y: " << y << " func: " << function << std::endl;
 			std::cout << "yShift: " << yShift << " xShift: " << xShift << " mode: " << mode << " check: " << check << std::endl;

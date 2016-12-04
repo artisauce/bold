@@ -482,6 +482,16 @@ int main( int argc, char* args[] )
 							optimizeArray.clear(); // Clears optimization
 							memoryMap.clear();
 							sider = playSpace.view(heightOffset,mapView,circleView,false,true,true, viewer,&optimizeArray,memoryMap,specialTiles,seeAboveInvisible,checkAll,mapDebug); // Sider is length.
+							for(int r = 0; r <= (playSpace.mapSide)*playSpace.mapSide; r++){
+								if(r%playSpace.mapSide == 0){
+									std::cout << std::endl;
+								}
+								if(r/playSpace.mapSide == playSpace.playerRegionY && r%playSpace.mapSide == playSpace.playerRegionX){
+									std::cout << "@";
+								}
+								else
+								std::cout << playSpace.current->heightMap[r];
+							}
 							//printMapVector(viewer,sider,tileSet); // This for console.
 							if(!memoryMode){
 								memoryMap.clear();

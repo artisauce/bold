@@ -863,6 +863,10 @@ void playerSpace::travel(int yT, int xT, int mode){
 			}
 		}
 	}
+	// IF WONDERING IF PLAYERZ IS OFF BY 1 OR SOME MORE: KNOW THAT WE USE HEIGHT FROM TILE.
+	// THE TILES
+	// THE THE MAPHEIGHT
+	// ELSE, GO FOR IT
 	if(flyMode == 0){
 		if(current->activated == 2){
 			playerZ = 0;

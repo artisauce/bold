@@ -1,2 +1,2 @@
-/home/dmagaril/bold/CMakeFiles/maptest.14.04.dir
-/home/dmagaril/bold/CMakeFiles/maptest.16.04.dir
+/home/gefer8/bold/CMakeFiles/maptest.14.04.dir
+/home/gefer8/bold/CMakeFiles/maptest.16.04.dir
