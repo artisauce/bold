@@ -8,11 +8,11 @@ public:
 	// -- ESSENTIAL
 	const unsigned int seed;
 	// -- ESSENTIAL
-
+ 
 	// -- Settings
-	const size_t mapSide;
-	const size_t tileSide;
-	const size_t battlefieldSide;
+	const int mapSide;
+	const int tileSide;
+	const int battlefieldSide;
 	const double push;
 	const bool diagonal;
 	const bool debug;
@@ -34,6 +34,8 @@ public:
 	int playerRegionX;
 	int playerTileY; // Cordinate on the tile objects in the map object.
 	int playerTileX;
+	int flyMode;
+	int playerZ;
 	// -- Player stats
 
 	// -- Maps
@@ -48,7 +50,7 @@ public:
 	void teleport();
 	void travel(int yT, int xT, int mode);
 	~playerSpace();
-	unsigned int view(float heightOffset, int playerHeight, int mapView, bool circle,
+	unsigned int view(float heightOffset, int mapView, bool circle,
 					 bool borders, bool playerSee, bool wallMode, std::vector<int>& viewMap, 
 					 std::vector<int>* optimizeArray, std::vector<int>& memoryMap,int specialTiles, bool InvisibleAboveCustom, bool checkAll, bool debug);
 };
