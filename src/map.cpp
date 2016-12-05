@@ -164,7 +164,7 @@ void map::activate(){
 	}
 	srand(seed);
 	int test = rand()%20;
-	if(test > 10){ // ocean all
+	if(test != 0 && (y!=0 || x!=0)){ // ocean all
 		//std::cout << seed << " " << test <<std::endl;
 		activated = 2; // TODO perhaps: make memorymap handled differently for ocean maps so it takes less space.
 		if(debug){
@@ -172,6 +172,7 @@ void map::activate(){
 		}	
 		return;
 	}
+	srand(seed); // we do this twice so the original seed is used.
 	activated = 1;
 	heightMap = new int[mapSide*mapSide];
 	seedMap = new int[mapSide*mapSide];
