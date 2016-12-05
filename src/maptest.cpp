@@ -195,7 +195,7 @@ bool init()
 int main( int argc, char* args[] )
 {
 	std::ios::sync_with_stdio(false); // This allows fast output for the move demo.
-    srand(1505335276);
+    srand(time(NULL));
 	// Constants.
     bool debug = false;
     bool diagonal = true;
@@ -210,7 +210,7 @@ int main( int argc, char* args[] )
 	int specialTiles = 4; // -1 (empty/hidden space) -2 (alternate hidden space), -3 (circleInvsi) ,-4 (skipline)
 	int viewRadius = 23;
 	
-    playerSpace playSpace(1505335276, viewRadius, pushCoefficient, mapSide, tileSide, battlefieldSide,  diagonal, debug);
+    playerSpace playSpace(rand(), viewRadius, pushCoefficient, mapSide, tileSide, battlefieldSide,  diagonal, debug);
 	
 	//playerSpace(unsigned int seedInput, int playerViewRadius, const double pushInput, size_t mapSideInput, 
 	//size_t tileSideInput, size_t battlefieldSideInput, const bool diagonalInput, const bool debugInput)
@@ -220,8 +220,10 @@ int main( int argc, char* args[] )
     std::vector<int> viewer;
 	// More constants.
     unsigned int sider;
-	 playSpace.playerRegionX = 32;
-	playSpace.playerRegionY = 32;
+	 playSpace.playerRegionX = mapSide/2;
+	playSpace.playerRegionY = mapSide/2;
+	playSpace.playerTileX = tileSide/2;
+	playSpace.playerTileY = tileSide/2;
 	playSpace.travel(0, 0, rand());
 	 //playSpace.playerTileX = 11;
 	//playSpace.playerTileY = 11;
