@@ -164,7 +164,7 @@ void map::activate(){
 	}
 	srand(seed);
 	int test = rand()%20;
-	if(test != 1){ // ocean all
+	if(test > 10){ // ocean all
 		//std::cout << seed << " " << test <<std::endl;
 		activated = 2; // TODO perhaps: make memorymap handled differently for ocean maps so it takes less space.
 		if(debug){

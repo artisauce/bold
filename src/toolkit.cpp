@@ -242,7 +242,7 @@ void randLine(unsigned int seed, double pushCoefficient, int startY, int startX,
 }
 
 void viewLine(int length, int* viewMap,std::vector<std::vector<std::vector<double>>>* funcTracker, float heightOffset, std::vector<int>& actualMap, std::vector<int>& memoryMap,
-    int playerY, int playerX, int playerHeightI, int yTar, int xTar, bool debug){
+    int playerY, int playerX, int playerHeightI, int yTar, int xTar, bool playerIsHigher, bool debug){
 	// Just in case in the future, and people would find this out as some sort of bug...
 	// It isn't. It just isn't possible with the algorithm to detect every square's edge.
 	// So: We rely on the outer squares (the ones at the border of the screen) to create
@@ -287,10 +287,10 @@ void viewLine(int length, int* viewMap,std::vector<std::vector<std::vector<doubl
 	//	debug = true;
 	//}
 	std::cout << std::fixed << std::setprecision(19);
-    bool playerIsHigher = false; // If player is higher, we use lookUp Algorithm -> playerIsHigher == !lookUp
-	if(actualMap[(yTar*length)+xTar]<playerHeightI){
-		playerIsHigher = true;
-	}
+    //bool playerIsHigher = false; // If player is higher, we use lookUp Algorithm -> playerIsHigher == !lookUp
+	//if(actualMap[(yTar*length)+xTar]<playerHeightI){
+	//	playerIsHigher = true;
+	//}
 	double minAngle = -100.00; //a depth of darkness
 	double playerHeight = (double)playerHeightI;
 	bool yMode = false; // If function for x > 1, then we must use inverse algorithm.
@@ -598,7 +598,7 @@ void viewLine(int length, int* viewMap,std::vector<std::vector<std::vector<doubl
 					std::cout << "diag8y: " << y-mode << " diag8x: "<<  x+altMode << std::endl;
 					std::cout << "====" << std::endl;
 					}
-					maxHeight = actualMap[((y)*length)+x];
+					maxHeight = actualMap[(y*length)+x];
 		        		maxHeight2 = actualMap[((y-mode)*length)+(x+altMode)];
 				    if(maxHeight2>maxHeight){
 				        maxHeight = maxHeight2;
@@ -607,6 +607,17 @@ void viewLine(int length, int* viewMap,std::vector<std::vector<std::vector<doubl
 					//std::cout << "BARON: " << yTar << " " << xTar << std::endl;
 				    //std::cout << "ALRAM: " << y << " " << x << " " << function << std::endl;
 				    //std::cout << "ALRAM2: " << saveDouble << " " << calc << std::endl;
+				}
+				if(!playerIsHigher){
+					maxHeight2 = actualMap[((y-mode)*length)+x];
+					if(debug)
+					std::cout << "MAXER: " << maxHeight2 << std::endl;
+					if(maxHeight2>maxHeight){
+				        	maxHeight = maxHeight2; // 
+						if(maxHeight>actualMap[(((int)calc)*length)+((int)saveDouble)]){
+							foundDiagonal=true; // This is hacky, but works well!
+						}
+				    	}
 				}
                 		x = saveDouble; // Both truncates
 				y = calc;
@@ -687,6 +698,8 @@ void viewLine(int length, int* viewMap,std::vector<std::vector<std::vector<doubl
 		}
 		if(debug) 
 		std::cout << "END YMODE FOR" << std::endl;
+		if(playerIsHigher)
+		viewLine(length,viewMap,funcTracker,heightOffset,actualMap,memoryMap,playerY,playerX,playerHeightI,yTar,xTar,false, debug);
 		return;
 	}
 	while(1){ // used to be while(y != yTar || x != xTar)
@@ -752,6 +765,17 @@ void viewLine(int length, int* viewMap,std::vector<std::vector<std::vector<doubl
 				if(maxHeight2>maxHeight){
 		           	 	maxHeight = maxHeight2;
 		   		}
+			}
+			if(!playerIsHigher){
+				maxHeight2 = actualMap[(y*length)+(x-mode)];
+				if(debug)
+				std::cout << "MAXER: " << maxHeight2 << std::endl;
+				if(maxHeight2>maxHeight){ // Compatibility with diagonals
+				       	maxHeight = maxHeight2; // 
+					if(maxHeight>actualMap[(((int)saveDouble)*length)+((int)calc)]){
+						foundDiagonal=true; // This is hacky, but works well!
+					}
+				}
 			}
 		        //std::cout << "ALER: " << playerY << " " << playerX << std::endl;
 			//std::cout << "BARON: " << yTar << " " << xTar << std::endl;
@@ -836,6 +860,8 @@ void viewLine(int length, int* viewMap,std::vector<std::vector<std::vector<doubl
 	}
 	if(debug)
 	std::cout << "END XMODE FOR" << std::endl;
+	if(playerIsHigher)
+	viewLine(length,viewMap,funcTracker,heightOffset,actualMap,memoryMap,playerY,playerX,playerHeightI,yTar,xTar,false, debug);
 	return;
 }
 

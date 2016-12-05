@@ -1198,13 +1198,13 @@ unsigned int playerSpace::view(float heightOffset,  int mapView, bool circle, bo
 		{
 			// Getting most of them with this is a good, efficient idea and method.
 			////std::cout << "FIRST " << std::endl;
-			viewLine(viewTileWidth,boolMap,&funcTracking,heightOffset,viewMap,memoryMap,halfTileWidth,halfTileWidth,playerZ, a, 0,debug);
+			viewLine(viewTileWidth,boolMap,&funcTracking,heightOffset,viewMap,memoryMap,halfTileWidth,halfTileWidth,playerZ, a, 0,true,debug);
 			////std::cout << "SECOND " << std::endl;
-			viewLine(viewTileWidth,boolMap,&funcTracking,heightOffset,viewMap,memoryMap,halfTileWidth,halfTileWidth,playerZ, a, viewTileWidth-1,debug);
+			viewLine(viewTileWidth,boolMap,&funcTracking,heightOffset,viewMap,memoryMap,halfTileWidth,halfTileWidth,playerZ, a, viewTileWidth-1,true,debug);
 			////std::cout << "THIRD " << std::endl;
-			viewLine(viewTileWidth,boolMap,&funcTracking,heightOffset,viewMap,memoryMap,halfTileWidth,halfTileWidth,playerZ, 0, a,debug);
+			viewLine(viewTileWidth,boolMap,&funcTracking,heightOffset,viewMap,memoryMap,halfTileWidth,halfTileWidth,playerZ, 0, a,true,debug);
 			////std::cout << "FOURTH " << std::endl;
-			viewLine(viewTileWidth,boolMap,&funcTracking,heightOffset,viewMap,memoryMap,halfTileWidth,halfTileWidth, playerZ,viewTileWidth-1, a,debug);
+			viewLine(viewTileWidth,boolMap,&funcTracking,heightOffset,viewMap,memoryMap,halfTileWidth,halfTileWidth, playerZ,viewTileWidth-1, a,true,debug);
 		}
 		////std::cout << "----END AROUND----" << std::endl;
 		for(int y = 1; y < viewTileWidth-1; y++)
@@ -1212,7 +1212,7 @@ unsigned int playerSpace::view(float heightOffset,  int mapView, bool circle, bo
 			for (int x = 1; x < viewTileWidth-1; x++)
 			{
 				if(boolMap[(y*viewTileWidth)+x] != 1 || checkAll){ // This will save a function call, more efficient than in viewLine function check.
-					viewLine(viewTileWidth,boolMap,&funcTracking,heightOffset,viewMap,memoryMap,halfTileWidth,halfTileWidth,playerZ, y, x,debug);
+					viewLine(viewTileWidth,boolMap,&funcTracking,heightOffset,viewMap,memoryMap,halfTileWidth,halfTileWidth,playerZ, y, x,true,debug);
 				}
 				////std::cout << y << " " << x << std::endl;
 			}
