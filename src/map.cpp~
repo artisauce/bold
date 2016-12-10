@@ -132,7 +132,6 @@ map::~map(){
 }
 
 void map::deactivate(){
-	std::cout << "DEACTIVATION Y: " << y << " X: " << x << std::endl;
 	if(debug){
 		std::cout << "DEACTIVATING MAP " << this << std::endl;
 	}
@@ -150,6 +149,7 @@ void map::deactivate(){
 	//std::cout << "YELL" << std::endl;
 	delete[] seedMap;
 	regionMap = std::vector<tile>();
+	std::cout << "DEACTIVATION Y: " << y << " X: " << x << std::endl;
 	if(debug){
 			std::cout << "DONE DEACTIVATING MAP " << this << std::endl;
 	}

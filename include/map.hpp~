@@ -21,8 +21,8 @@ public:
 	map* down;
 	map* up;
 	int activated;
-	std::list<map*>::iterator xConnector; // For quick list accessing
-	std::list<std::list<map*>>::iterator yConnector;
+	std::list<coordinate>::iterator xConnector; // For quick list accessing
+	std::list<std::list<coordinate>>::iterator yConnector;
 	// -- ESSENTIAL
 
 	// -- Settings

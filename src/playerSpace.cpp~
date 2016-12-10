@@ -305,13 +305,12 @@ bool playerSpace::find(int y, int x, std::list<std::list<map*>>::iterator& yy, s
 	}
 	return true;
 }
-/*
+
 void playerSpace::adjustView(){
 	int holder = (regionViewRadius / mapSide) + 1;
 	if(holder > mapViewRadius){
 		std::list<std::list<map*>>::iterator yIt = current->yConnector;
 		std::list<map*>::iterator xIt = current->xConnector;
-		
 		
 		
 	}
@@ -357,7 +356,7 @@ void playerSpace::adjustView(){
 		
 	}
 }
-*/
+
 void playerSpace::teleport(){
 	current = NULL;
 }
