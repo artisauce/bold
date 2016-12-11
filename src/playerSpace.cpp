@@ -305,15 +305,139 @@ bool playerSpace::find(int y, int x, std::list<std::list<map*>>::iterator& yy, s
 	}
 	return true;
 }
-/*
+
+map* playerSpace::gotoMapX(map* currMap, bool goRight){
+	std::list<std::list<map*>>::iterator yIt = currMap->yConnector;
+	std::list<map*>::iterator xIt = currMap->xConnector;
+	if(goRight){
+		if(!(currMap->right) || (currMap->right)->activate()){
+			int ex = currMap->x+1;
+			int wy = currMap->y;
+			if(!find(wy,ex,yIt,xIt) || (*xIt)->activate()){
+				map* tempMap = new map(seed,wy,ex,push,mapSide,tileSide,battlefieldSide,diagonal,debug);
+				insertCoordinateRelative(yIt,xIt,tempMap);
+				(*xIt)->xConnector = xIt;
+				(*xIt)->yConnector = yIt;
+			}
+			currMap->right = *xIt;
+			(*xIt)->left = currMap;
+		}
+		return currMap->right;
+	}
+	else {
+		if(!(currMap->left) || (currMap->left)->activate()){
+			int ex = currMap->x-1;
+			int wy = currMap->y;
+			if(!find(wy,ex,yIt,xIt) || (*xIt)->activate()){ // short circuit ftw
+				map* tempMap = new map(seed,wy,ex,push,mapSide,tileSide,battlefieldSide,diagonal,debug);
+				insertCoordinateRelative(yIt,xIt,tempMap);
+				(*xIt)->xConnector = xIt;
+				(*xIt)->yConnector = yIt;
+			}
+			currMap->left = *xIt;
+			(*xIt)->right = currMap;
+		}
+		return currMap->left;
+	}
+}
+
+map* playerSpace::gotoMapY(map* currMap, bool goDown, std::list<std::list<map*>>::iterator yIt, std::list<map*>::iterator xIt){
+	// iterator in arguments are there to help
+	if(goDown){
+		if(!(currMap->down) || (currMap->down)->activate()){
+			int ex = currMap->x;
+			int wy = currMap->y+1;
+			if(!find(wy,ex,yIt,xIt) || (*xIt)->activate()){
+				map* tempMap = new map(seed,wy,ex,push,mapSide,tileSide,battlefieldSide,diagonal,debug);
+				insertCoordinateRelative(yIt,xIt,tempMap);
+				(*xIt)->xConnector = xIt;
+				(*xIt)->yConnector = yIt;
+			}
+			currMap->down = *xIt;
+			(*xIt)->up = currMap;
+		}
+		return currMap->down;
+	}
+	else{
+		if(!(currMap->up) || (currMap->up)->activate()){
+			int ex = currMap->x;
+			int wy = currMap->y-1;
+			if(!find(wy,ex,yIt,xIt) || (*xIt)->activate()){
+				map* tempMap = new map(seed,wy,ex,push,mapSide,tileSide,battlefieldSide,diagonal,debug);
+				insertCoordinateRelative(yIt,xIt,tempMap);
+				(*xIt)->xConnector = xIt;
+				(*xIt)->yConnector = yIt;
+			}
+			currMap->up = *xIt;
+			(*xIt)->down = currMap;
+		}
+		return currMap->up;
+	}
+}
+
+
 void playerSpace::adjustView(){
 	int holder = (regionViewRadius / mapSide) + 1;
+	//std::cout << "HOLDER: " << holder << std::endl;
 	if(holder > mapViewRadius){
-		std::list<std::list<map*>>::iterator yIt = current->yConnector;
-		std::list<map*>::iterator xIt = current->xConnector;
-		
-		
-		
+		map* currMap=current;
+		map* currMapB=currMap;
+		for (int i = 0; i < mapViewRadius; i++)
+		{
+			currMap=currMap->up->left;
+			currMapB=currMapB->down->right;
+		}
+		currMap = gotoMapX(gotoMapY(currMap,false,currMap->yConnector,currMap->xConnector),false); // lol
+		currMapB = gotoMapX(gotoMapY(currMapB,true,currMapB->yConnector,currMapB->xConnector),true);
+		//std::cout << "Gottem 1" << std::endl;
+		map* holdMap = currMap;
+		map* holdMapB = currMapB;
+		currMap = currMap->right;
+		currMapB = currMapB->left;
+		map* spareMap = currMap->down;
+		map* spareMapB = currMapB->up;
+		int tempHolder = (mapViewRadius+1)*2 -1; // to include middle
+		//std::cout << "Gottem 2" << std::endl;
+		for (int i = 0; i < tempHolder; i++)
+		{
+			currMap = gotoMapX(currMap,true);
+			currMapB = gotoMapX(currMapB,false);
+			//std::cout << "Gottemb " << i <<  std::endl;
+			if(i!=tempHolder-1){
+				//std::cout << "Gotteme " << i << " " << spareMap->right << " " << spareMapB->left << std::endl;
+				spareMap=spareMap->right;
+				spareMapB=spareMapB->left;
+				//std::cout << "Gottemc " << i <<  std::endl;
+				currMap->down = spareMap;
+				spareMap->up = currMap;
+				//std::cout << "Gottemd " << i <<  std::endl;
+				currMapB->up = spareMapB;
+				spareMapB->down = currMapB;
+			}
+		}
+		//std::cout << "Gottem 3" << std::endl;
+		for (int i = 0; i < tempHolder; i++)
+		{
+			if(i!=0){
+				spareMap=spareMap->down;
+				spareMapB=spareMapB->up;
+			}
+			currMap = gotoMapY(currMap,true,spareMap->yConnector,spareMap->xConnector);
+			currMapB = gotoMapY(currMapB,false,spareMapB->yConnector,spareMapB->xConnector);
+			currMap->left = spareMap;
+			spareMap->right = currMap;
+			currMapB->right = spareMapB;
+			spareMapB->left = currMapB;
+		}
+		holdMap->down = currMapB; // complete circuit
+		currMapB->up = holdMap;
+		holdMapB->up = currMap;
+		currMap->down = holdMapB;
+		mapViewRadius++;
+		if(holder>mapViewRadius){
+			adjustView();
+			return;
+		}
 	}
 	else if(holder != mapViewRadius){
 		//deactivate in swastika
@@ -353,13 +477,97 @@ void playerSpace::adjustView(){
 			currMapC->deactivate();
 			currMapD->deactivate();
 		}
-		mapViewRadius = holder;
-		
+		mapViewRadius--;
+		if(holder<mapViewRadius){
+			adjustView();
+			return;
+		}
 	}
 }
-*/
+
 void playerSpace::teleport(){
-	current = NULL;
+	current->deactivate();
+	map* deLeft = current;
+	map* deRight = current;
+	map* deUp = current;
+	map* deDown = current;
+	for (int i = 0; i < mapViewRadius; i++)
+	{
+		deUp=deUp->up;
+		deDown=deDown->down;
+		deUp->deactivate();
+		deDown->deactivate();
+	}
+	for (int i = 0; i < mapViewRadius; i++)
+	{
+		deLeft=deLeft->left;
+		deLeft->deactivate();
+		deUp = deLeft;
+		deDown = deLeft;
+		for(int e = 0; e < mapViewRadius; e++){
+			deUp=deUp->up;
+			deDown=deDown->down;
+			deUp->deactivate();
+			deDown->deactivate();
+		}
+		deRight=deRight->right;
+		deRight->deactivate();
+		deUp = deRight;
+		deDown = deRight;
+		for(int e = 0; e < mapViewRadius; e++){
+			deUp=deUp->up;
+			deDown=deDown->down;
+			deUp->deactivate();
+			deDown->deactivate();
+		}
+	}
+	//deactivated all -- likely
+	//now to make where we will be.
+	std::list<std::list<map*>>::iterator yIt = current->yConnector;
+	std::list<map*>::iterator xIt = current->xConnector;
+	int y = playerWorldY;
+	int x = playerWorldX;
+	map* tempMap;
+	if(!find(y,x,yIt,xIt) || (*xIt)->activate()){
+		tempMap = new map(seed,y,x,push,mapSide,tileSide,battlefieldSide,diagonal,debug);
+		insertCoordinateRelative(yIt,xIt,tempMap);
+	}
+	current = (*xIt);
+	current->xConnector = xIt;
+	current->yConnector = yIt;
+	deLeft = current;
+	deRight = current;
+	mapViewRadius = (regionViewRadius / mapSide) + 1;
+	for(int i = 0;i<mapViewRadius;i++){
+		deRight = gotoMapX(deRight,true);
+		deLeft = gotoMapX(deLeft,false);
+	}
+	map* connectMap;
+	deUp=deLeft; // re-use these variables. they still kinda make sense here
+	deDown=deLeft;
+	int holder = mapViewRadius*2;
+	for(int i = 0;i<mapViewRadius;i++){
+		connectMap = deUp;
+		deUp = gotoMapY(deUp,false,deUp->yConnector,deUp->xConnector);
+		deRight = deUp;
+		for(int e = 0; e < holder; e++){
+			deRight=gotoMapX(deRight,true);
+			connectMap=connectMap->right;
+			connectMap->up=deRight;
+			deRight->down = connectMap;
+		}
+		connectMap = deDown;
+		deDown = gotoMapY(deDown,true,deDown->yConnector,deDown->xConnector);
+		deRight = deDown;
+		for(int e = 0; e < holder; e++){
+			deRight=gotoMapX(deRight,true);
+			connectMap=connectMap->right;
+			connectMap->down=deRight;
+			deRight->up = connectMap;
+		}
+	}
+	
+	
 }
 
 void playerSpace::travel(int yT, int xT, int mode){
@@ -382,8 +590,8 @@ void playerSpace::travel(int yT, int xT, int mode){
 			playerRegionX+=xT;
 		}
 		else if(mode==2){
-			playerWorldY+=yT;
-			playerWorldX+=xT;
+			worldYDest+=yT;
+			worldXDest+=xT;
 		}
 		if(playerTileY<0){
 			regionYOffset=((playerTileY+1)/tileSide) - 1;
@@ -527,7 +735,7 @@ void playerSpace::travel(int yT, int xT, int mode){
 							// starts activated
 						}
 					}
-					if(x!=startCord && !theTestMap){ // left/right. left is gauranteed to be something, so...
+					if(x!=startCord){ // left/right. left is gauranteed to be something, so...
 						(iterArray[i-1])->up->right = (iterArray[i])->up;
 						(iterArray[i])->up->left = (iterArray[i-1])->up;
 					}
@@ -596,7 +804,7 @@ void playerSpace::travel(int yT, int xT, int mode){
 							// starts activated
 						}
 					}
-					if(x!=startCord && !theTestMap){ // left/right. left is gauranteed to be something, so...
+					if(x!=startCord){ // left/right. left is gauranteed to be something, so...
 						(iterArray[i-1])->down->right = (iterArray[i])->down;
 						(iterArray[i])->down->left = (iterArray[i-1])->down;
 					}
@@ -912,29 +1120,31 @@ unsigned int playerSpace::view(float heightOffset,  int mapView, bool circle, bo
 				}
 				////std::cout << "ALERTD= " << worldXOffset << std::endl;
 				ex -=(worldXOffset*mapSide);
-				////std::cout << usedMap->down << std::endl;
-				////std::cout << usedMap->up << std::endl;
-				////std::cout << usedMap->left << std::endl;
-				////std::cout << usedMap->right << std::endl;
-				//
+				//std::cout << "EZ: " << y << " " << x << std::endl;
 				while(worldYOffset){
 					if(worldYOffset>0){
-						////std::cout << "DIDd " << worldYOffset << " " << usedMap<< " " <<usedMap->down << " " << usedMap->up << " " << usedMap->left << " " << usedMap->right << std::endl;
+						//std::cout << "==DOWN" << std::endl;
 						usedMap = usedMap->down;
 						worldYOffset--;
 					}
 					else if(worldYOffset<0){
-						////std::cout << "DIDu" << std::endl;
+						//std::cout << "==UP" << std::endl;
 						usedMap = usedMap->up;
 						worldYOffset++;
 					}
 				}
 				while(worldXOffset){
 					if(worldXOffset>0){
+						//std::cout << "==RIGHT" << std::endl;
 						usedMap = usedMap->right;
 						worldXOffset--;
 					}
 					else if(worldXOffset<0){
+						//std::cout << usedMap->down << std::endl;
+						//std::cout << usedMap->up << std::endl;
+						//std::cout << usedMap->left << std::endl;
+						//std::cout << usedMap->right << std::endl;
+						//std::cout << "==LEFT" << std::endl;
 						usedMap = usedMap->left;
 						worldXOffset++;
 					}

@@ -47,6 +47,9 @@ public:
 	size_t tileSideInput, size_t battlefieldSideInput, const bool diagonalInput, const bool debugInput);
 	void insertCoordinateRelative(std::list<std::list<map*>>::iterator& yy, std::list<map*>::iterator& xx, map* data);
 	bool find(int y, int x, std::list<std::list<map*>>::iterator& yy, std::list<map*>::iterator& xx);
+	map* gotoMapX(map* currMap, bool goRight);
+	map* gotoMapY(map* currMap, bool goDown, std::list<std::list<map*>>::iterator yIt, std::list<map*>::iterator xIt);
+	void adjustView();
 	void teleport();
 	void travel(int yT, int xT, int mode);
 	~playerSpace();

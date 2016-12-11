@@ -55,7 +55,7 @@ public:
 	map(map const& src);
 	~map();
 	void deactivate();
-	void activate();
+	bool activate();
 	
 
 };

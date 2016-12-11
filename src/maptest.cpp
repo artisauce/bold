@@ -208,8 +208,8 @@ int main( int argc, char* args[] )
     tileSet.push_back("~"); // as -5. Ground
     tileSet.push_back("T"); // as -6. Tree
 	int specialTiles = 4; // -1 (empty/hidden space) -2 (alternate hidden space), -3 (circleInvsi) ,-4 (skipline)
-	int viewRadius = 23;
-	
+	int viewRadius = 63;
+	//this seed needs investigating: 6829467
     playerSpace playSpace(rand(), viewRadius, pushCoefficient, mapSide, tileSide, battlefieldSide,  diagonal, debug);
 	
 	//playerSpace(unsigned int seedInput, int playerViewRadius, const double pushInput, size_t mapSideInput, 
@@ -229,18 +229,19 @@ int main( int argc, char* args[] )
 	//playSpace.playerTileY = 11;
 	//int viewRadius = 9;
 	float heightOffset = 0.5; // Ideal?
-	int mapView = 1;
+	int mapView = 2;
 	bool seeAboveInvisible = false;
 	bool circleView = false;
 	bool mapDebug = false;
 	bool flyMode = false;
+	bool checkRadius = false;
 	bool checkAll = true; // See notes in viewline.
 	bool memoryMode = false; // See what you saw before.
 	int calcHeight; // For calculating height.
 	std::vector<int> optimizeArray;
 	std::vector<int> memoryMap;
 	std::cout << "Got here" << std::endl;
-    viewer.clear(); // Clear print console map.
+    	viewer.clear(); // Clear print console map.
 	optimizeArray.clear(); // Clears optimization
 	memoryMap.clear();
 	//playerSpace::view(float heightOffset, int playerHeight, int mapView, bool circle, bool borders, bool playerSee, bool wallMode, std::vector<int>& viewMap, std::vector<int>* optimizeArray, std::vector<int>& memoryMap,int specialTiles, bool InvisibleAboveCustom, bool checkAll, bool debug){
@@ -369,7 +370,7 @@ int main( int argc, char* args[] )
 							break;
 
 							case SDLK_m: // Toggle map
-							mapView=!mapView;
+							mapView = (mapView+1)%3;
 							std::cout << "mapView: " << mapView << std::endl;
 							SDL_Delay(250);
 							break;
@@ -411,14 +412,18 @@ int main( int argc, char* args[] )
 							break;
 
 							case SDLK_MINUS: // Decrease view
-							viewRadius--;
-							std::cout << "viewRadius: " << viewRadius << std::endl;
+							checkRadius = true;
+							playSpace.tileViewRadius--;
+							playSpace.regionViewRadius--;
+							std::cout << "regionViewRadius: " << playSpace.regionViewRadius << std::endl;
 							SDL_Delay(250);
 							break;
 
 							case SDLK_EQUALS: // Increase view
-							viewRadius++;
-							std::cout << "viewRadius: " << viewRadius << std::endl;
+							checkRadius = true;
+							playSpace.tileViewRadius++;
+							playSpace.regionViewRadius++;
+							std::cout << "regionViewRadius: " << playSpace.regionViewRadius << std::endl;
 							SDL_Delay(250);
 							break;
 
@@ -461,6 +466,10 @@ int main( int argc, char* args[] )
 							std::cout << "regionY: " << playSpace.playerRegionY << " regionX: " << playSpace.playerRegionX << std::endl;
 							std::cout << "worldY: " << playSpace.current->y << " worldX: " << playSpace.current->x << std::endl;
 							std::cout << "Currseed: " << playSpace.current->seed << std::endl;
+							if(checkRadius){
+								playSpace.adjustView();
+								checkRadius=false;
+							}
 							//for (int i = 0; i < playSpace.mapSide*playSpace.mapSide; ++i){
 							//	for (int e = 0; e < playSpace.tileSide*playSpace.tileSide; ++e)
 							//	{
@@ -483,6 +492,7 @@ int main( int argc, char* args[] )
 							viewer.clear(); // Clear print console map.
 							optimizeArray.clear(); // Clears optimization
 							memoryMap.clear();
+							//std::cout << "ERROR?" << std::endl;
 							sider = playSpace.view(heightOffset,mapView,circleView,false,true,true, viewer,&optimizeArray,memoryMap,specialTiles,seeAboveInvisible,checkAll,mapDebug); // Sider is length.
 							/*
 							for(int r = 0; r <= (playSpace.mapSide)*playSpace.mapSide; r++){

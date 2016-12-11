@@ -155,12 +155,12 @@ void map::deactivate(){
 	}
 }
 
-void map::activate(){
+bool map::activate(){
 	// -- For activation
 	std::cout << "ACTIVATION Y: " << y << " X: " << x << std::endl;
 	if(activated == 1){
 		std::cout << "ERROR ALREADY ACTIVATED Y: " << y << " X: " << x << std::endl;
-		return;
+		return false;
 	}
 	srand(seed);
 	int test = rand()%20;
@@ -170,7 +170,7 @@ void map::activate(){
 		if(debug){
 			std::cout << "ACTIVATED MAP " << this << std::endl; 
 		}	
-		return;
+		return false;
 	}
 	srand(seed); // we do this twice so the original seed is used.
 	activated = 1;
@@ -201,4 +201,5 @@ void map::activate(){
 	if(debug){
 		std::cout << "ACTIVATED MAP " << this << std::endl; 
 	}
+	return false;
 }
