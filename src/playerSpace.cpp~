@@ -1,4 +1,5 @@
 #include "playerSpace.hpp"
+// refer to here: https://docs.google.com/document/d/12cM5ErZal8zfb37lwKVkP85OTCh3h_lNwrrEEZjL0YA/edit
 playerSpace::playerSpace(unsigned int seedInput, int playerViewRadius, const double pushInput, size_t mapSideInput, 
 	size_t tileSideInput, size_t battlefieldSideInput, const bool diagonalInput, const bool debugInput):
 	seed(seedInput),
@@ -155,7 +156,7 @@ playerSpace::playerSpace(unsigned int seedInput, int playerViewRadius, const dou
 	}
     
 }
-// Another function will connect the directions later for this insertion.
+
 void playerSpace::insertCoordinateRelative(std::list<std::list<map*>>::iterator& yy, std::list<map*>::iterator& xx, map* data){
 // if not found y, use mylist.insert (iterator,thingWeWantToPutIn);
 	int wy = (*xx)->y;
@@ -176,7 +177,7 @@ void playerSpace::insertCoordinateRelative(std::list<std::list<map*>>::iterator&
 		tempList.push_back(data);
 		cordMap.push_back(tempList);
 		yy = std::prev(cordMap.end());
-		xx= std::prev(cordMap.end())->begin();
+		xx= std::prev(std::prev(cordMap.end())->end());
 		return;
 	}
 	bool tester;
@@ -194,7 +195,7 @@ void playerSpace::insertCoordinateRelative(std::list<std::list<map*>>::iterator&
 			}
 			tester = ((*xx)->x < tarX);
 			goDir = true;
-			while(tester || goDir){ // while current is less than target or your going left
+			while(tester || goDir){ // while current is less than target and your going left
 				if(tester){
 					xx++;
 					goDir = false;
@@ -305,7 +306,7 @@ bool playerSpace::find(int y, int x, std::list<std::list<map*>>::iterator& yy, s
 	}
 	return true;
 }
-// Lots of short-circuiting here.
+
 map* playerSpace::gotoMapX(map* currMap, bool goRight){
 	std::list<std::list<map*>>::iterator yIt = currMap->yConnector;
 	std::list<map*>::iterator xIt = currMap->xConnector;
@@ -528,7 +529,7 @@ void playerSpace::teleport(){
 	int y = playerWorldY;
 	int x = playerWorldX;
 	map* tempMap;
-	if(!find(y,x,yIt,xIt) || (*xIt)->activate()){ // Short circuit
+	if(!find(y,x,yIt,xIt) || (*xIt)->activate()){
 		tempMap = new map(seed,y,x,push,mapSide,tileSide,battlefieldSide,diagonal,debug);
 		insertCoordinateRelative(yIt,xIt,tempMap);
 	}
@@ -546,7 +547,7 @@ void playerSpace::teleport(){
 	deUp=deLeft; // re-use these variables. they still kinda make sense here
 	deDown=deLeft;
 	int holder = mapViewRadius*2;
-	for(int i = 0;i<mapViewRadius;i++){ // Consider: Maybe use this as initial construction for maps?
+	for(int i = 0;i<mapViewRadius;i++){
 		connectMap = deUp;
 		deUp = gotoMapY(deUp,false,deUp->yConnector,deUp->xConnector);
 		deRight = deUp;
